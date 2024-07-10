@@ -1,0 +1,62 @@
+<mvc:View controllerName="cfwreport.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:sfb="sap.ui.comp.smartfilterbar"
+    xmlns:sft="sap.ui.comp.smarttable"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+    <f:DynamicPage fitContent="true" id="dynamicPageId">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="{i18n>title}" />
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:header>
+            <f:DynamicPageHeader>
+                <core:Fragment fragmentName="cfwreport.fragment.FilterBar" type="XML" />
+            </f:DynamicPageHeader>
+        </f:header>
+        <f:content>
+            <NavContainer
+                navigationFinished="onNavigationFinished"
+                id="navContainer"
+                class="navContainerControl sapUiSmallMarginBottom">
+                <Page showHeader="false" showNavButton="false" id="accountQuery">
+                    <content>
+                        <core:Fragment fragmentName="cfwreport.fragment.AccountDataTable" type="XML" />
+                    </content>
+                    <footer>
+                        <OverflowToolbar>
+                            <Button icon="sap-icon://message-popup" id="btnShowMessageAppRaw"
+                                text="{= ${messageApp>/}.length }"
+                                visible="{= ${messageApp>/}.length > 0 }"
+                                press="onShowMessageApp" />
+                            <ToolbarSpacer />
+
+                        </OverflowToolbar>
+                    </footer>
+                </Page>
+                <Page id="hierarchyBankQuery" showHeader="false">
+                    <content>
+                        <core:Fragment fragmentName="cfwreport.fragment.hierarchyBank.TreeData"
+                            type="XML" />
+                    </content>
+                    <footer>
+                        <OverflowToolbar>
+                            <Button icon="sap-icon://message-popup" id="btnShowMessageAppTree"
+                                text="{= ${messageApp>/}.length }"
+                                visible="{= ${messageApp>/}.length > 0 }"
+                                press="onShowMessageApp" />
+                            <ToolbarSpacer />
+
+                        </OverflowToolbar>
+                    </footer>
+                </Page>
+            </NavContainer>
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

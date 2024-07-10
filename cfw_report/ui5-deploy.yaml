@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "3.1"
+metadata:
+  name: cfwreport
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          url: https://c8b17cfb-1029-4317-b575-e75b998efae5.abap.eu20.hana.ondemand.com
+          scp: true
+        app:
+          name: /STRCM/CFW_REPORT
+          description: Informe de provisión y previsión
+          package: /STRCM/TR02_03_01
+          transport: H01K900101
+        exclude:
+          - /test/

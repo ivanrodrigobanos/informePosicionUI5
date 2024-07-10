@@ -1,0 +1,127 @@
+import BaseComponent from "sap/ui/core/UIComponent";
+import { createDeviceModel } from "./model/models";
+import { QUERY_MODEL, MESSAGE_MODEL } from "./constants/models";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import {
+  FiltersQuery,
+  HierarchySelectViewModel,
+  AccountDataQueryViewModel,
+} from "./types/types";
+import { ValueState } from "sap/ui/core/library";
+
+import HierarchyBankState from "./state/hierarchyBankState";
+import AccountBankState from "./state/accountBankState";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import MetadataState from "./state/metadataState";
+import Messaging from "sap/ui/core/Messaging";
+
+/**
+ * @namespace cfwreport
+ */
+export default class Component extends BaseComponent {
+  public static metadata = {
+    manifest: "json",
+  };
+  public hierarchyBankState: HierarchyBankState;
+  public accountBankState: AccountBankState;
+  public metadataState: MetadataState;
+  public queryModel: JSONModel;
+  public messageModel: JSONModel;
+
+  /**
+   * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
+   * @public
+   * @override
+   */
+  public init(): void {
+    // call the base component's init function
+    super.init();
+
+    // enable routing
+    this.getRouter().initialize();
+
+    // set the device model
+    this.setModel(createDeviceModel(), "device");
+
+    this.initQueryModelData();
+
+    // Modelo para los mensajes
+    this.setModel(Messaging.getMessageModel(), MESSAGE_MODEL);
+
+    // Clase encargada de gestionar los metadatos del servicio
+    this.metadataState = new MetadataState(this);
+    // Clase encarga de gestionar las peticion de jerarquía de bancos
+    this.hierarchyBankState = new HierarchyBankState(this);
+    // Clase encarga de gestionar los datos de cuentas
+    this.accountBankState = new AccountBankState(this);
+  }
+
+  /**
+   * Devuelve los valores de los filtros
+   */
+  public getFiltersValues(): FiltersQuery {
+    return this.queryModel.getProperty(
+      QUERY_MODEL.FILTER_PROPERTY
+    ) as FiltersQuery;
+  }
+
+  /**
+   * Guarda los valores del filtro
+   * @param values
+   */
+  public setFiltersValues(values: FiltersQuery) {
+    this.queryModel.setProperty(QUERY_MODEL.FILTER_PROPERTY, values);
+  }
+  /**
+   * Obtiene el recurso para los textos del i18n
+   */
+  public getI18nBundle(): ResourceBundle {
+    return (
+      this.getModel("i18n") as ResourceModel
+    ).getResourceBundle() as ResourceBundle;
+  }
+  /**
+   * Inicialización de los modelos internos de la aplicación
+   */
+  private initQueryModelData() {
+    // Filtros
+    this.queryModel = this.getModel(QUERY_MODEL.MODEL_NAME) as JSONModel;
+    let initFilters: FiltersQuery = {
+      company_code: [],
+      displayCurrency: "",
+      dateFrom: new Date("2020-01-01"),
+      dateFromValueState: ValueState.None,
+      dateFromValueStateMessage: "",
+      dateTo: new Date("2020-01-03"),
+      dateToValueState: ValueState.None,
+      dateToValueStateMessage: "",
+    };
+    this.setFiltersValues(initFilters);
+
+    // Modelo para la vista de la consulta de datos en formato plano
+    let viewModel: AccountDataQueryViewModel = { dummy: "" };
+    this.queryModel.setProperty(QUERY_MODEL.ACCOUNT_DATA_VIEW_MODEL, viewModel);
+
+    // Modelo para la vista de selección de la jerarquía
+    let hierViewModel: HierarchySelectViewModel = {
+      inputIDBankEnabled: false,
+      inputIDBank: "",
+      inputIDBankValueState: ValueState.None,
+      inputIDBankValueStateText: "",
+      inputIDBankPrevious: "",
+      inputIDLiquidityEnabled: false,
+      inputIDLiquidity: "",
+      inputIDLiquidityValueState: ValueState.None,
+      inputIDLiquidityValueStateText: "",
+      inputIDLiquidityPrevious: "",
+    };
+    this.queryModel.setProperty(
+      QUERY_MODEL.HIER_SELECT_VIEW_MODEL,
+      hierViewModel
+    );
+
+    this.queryModel.setProperty(QUERY_MODEL.LOADING_HIER_PROCESS, false);
+    this.queryModel.setProperty(QUERY_MODEL.HIERARCHY_SHOWN, false);
+  }
+}

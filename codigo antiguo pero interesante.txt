@@ -1,0 +1,81 @@
+1. INPUT DE SELECCION JERARQUIA:
+
+1.1.- XML donde hay un input para seleccion de jerarquia:
+                <Input
+                        width="100%"
+                        id="idBankHierarchy"
+                        type="Text"
+                        value="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBank'}"
+                        enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankEnabled'}"
+                        showValueHelp="true"
+                        valueHelpRequest="showValueHelpBankHier"
+                        showSuggestion="true"
+                        suggestionItems="{path: '/dir_bank_hier'}"
+                        suggest="suggestIDBankHierarchy"
+                    >
+                        <suggestionItems>
+                            <core:Item text="{hierarchy_name}" />
+                        </suggestionItems>
+                    </Input>
+
+1.2.- Codigo que muestra en dialogo para el F4:
+private _dialogBankHierarchy: Dialog;
+
+  /**
+   * Muestra la ayuda para búsqueda para seleccionar la jerarquía de bancos
+   * @param event
+   */
+  public async showValueHelpBankHier(): Promise<void> {
+    this._messageState.clearMessage();
+    this._dialogBankHierarchy ??= await (<Promise<Dialog>>this.loadFragment({
+      id: this.getView()?.getId() as string,
+      name: "cfwreport.fragment.valueHelpBankHier",
+    }));
+
+    this._dialogBankHierarchy.open();
+  }
+
+1.3.- XML del POPUP de la ayuda para búsqueda de las jerarquías:
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <SelectDialog
+        id="valueHelpBankHier"
+        noDataText="{i18n>NoDataFound}"
+        title="{i18n>valueHelpBankHier.title}"
+        confirm="handlerBankHierSelected"
+        cancel="handlerBankHierSearch"
+        liveChange="handlerBankHierSearch"
+        search="onHandleSearchForBAH"
+        items="{
+        path: '/dir_bank_hier'
+    }">
+        <StandardListItem id="_IDEGen_standardlistitem0"
+            title="{hierarchy_name}"
+            description="{hierarchy}"
+            type="Active" />
+    </SelectDialog>
+</core:FragmentDefinition>
+
+1.4.- Codigo que filtra desde el dialogo:
+  /**
+   * Gestiona la búsqueda manual que se hace desde el dialogo
+   * @param event
+   */
+  public handlerBankHierSearch(event: any) {
+    let filters: Filter[] = [
+      new Filter(
+        "hierarchy_name",
+        FilterOperator.Contains,
+        event.getParameter("value")
+      ),
+    ];
+    let dialogItems = event.getSource().getBinding("items");
+    dialogItems.filter(filters);
+  }
+
+  1.5.- Como se recupera el item selecciado en el StandardListItem
+
+   // Recuperación de la jerarquía seleccionada y se guarda en el modelo
+    let itemSelected = oEvent.getParameter("selectedItem") as StandardListItem;
+    viewModel.inputIDBank = itemSelected.getProperty("description");
