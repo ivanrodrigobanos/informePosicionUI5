@@ -117,15 +117,6 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         hAlign: HorizontalAlign.Begin,
       });
 
-    /*fieldInfo = this.metadataState.getFieldInfo(FIELDS_TREE.BANK_CURRENCY);
-    fieldsCatalog.push({
-      name: FIELDS_TREE.BANK_CURRENCY,
-      label: fieldInfo.label,
-      quickinfo: fieldInfo.quickinfo,
-      pos: this.fieldPos++,
-      type: ColumnType.Text,
-    });*/
-
     return fieldsCatalog;
   }
   /**
@@ -151,7 +142,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
           quickinfo: labelValue as string,
           pos: this.fieldPos++,
           type: ColumnType.Amount,
-          currencyField: FIELDS_TREE.BANK_CURRENCY,
+          currencyField: FIELDS_TREE.CURRENCY,
           width: "7rem",
           hAlign: HorizontalAlign.Right,
         });

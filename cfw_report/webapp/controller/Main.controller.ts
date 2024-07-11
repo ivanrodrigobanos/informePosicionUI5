@@ -87,7 +87,7 @@ export default class Main extends BaseController {
 
     this._bankTreeTable.setFixedColumnCount(NUMBER_FIX_FIELDS); // Campos fijos en la jerarquía del arbol
 
-    this._sfb.search();
+    //this._sfb.search();
   }
 
   /**
@@ -139,7 +139,6 @@ export default class Main extends BaseController {
     // Sitio raro para inicializar el modelo pero es aquí donde tengo el metadata
     // completamente cargado, y puedo inicializar el model con determinados datos de el.
     this.initModel();
-
     // Oculta las columna de valores para que no se vean de un inicio.
     this.hiddenColumnValues();
   }
@@ -727,11 +726,11 @@ export default class Main extends BaseController {
         text: {
           parts: [
             { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
-            { path: `${STATE_PATH.BANK}${FIELDS_TREE.BANK_CURRENCY}` },
+            { path: `${STATE_PATH.BANK}${FIELDS_TREE.CURRENCY}` },
           ],
           type: "sap.ui.model.type.Currency",
           formatOptions: {
-            currencyCode: false,
+            currencyCode: true,
           },
         },
       });

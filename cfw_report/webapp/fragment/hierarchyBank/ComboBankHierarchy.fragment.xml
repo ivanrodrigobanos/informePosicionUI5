@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <FlexBox
+        class="sapUiSmallMarginBegin"
+        direction="Column"
+    >
+        <Label
+            text="{i18n>hierarchySelect.bank.label}:"
+            labelFor="idBankHierarchy"
+            required="true"
+        />
+        <ComboBox
+            showSecondaryValues="true"
+            filterSecondaryValues="true"
+            selectedKey="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBank'}"
+            enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankEnabled'}"
+            items="{
+						path: '/dir_bank_hier',
+                        suspended: true,
+						sorter: { path: 'hierarchy_name' }
+					}"
+            loadItems="handlerLoadHierBank"
+            valueState="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankValueState'}"
+            valueStateText="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankValueStateText'}"
+        >
+            <core:ListItem
+                key="{hierarchy}"
+                text="{hierarchy_id}"
+                additionalText="{hierarchy_type}"
+            />
+        </ComboBox>
+    </FlexBox>
+</core:FragmentDefinition>

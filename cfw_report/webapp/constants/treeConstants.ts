@@ -10,7 +10,7 @@ export const FIELDS_TREE = {
   COMPANY_CODE: "company_code",
   COMPANY_CODE_NAME: "company_code_name",
   COMPANY_CODE_NAME_WIDTH: "10rem",
-  BANK_CURRENCY: "bank_currency",
+  CURRENCY: "currency",
   HOUSE_BANK: "house_bank",
   HOUSE_BANK_WIDTH: "7rem",
   HOUSE_BANK_ACCOUNT: "house_bank_account",

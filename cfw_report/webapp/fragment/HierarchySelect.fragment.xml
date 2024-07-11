@@ -1,0 +1,62 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Popover
+        id="popOverHirarchySelect"
+        title="{i18n>hierarchySelect.title}"
+        class="sapUiContentPadding"
+        placement="Bottom"
+    >
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    id="action"
+                    text="{i18n>hierarchySelect.btnGo}"
+                    press="handlerHierarchySelected"
+                />
+            </Toolbar>
+        </footer>
+        <FlexBox
+            alignContent="Start"
+            direction="Column"
+        >
+            <FlexBox direction="Column">
+                <RadioButton
+                    id="BankHierarchy"
+                    text="{i18n>hierarchySelect.bank}"
+                    select="handlerSelectHierarchy"
+                />
+                <core:Fragment
+                    fragmentName="cfwreport.fragment.hierarchyBank.ComboBankHierarchy"
+                    type="XML" />
+            </FlexBox>
+            <FlexBox direction="Column">
+                <RadioButton
+                    id="LiquidityHierarchy"
+                    text="{i18n>hierarchySelect.liquidity}"
+                    select="handlerSelectHierarchy"
+                />
+                <FlexBox
+                    class="sapUiSmallMarginBegin"
+                    direction="Column"
+                >
+                    <Label
+                        text="{i18n>hierarchySelect.liquidity.label}:"
+                        labelFor="idLiquidityHierarchy"
+                        required="true"
+                    />
+                    <Input
+                        width="100%"
+                        id="idLiquidityHierarchy"
+                        type="Text"
+                        showSuggestion="false"
+                        enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidityEnabled'}"
+                        value="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidity'}"
+                    />
+                </FlexBox>
+            </FlexBox>
+        </FlexBox>
+    </Popover>
+</core:FragmentDefinition>

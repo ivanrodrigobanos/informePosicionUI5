@@ -131,7 +131,7 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
       .forEach((key) => {
         rowTree[key] = rowHierarchyFlat[key];
       });
-    rowTree["bank_currency"] = rowHierarchyFlat["bank_currency"];
+    rowTree[FIELDS_TREE.CURRENCY] = rowHierarchyFlat[FIELDS_TREE.CURRENCY];
   }
   /**
    * Rellena el campo del valor del nodo
@@ -197,8 +197,8 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
       );
 
     if (hierarchyFlatUpperIndex !== -1) {
-      hierarchyFlat[hierarchyFlatUpperIndex]["bank_currency"] =
-        hierarchyFlatRow["bank_currency"];
+      hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE.CURRENCY] =
+        hierarchyFlatRow[FIELDS_TREE.CURRENCY];
       Object.keys(hierarchyFlatRow)
         .filter(
           (rowKey) =>
