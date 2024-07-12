@@ -96,7 +96,7 @@ export default class Component extends BaseComponent {
       dateTo: new Date("2020-01-04"),
       dateToValueState: ValueState.None,
       dateToValueStateMessage: "",
-      holiday_calendar: "E1",
+      holiday_calendar: "",
     };
     this.setFiltersValues(initFilters);
 

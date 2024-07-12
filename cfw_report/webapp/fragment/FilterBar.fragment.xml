@@ -6,7 +6,10 @@
     xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
     <sfb:SmartFilterBar entitySet="cfw_query" id="SFBQuery"
-        filterChange="onSFChange">
+        persistencyKey="SmartFilterBarApp"
+        filterChange="onSFChange"
+        afterVariantLoad="onSFVariantLoad"
+        beforeVariantFetch="onSFBeforeVariantFetch">
         <sfb:controlConfiguration>
             <sfb:ControlConfiguration
                 key="p_keydate"

@@ -30,6 +30,7 @@
                 <Title
                     text=" {i18n>bankAccountTree.title}
                 ({= ${hierarchyBankState>/hierarchyBankAccount/hierarchyFlat}.length })" />
+                <vm:VariantManagement id="hierarchyBankTreeTable" for="BankTreeTable" />
                 <ToolbarSpacer />
                 <Button
                     ariaLabelledBy="{i18n>accountDataTable.refresh}"

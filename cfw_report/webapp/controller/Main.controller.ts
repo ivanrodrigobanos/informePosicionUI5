@@ -7,7 +7,7 @@ import Table from "sap/ui/table/Table";
 import { ValueState } from "sap/ui/core/library";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
-import { HierarchySelectViewModel } from "cfwreport/types/types";
+import { FiltersQuery, HierarchySelectViewModel } from "cfwreport/types/types";
 import DateFormat from "cfwreport/utils/dateFormat";
 import NavContainer from "sap/m/NavContainer";
 import { NAVIGATION_ID } from "cfwreport/constants/navigation";
@@ -60,6 +60,7 @@ export default class Main extends BaseController {
   private _filterBarValuesChanged: boolean;
   private _bankTreeMetadataHelper: MetadataHelper;
   private _bankTreeMDHInitialWidth: Record<string, string>;
+  private _navigateToHierarchy: boolean;
 
   /*eslint-disable @typescript-eslint/no-empty-function*/
   public onInit(): void {
@@ -86,11 +87,13 @@ export default class Main extends BaseController {
     // Controla si se han modificado los valores de los filtros
     this._filterBarValuesChanged = true;
 
+    // Indica si tiene que navegar a la jerarquía. Esto ocurrirá cuando se navega a una jerarquía sin haber cargado los datos
+    // principales o se hayan modificado los filtros .
+    this._navigateToHierarchy = false;
+
     this._bankTreeMDHInitialWidth = {};
 
     this._bankTreeTable.setFixedColumnCount(NUMBER_FIX_FIELDS); // Campos fijos en la jerarquía del arbol
-
-    //this._sfb.search();
   }
 
   /**
@@ -138,6 +141,27 @@ export default class Main extends BaseController {
     }
     this.getOwnerComponent().setFiltersValues(filterValues);
   }
+  /**
+   * Evento que se lanza antes de grabarse la variante
+   */
+  public onSFBeforeVariantFetch() {
+    let filterValues = this.getOwnerComponent().getFiltersValues();
+    this._sfb.setFilterData({ _CUSTOM: filterValues }, false);
+  }
+  /**
+   * Evento que se lanza antes cargar la variante
+   */
+  public onSFVariantLoad() {
+    let customData = this._sfb.getFilterData() as any;
+    let filters = customData._CUSTOM as FiltersQuery;
+    // Las fechas vienen en string y hay que convertirlas a fechas para que se vean correctamente
+    filters.dateFrom = new Date(filters.dateFrom);
+    filters.dateTo = new Date(filters.dateTo);
+    this.getOwnerComponent().setFiltersValues(filters);
+  }
+  /**
+   * Evento cuando la smarttable se inicializa
+   */
   public onSTInitialised() {
     // Sitio raro para inicializar el modelo pero es aquí donde tengo el metadata
     // completamente cargado, y puedo inicializar el model con determinados datos de el.
@@ -207,23 +231,23 @@ export default class Main extends BaseController {
   public async showHierarchySelect(event: any): Promise<void> {
     this._messageState.clearMessage();
 
-    if (this.getOwnerComponent().accountBankState.getAccountData().length > 0) {
-      let btnShowHierarchy = event.getSource() as Button;
-      this._popOverHierarchySelect ??= await (<Promise<Popover>>(
-        this.loadFragment({
-          id: this.getView()?.getId() as string,
-          name: "cfwreport.fragment.HierarchySelect",
-        })
-      ));
+    //if (this.getOwnerComponent().accountBankState.getAccountData().length > 0) {
+    let btnShowHierarchy = event.getSource() as Button;
+    this._popOverHierarchySelect ??= await (<Promise<Popover>>this.loadFragment(
+      {
+        id: this.getView()?.getId() as string,
+        name: "cfwreport.fragment.HierarchySelect",
+      }
+    ));
 
-      this._popOverHierarchySelect.openBy(btnShowHierarchy);
-    } else {
+    this._popOverHierarchySelect.openBy(btnShowHierarchy);
+    /*} else {
       MessageToast.show(
         this.geti18nResourceBundle().getText(
           "accountDataTable.hierarchyInfoAccountDataNoLoaded"
         ) as string
       );
-    }
+    }*/
   }
   /**
    * Gestiona la jerarquía seleccionada desde el popover
@@ -256,7 +280,16 @@ export default class Main extends BaseController {
           ) as string;
         } else {
           hierViewModel.inputIDBankPrevious = hierViewModel.inputIDBank; // Guardo el previo
-          this.processBuildBankHier(hierViewModel.inputIDBank, true);
+          // Si los filtros se han modificado y se navega hacia una jerarquía se realiza la misma acción que al refrescar. Es decir,
+          // leer los datos de la tabla principal para poder construir la jerarquía. Si no se han modificado se hace la lectura directa
+          // de los datos de jerarquía
+          if (this._filterBarValuesChanged) {
+            // Se tiene que navegar a la pantalla de jerarquía
+            this._navigateToHierarchy = true;
+            this.handlerRefreshData();
+          } else {
+            this.processBuildBankHier(hierViewModel.inputIDBank, true);
+          }
         }
 
         closePopover = true;
@@ -686,7 +719,10 @@ export default class Main extends BaseController {
       ) as HierarchySelectViewModel;
 
       if (hierViewModel.inputIDBankEnabled)
-        this.processBuildBankHier(hierViewModel.inputIDBank, false);
+        this.processBuildBankHier(
+          hierViewModel.inputIDBank,
+          this._navigateToHierarchy
+        );
     } else {
       this.getOwnerComponent().queryModel.setProperty(
         QUERY_MODEL.LOADING_HIER_PROCESS,
@@ -698,6 +734,8 @@ export default class Main extends BaseController {
 
     // Se indica que los filtros no han cambiado una vez obtenido todos los valores
     this._filterBarValuesChanged = false;
+    // Se indica que no se va a navegar una vez finalizado el proceso
+    this._navigateToHierarchy = false;
   }
   /**
    * Devuevle el control donde se pinta el valor en las tablas dinámicas

@@ -3,7 +3,7 @@
     xmlns:core="sap.ui.core"
     xmlns="sap.m"
     xmlns:sft="sap.ui.comp.smarttable"
-    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
     <sft:SmartTable
         id="SFTQuery"
@@ -16,6 +16,8 @@
         showRowCount="true"
         beforeRebindTable="onBeforeRebindTable"
         initialise="onSTInitialised"
+        persistencyKey="SmartAccountDataTable"
+        editTogglable="true" app:useSmartToggle="true"
     >
         <sft:customToolbar>
             <OverflowToolbar design="Transparent">
