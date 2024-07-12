@@ -1,7 +1,13 @@
 export const STATE_PATH = {
   BANK: "hierarchyBankState>",
 };
+
 export const FIELDS_TREE = {
+  NODE: "node",
+  NODE_NAME: "node_name",
+};
+
+export const FIELDS_TREE_ACCOUNT = {
   NODE_VALUE: "accountNode",
   NODE_VALUE_WIDTH: "20rem",
   NODE_NAME: "accountNodeName",
@@ -17,6 +23,7 @@ export const FIELDS_TREE = {
   HOUSE_BANK_ACCOUNT_WIDTH: "6rem",
   PLANNING_LEVEL: "planning_level",
   PLANNING_LEVEL_WIDTH: "7rem",
+  AMOUNT_DATA_WIDTH: "8rem",
 };
 
 export const CUSTOM_DATA = {

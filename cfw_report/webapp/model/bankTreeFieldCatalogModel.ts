@@ -1,6 +1,6 @@
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import BaseModel from "./baseModel";
-import { FIELDS_TREE } from "cfwreport/constants/treeConstants";
+import { FIELDS_TREE_ACCOUNT } from "cfwreport/constants/treeConstants";
 import { HierarchyBankFlat } from "./hierarchyBankModel";
 import MetadataState from "cfwreport/state/metadataState";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
@@ -45,7 +45,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
   public getFixFields(): FieldsCatalogTree {
     let fieldsCatalog: FieldsCatalogTree = [
       {
-        name: FIELDS_TREE.NODE_VALUE,
+        name: FIELDS_TREE_ACCOUNT.NODE_VALUE,
         label: this.i18nBundle.getText(
           "bankAccountTree.labelColumnNode"
         ) as string,
@@ -54,11 +54,11 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         ) as string,
         pos: this.fieldPos++,
         type: ColumnType.Text,
-        width: FIELDS_TREE.NODE_VALUE_WIDTH,
+        width: FIELDS_TREE_ACCOUNT.NODE_VALUE_WIDTH,
         hAlign: HorizontalAlign.Begin,
       },
       {
-        name: FIELDS_TREE.NODE_NAME,
+        name: FIELDS_TREE_ACCOUNT.NODE_NAME,
         label: this.i18nBundle.getText(
           "bankAccountTree.labelColumnNodeName"
         ) as string,
@@ -67,12 +67,14 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         ) as string,
         pos: this.fieldPos++,
         type: ColumnType.Text,
-        width: FIELDS_TREE.NODE_NAME_WIDTH,
+        width: FIELDS_TREE_ACCOUNT.NODE_NAME_WIDTH,
         hAlign: HorizontalAlign.Begin,
       },
     ];
 
-    let fieldInfo = this.metadataState.getFieldInfo(FIELDS_TREE.COMPANY_CODE);
+    let fieldInfo = this.metadataState.getFieldInfo(
+      FIELDS_TREE_ACCOUNT.COMPANY_CODE
+    );
     if (fieldInfo)
       fieldsCatalog.push({
         name: fieldInfo.name,
@@ -80,10 +82,12 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         quickinfo: fieldInfo.quickinfo,
         pos: this.fieldPos++,
         type: ColumnType.Text,
-        width: FIELDS_TREE.COMPANY_CODE_NAME_WIDTH,
+        width: FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME_WIDTH,
         hAlign: HorizontalAlign.Begin,
       });
-    fieldInfo = this.metadataState.getFieldInfo(FIELDS_TREE.PLANNING_LEVEL);
+    fieldInfo = this.metadataState.getFieldInfo(
+      FIELDS_TREE_ACCOUNT.PLANNING_LEVEL
+    );
     if (fieldInfo)
       fieldsCatalog.push({
         name: fieldInfo.name,
@@ -91,10 +95,10 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         quickinfo: fieldInfo.quickinfo,
         pos: this.fieldPos++,
         type: ColumnType.Text,
-        width: FIELDS_TREE.PLANNING_LEVEL_WIDTH,
+        width: FIELDS_TREE_ACCOUNT.PLANNING_LEVEL_WIDTH,
         hAlign: HorizontalAlign.Begin,
       });
-    fieldInfo = this.metadataState.getFieldInfo(FIELDS_TREE.HOUSE_BANK);
+    fieldInfo = this.metadataState.getFieldInfo(FIELDS_TREE_ACCOUNT.HOUSE_BANK);
     if (fieldInfo)
       fieldsCatalog.push({
         name: fieldInfo.name,
@@ -102,10 +106,12 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         quickinfo: fieldInfo.quickinfo,
         pos: this.fieldPos++,
         type: ColumnType.Text,
-        width: FIELDS_TREE.HOUSE_BANK_WIDTH,
+        width: FIELDS_TREE_ACCOUNT.HOUSE_BANK_WIDTH,
         hAlign: HorizontalAlign.Begin,
       });
-    fieldInfo = this.metadataState.getFieldInfo(FIELDS_TREE.HOUSE_BANK_ACCOUNT);
+    fieldInfo = this.metadataState.getFieldInfo(
+      FIELDS_TREE_ACCOUNT.HOUSE_BANK_ACCOUNT
+    );
     if (fieldInfo)
       fieldsCatalog.push({
         name: fieldInfo.name,
@@ -113,7 +119,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         quickinfo: fieldInfo.quickinfo,
         pos: this.fieldPos++,
         type: ColumnType.Text,
-        width: FIELDS_TREE.HOUSE_BANK_ACCOUNT_WIDTH,
+        width: FIELDS_TREE_ACCOUNT.HOUSE_BANK_ACCOUNT_WIDTH,
         hAlign: HorizontalAlign.Begin,
       });
 
@@ -142,8 +148,8 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
           quickinfo: labelValue as string,
           pos: this.fieldPos++,
           type: ColumnType.Amount,
-          currencyField: FIELDS_TREE.CURRENCY,
-          width: "7rem",
+          currencyField: FIELDS_TREE_ACCOUNT.CURRENCY,
+          width: FIELDS_TREE_ACCOUNT.AMOUNT_DATA_WIDTH,
           hAlign: HorizontalAlign.Right,
         });
       else break; // Se sale del bucle ya no hay campos informados

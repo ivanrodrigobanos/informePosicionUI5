@@ -2,7 +2,10 @@ import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import { AccountData, AccountsData } from "./accountBankModel";
 import BaseModel from "./baseModel";
 import { HierarchyBank, HierarchyBanks } from "./hierarchyBankModel";
-import { FIELDS_TREE } from "cfwreport/constants/treeConstants";
+import {
+  FIELDS_TREE,
+  FIELDS_TREE_ACCOUNT,
+} from "cfwreport/constants/treeConstants";
 
 export type HierarchyBankFlat = Record<string, string | number>;
 export type HierarchyBankFlats = HierarchyBankFlat[];
@@ -126,12 +129,14 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
       .filter(
         (rowKey) =>
           rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA) ||
-          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL)
+          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL) ||
+          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_CRITICITY)
       )
       .forEach((key) => {
         rowTree[key] = rowHierarchyFlat[key];
       });
-    rowTree[FIELDS_TREE.CURRENCY] = rowHierarchyFlat[FIELDS_TREE.CURRENCY];
+    rowTree[FIELDS_TREE_ACCOUNT.CURRENCY] =
+      rowHierarchyFlat[FIELDS_TREE_ACCOUNT.CURRENCY];
   }
   /**
    * Rellena el campo del valor del nodo
@@ -142,8 +147,10 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
     rowTree: HierarchyBankTree,
     rowHierarchyFlat: HierarchyBankFlat
   ) {
-    rowTree[FIELDS_TREE.NODE_VALUE] = rowHierarchyFlat["node"];
-    rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat["node_name"];
+    rowTree[FIELDS_TREE_ACCOUNT.NODE_VALUE] =
+      rowHierarchyFlat[FIELDS_TREE.NODE];
+    rowTree[FIELDS_TREE_ACCOUNT.NODE_NAME] =
+      rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
   }
   private buildHierarchyFlat(): HierarchyBankFlats {
     let hierarchyFlat: HierarchyBankFlats = [];
@@ -197,13 +204,14 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
       );
 
     if (hierarchyFlatUpperIndex !== -1) {
-      hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE.CURRENCY] =
-        hierarchyFlatRow[FIELDS_TREE.CURRENCY];
+      hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.CURRENCY] =
+        hierarchyFlatRow[FIELDS_TREE_ACCOUNT.CURRENCY];
       Object.keys(hierarchyFlatRow)
         .filter(
           (rowKey) =>
             rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA) ||
-            rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL)
+            rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL) ||
+            rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_CRITICITY)
         )
         .forEach((key) => {
           if (key.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))

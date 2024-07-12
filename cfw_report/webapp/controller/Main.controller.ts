@@ -27,7 +27,7 @@ import {
   NUMBER_FIX_FIELDS,
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
-import { FIELDS_TREE } from "cfwreport/constants/treeConstants";
+import { FIELDS_TREE_ACCOUNT } from "cfwreport/constants/treeConstants";
 import TreeTable from "sap/ui/table/TreeTable";
 import MessageState from "cfwreport/state/messageState";
 import View from "sap/ui/core/mvc/View";
@@ -38,6 +38,9 @@ import Engine from "sap/m/p13n/Engine";
 import SelectionController from "sap/m/p13n/SelectionController";
 import ColumnWidthController from "sap/m/table/ColumnWidthController";
 import CustomData from "sap/ui/core/CustomData";
+import Conversion from "cfwreport/utils/conversion";
+import ObjectStatus from "sap/m/ObjectStatus";
+import Formatters from "cfwreport/utils/formatters";
 
 /**
  * @namespace cfwreport.controller
@@ -550,7 +553,7 @@ export default class Main extends BaseController {
     // Se excluye el campo fijo del valor del nodo para que no entre dentro del state, ya que no puede tocarse para
     // que la jerarquía se vea correctamente.
     fixFields
-      .filter((row) => row.name !== FIELDS_TREE.NODE_VALUE)
+      .filter((row) => row.name !== FIELDS_TREE_ACCOUNT.NODE_VALUE)
       .forEach((row, index) => {
         // Al ser una tabla dinámica el ID del campo es la concatenación del ID de la tabla+el índice de la tabla.
         // Al índice se le suma el numero de campos fijos para calcular correctamente el índice real del campo
@@ -610,7 +613,7 @@ export default class Main extends BaseController {
 
       // El campo donde esta la jerarquía y los importes no se tocan porque no aparecen en la personalización de campos
       if (
-        internalField !== FIELDS_TREE.NODE_VALUE &&
+        internalField !== FIELDS_TREE_ACCOUNT.NODE_VALUE &&
         internalField.indexOf(ENTITY_FIELDS_DATA.AMOUNT_DATA) === -1
       ) {
         // Si la clave de la columna no esta en el estado es que no la quieren ver, en caso contrario la vuelvo a mostrar, aunque
@@ -705,12 +708,14 @@ export default class Main extends BaseController {
   private getTemplateObjectforTableColumn(
     fieldCatalog: FieldCatalogTree
   ): Control {
-    if (fieldCatalog.name === FIELDS_TREE.COMPANY_CODE) {
+    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.COMPANY_CODE) {
       return new Text({
         text: {
           parts: [
             { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
-            { path: `${STATE_PATH.BANK}${FIELDS_TREE.COMPANY_CODE_NAME}` },
+            {
+              path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME}`,
+            },
           ],
           formatter: function (companyCode: string, companyCodeName: string) {
             if (companyCode && companyCodeName)
@@ -722,15 +727,24 @@ export default class Main extends BaseController {
     }
 
     if (fieldCatalog.type === ColumnType.Amount) {
-      return new Text({
+      let criticField = fieldCatalog.name.replace(
+        ENTITY_FIELDS_DATA.AMOUNT_DATA,
+        ENTITY_FIELDS_DATA.AMOUNT_CRITICITY
+      );
+      return new ObjectStatus({
         text: {
           parts: [
             { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
-            { path: `${STATE_PATH.BANK}${FIELDS_TREE.CURRENCY}` },
+            { path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.CURRENCY}` },
           ],
-          type: "sap.ui.model.type.Currency",
-          formatOptions: {
-            currencyCode: true,
+          formatter: function (amount: number, currency: string) {
+            return Formatters.amount2String(amount, currency);
+          },
+        },
+        state: {
+          path: `${STATE_PATH.BANK}${criticField}`,
+          formatter: function (value: any) {
+            return Conversion.criticallyToValueState(Number(value));
           },
         },
       });
