@@ -60,7 +60,6 @@ export default class Main extends BaseController {
   private _filterBarValuesChanged: boolean;
   private _bankTreeMetadataHelper: MetadataHelper;
   private _bankTreeMDHInitialWidth: Record<string, string>;
-  private _navigateToHierarchy: boolean;
 
   /*eslint-disable @typescript-eslint/no-empty-function*/
   public onInit(): void {
@@ -86,10 +85,6 @@ export default class Main extends BaseController {
 
     // Controla si se han modificado los valores de los filtros
     this._filterBarValuesChanged = true;
-
-    // Indica si tiene que navegar a la jerarquía. Esto ocurrirá cuando se navega a una jerarquía sin haber cargado los datos
-    // principales o se hayan modificado los filtros .
-    this._navigateToHierarchy = false;
 
     this._bankTreeMDHInitialWidth = {};
 
@@ -284,8 +279,14 @@ export default class Main extends BaseController {
           // leer los datos de la tabla principal para poder construir la jerarquía. Si no se han modificado se hace la lectura directa
           // de los datos de jerarquía
           if (this._filterBarValuesChanged) {
-            // Se tiene que navegar a la pantalla de jerarquía
-            this._navigateToHierarchy = true;
+            // Activamos el loader de la tabla de jerarquía
+            this.getOwnerComponent().queryModel.setProperty(
+              QUERY_MODEL.LOADING_HIER_PROCESS,
+              true
+            );
+            // Navegamos a la tabla de jerarquía de bancos
+            this.navigateToHierarchyBank();
+
             this.handlerRefreshData();
           } else {
             this.processBuildBankHier(hierViewModel.inputIDBank, true);
@@ -719,10 +720,7 @@ export default class Main extends BaseController {
       ) as HierarchySelectViewModel;
 
       if (hierViewModel.inputIDBankEnabled)
-        this.processBuildBankHier(
-          hierViewModel.inputIDBank,
-          this._navigateToHierarchy
-        );
+        this.processBuildBankHier(hierViewModel.inputIDBank, false);
     } else {
       this.getOwnerComponent().queryModel.setProperty(
         QUERY_MODEL.LOADING_HIER_PROCESS,
@@ -734,8 +732,6 @@ export default class Main extends BaseController {
 
     // Se indica que los filtros no han cambiado una vez obtenido todos los valores
     this._filterBarValuesChanged = false;
-    // Se indica que no se va a navegar una vez finalizado el proceso
-    this._navigateToHierarchy = false;
   }
   /**
    * Devuevle el control donde se pinta el valor en las tablas dinámicas
