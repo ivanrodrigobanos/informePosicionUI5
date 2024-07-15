@@ -89,6 +89,7 @@ export default class Main extends BaseController {
     this._bankTreeMDHInitialWidth = {};
 
     this._bankTreeTable.setFixedColumnCount(NUMBER_FIX_FIELDS); // Campos fijos en la jerarquía del arbol
+    this._bankTreeTable.setRowMode("Auto");
   }
 
   /**

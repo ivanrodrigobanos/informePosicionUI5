@@ -90,10 +90,10 @@ export default class Component extends BaseComponent {
     let initFilters: FiltersQuery = {
       company_code: [],
       displayCurrency: "",
-      dateFrom: new Date("2020-01-01"),
+      dateFrom: new Date("2024-07-01"),
       dateFromValueState: ValueState.None,
       dateFromValueStateMessage: "",
-      dateTo: new Date("2020-01-04"),
+      dateTo: new Date("2024-07-15"),
       dateToValueState: ValueState.None,
       dateToValueStateMessage: "",
       holiday_calendar: "",
