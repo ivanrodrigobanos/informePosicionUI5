@@ -23,7 +23,7 @@ export const FIELDS_TREE_ACCOUNT = {
   HOUSE_BANK_ACCOUNT_WIDTH: "6rem",
   PLANNING_LEVEL: "planning_level",
   PLANNING_LEVEL_WIDTH: "7rem",
-  AMOUNT_DATA_WIDTH: "8rem",
+  AMOUNT_DATA_WIDTH: "9rem",
 };
 
 export const CUSTOM_DATA = {

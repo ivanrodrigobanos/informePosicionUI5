@@ -4,3 +4,8 @@ export const ENTITY_FIELDS_DATA = {
   AMOUNT_LABEL: "amount_label",
   AMOUNT_CRITICITY: "amount_critic",
 };
+
+export const FILTER_DAYS = {
+  FROM: 7,
+  TO: 7,
+};

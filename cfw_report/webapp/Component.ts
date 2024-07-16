@@ -15,6 +15,7 @@ import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import MetadataState from "./state/metadataState";
 import Messaging from "sap/ui/core/Messaging";
+import { FILTER_DAYS } from "./constants/smartConstants";
 
 /**
  * @namespace cfwreport
@@ -87,10 +88,15 @@ export default class Component extends BaseComponent {
   private initQueryModelData() {
     // Filtros
     this.queryModel = this.getModel(QUERY_MODEL.MODEL_NAME) as JSONModel;
+    let dateFrom = new Date();
+    dateFrom.setDate(dateFrom.getDate() - FILTER_DAYS.FROM);
+    let dateTo = new Date();
+    dateTo.setDate(dateTo.getDate() + FILTER_DAYS.TO);
+
     let initFilters: FiltersQuery = {
       company_code: [],
       displayCurrency: "",
-      dateFrom: new Date("2024-07-01"),
+      dateFrom: dateFrom,
       dateFromValueState: ValueState.None,
       dateFromValueStateMessage: "",
       dateTo: new Date("2024-07-15"),

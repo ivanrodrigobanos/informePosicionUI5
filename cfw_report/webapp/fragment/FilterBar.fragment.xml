@@ -59,12 +59,6 @@
                 visibleInAdvancedArea="true"
                 filterType="single"
                 index="4" />
-            <sfb:ControlConfiguration
-                key="p_calendar"
-                visibleInAdvancedArea="true"
-                filterType="single"
-                mandatory="mandatory"
-                index="5" />
         </sfb:controlConfiguration>
         <!-- layout data used to make the table growing but the filter bar fixed -->
         <sfb:layoutData>

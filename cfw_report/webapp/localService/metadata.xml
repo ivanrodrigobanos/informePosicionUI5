@@ -76,6 +76,10 @@
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
                 <Property Name="house_bank" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio" sap:value-list="standard"/>
                 <Property Name="house_bank_account" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta"/>
+                <Property Name="source" Type="Edm.String" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
+                <Property Name="source_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Fuente" sap:quickinfo="Descripción de la fuente"/>
+                <Property Name="overdue_amount" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Overdue" sap:quickinfo="Importe fechas overdue"/>
+                <Property Name="overdue_critic" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
                 <Property Name="amount_data01" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
                 <Property Name="amount_label01" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
                 <Property Name="amount_critic01" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
@@ -172,7 +176,6 @@
                 <Property Name="p_keydate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor desde"/>
                 <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
                 <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>
-                <Property Name="p_calendar" Type="Edm.String" MaxLength="2" sap:label="Calendario festivos" sap:quickinfo="Calendario de fabrica" sap:value-list="fixed-values"/>
             </EntityType>
             <EntityType Name="xSTRCMxC_BANCO_PRP_VHType" sap:label="Banco propio" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -186,13 +189,6 @@
                 <Property Name="hbkid_desc" Type="Edm.String" MaxLength="60" sap:label="Instit.financ." sap:quickinfo="Nombre de la institución financiera"/>
                 <Property Name="ort01" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Población" sap:quickinfo="Poblacion"/>
                 <Property Name="name1" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Pers.contacto" sap:quickinfo="Nombre de persona de contacto"/>
-            </EntityType>
-            <EntityType Name="xSTRCMxC_CALENDARIO_FEST_VHType" sap:label="Calendario de festivos" sap:value-list="true" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="calendar"/>
-                </Key>
-                <Property Name="calendar" Type="Edm.String" Nullable="false" MaxLength="2" sap:text="calendar_desc" sap:label="Calendario festivos" sap:quickinfo="Calendario de fabrica"/>
-                <Property Name="calendar_desc" Type="Edm.String" MaxLength="60" sap:label="Desc. Cal. Festivos" sap:quickinfo="Descripción calendario de fabrica"/>
             </EntityType>
             <EntityType Name="xSTRCMxC_SOCIEDAD_VHType" sap:label="Sociedades" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -446,7 +442,6 @@
                 <EntitySet Name="cfw_hier_bank" EntityType="cds_xstrcmxui_cash_flow.cfw_hier_bankType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query" EntityType="cds_xstrcmxui_cash_flow.cfw_queryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_BANCO_PRP_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_BANCO_PRP_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="xSTRCMxC_CALENDARIO_FEST_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_CALENDARIO_FEST_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_SOCIEDAD_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_SOCIEDAD_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="I_CurrencyStdVH" EntityType="cds_xstrcmxui_cash_flow.I_CurrencyStdVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
                 <EntitySet Name="SAP__FormatSet" EntityType="cds_xstrcmxui_cash_flow.SAP__Format" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
@@ -578,30 +573,6 @@
                 </Annotation>
                 <Annotation Term="Common.FilterDefaultValue" String="EUR"/>
             </Annotations>
-            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/p_calendar" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Common.ValueListForValidation" String=""/>
-                <Annotation Term="Common.ValueList">
-                    <Record>
-                        <PropertyValue Property="Label" String="Calendario festivos"/>
-                        <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
-                        <PropertyValue Property="CollectionPath" String="xSTRCMxC_CALENDARIO_FEST_VH"/>
-                        <PropertyValue Property="SearchSupported" Bool="false"/>
-                        <PropertyValue Property="Parameters">
-                            <Collection>
-                                <Record Type="Common.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="p_calendar"/>
-                                    <PropertyValue Property="ValueListProperty" String="calendar"/>
-                                </Record>
-                                <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="calendar_desc"/>
-                                </Record>
-                            </Collection>
-                        </PropertyValue>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Common.ValueListWithFixedValues"/>
-                <Annotation Term="Common.FilterDefaultValue" String="E1"/>
-            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
             </Annotations>
@@ -700,23 +671,6 @@
                 </Annotation>
             </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_BANCO_PRP_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Capabilities.DeleteRestrictions">
-                    <Record>
-                        <PropertyValue Property="Deletable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.InsertRestrictions">
-                    <Record>
-                        <PropertyValue Property="Insertable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.UpdateRestrictions">
-                    <Record>
-                        <PropertyValue Property="Updatable" Bool="false"/>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_CALENDARIO_FEST_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
                         <PropertyValue Property="Deletable" Bool="false"/>
