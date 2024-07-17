@@ -73,6 +73,20 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
     ];
 
     let fieldInfo = this.metadataState.getFieldInfo(
+      FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_PARTNER
+    );
+    if (fieldInfo)
+      fieldsCatalog.push({
+        name: fieldInfo.name,
+        label: fieldInfo.label,
+        quickinfo: fieldInfo.quickinfo,
+        pos: this.fieldPos++,
+        type: ColumnType.Text,
+        width: FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_PARTNER_WIDTH,
+        hAlign: HorizontalAlign.Begin,
+      });
+
+    fieldInfo = this.metadataState.getFieldInfo(
       FIELDS_TREE_ACCOUNT.COMPANY_CODE
     );
     if (fieldInfo)
@@ -85,6 +99,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         width: FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME_WIDTH,
         hAlign: HorizontalAlign.Begin,
       });
+
     fieldInfo = this.metadataState.getFieldInfo(
       FIELDS_TREE_ACCOUNT.PLANNING_LEVEL
     );
@@ -120,6 +135,20 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         pos: this.fieldPos++,
         type: ColumnType.Text,
         width: FIELDS_TREE_ACCOUNT.HOUSE_BANK_ACCOUNT_WIDTH,
+        hAlign: HorizontalAlign.Begin,
+      });
+
+    fieldInfo = this.metadataState.getFieldInfo(
+      FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+    );
+    if (fieldInfo)
+      fieldsCatalog.push({
+        name: fieldInfo.name,
+        label: fieldInfo.label,
+        quickinfo: fieldInfo.quickinfo,
+        pos: this.fieldPos++,
+        type: ColumnType.Amount,
+        width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,
         hAlign: HorizontalAlign.Begin,
       });
 

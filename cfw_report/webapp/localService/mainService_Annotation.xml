@@ -156,9 +156,6 @@
                             <PropertyValue Property="Value" Path="company_code"/>
                         </Record>
                         <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="planning_level"/>
-                        </Record>
-                        <Record Type="UI.DataField">
                             <PropertyValue Property="Value" Path="currency"/>
                         </Record>
                         <Record Type="UI.DataField">

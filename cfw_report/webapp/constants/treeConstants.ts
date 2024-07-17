@@ -13,6 +13,7 @@ export const FIELDS_TREE_ACCOUNT = {
   NODE_NAME: "accountNodeName",
   NODE_NAME_WIDTH: "15rem",
   BANK_ACCOUNT_PARTNER: "bank_account_partner",
+  BANK_ACCOUNT_PARTNER_WIDTH: "15rem",
   COMPANY_CODE: "company_code",
   COMPANY_CODE_NAME: "company_code_name",
   COMPANY_CODE_NAME_WIDTH: "10rem",
@@ -24,6 +25,8 @@ export const FIELDS_TREE_ACCOUNT = {
   PLANNING_LEVEL: "planning_level",
   PLANNING_LEVEL_WIDTH: "7rem",
   AMOUNT_DATA_WIDTH: "9rem",
+  OVERDUE_AMOUNT: "overdue_amount",
+  OVERDUE_AMOUNT_WIDTH: "7rem",
 };
 
 export const CUSTOM_DATA = {

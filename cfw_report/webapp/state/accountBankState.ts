@@ -45,6 +45,13 @@ export default class AccountBankState extends BaseState<
     return this.getData().accountData.getUniqueBankAccount() ?? [];
   }
   /**
+   * Devuelve si la columna overdue tiene valores
+   * @returns
+   */
+  checkOverdueColumnWithValues(): boolean {
+    return this.getData().accountData.checkOverdueColumnWithValues();
+  }
+  /**
    * Limpieza de los modelos de datos
    */
   public clearModelValue() {

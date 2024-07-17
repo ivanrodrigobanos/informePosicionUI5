@@ -99,7 +99,7 @@ export default class Component extends BaseComponent {
       dateFrom: dateFrom,
       dateFromValueState: ValueState.None,
       dateFromValueStateMessage: "",
-      dateTo: new Date("2024-07-15"),
+      dateTo: dateTo,
       dateToValueState: ValueState.None,
       dateToValueStateMessage: "",
       holiday_calendar: "",

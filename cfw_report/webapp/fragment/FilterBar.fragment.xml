@@ -57,7 +57,7 @@
             <sfb:ControlConfiguration
                 key="company_code"
                 visibleInAdvancedArea="true"
-                filterType="single"
+                filterType="multiple"
                 index="4" />
         </sfb:controlConfiguration>
         <!-- layout data used to make the table growing but the filter bar fixed -->

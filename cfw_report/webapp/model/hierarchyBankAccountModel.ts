@@ -1,4 +1,7 @@
-import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
+import {
+  ENTITY_FIELDS_DATA,
+  SOURCE_TYPES,
+} from "cfwreport/constants/smartConstants";
 import { AccountData, AccountsData } from "./accountBankModel";
 import BaseModel from "./baseModel";
 import { HierarchyBank, HierarchyBanks } from "./hierarchyBankModel";
@@ -155,17 +158,19 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
   private buildHierarchyFlat(): HierarchyBankFlats {
     let hierarchyFlat: HierarchyBankFlats = [];
 
-    this.accountData.forEach((row) => {
-      let hierarchyFlatRow = hierarchyFlat.find(
-        (rowHierFlat) => rowHierFlat.node === row.bank_account
-      );
+    this.accountData
+      .filter((row) => row.source === SOURCE_TYPES.SALDO_INI)
+      .forEach((row) => {
+        let hierarchyFlatRow = hierarchyFlat.find(
+          (rowHierFlat) => rowHierFlat.node === row.bank_account
+        );
 
-      // Añade los datos de la cuenta a la jerarquía plana y nos devuelve el indice donde se ha insertado
-      if (!hierarchyFlatRow)
-        hierarchyFlatRow = this.addAccountHierarchyFlat(row, hierarchyFlat);
+        // Añade los datos de la cuenta a la jerarquía plana y nos devuelve el indice donde se ha insertado
+        if (!hierarchyFlatRow)
+          hierarchyFlatRow = this.addAccountHierarchyFlat(row, hierarchyFlat);
 
-      this.addSumUpperNodesFlat(hierarchyFlatRow, hierarchyFlat);
-    });
+        this.addSumUpperNodesFlat(hierarchyFlatRow, hierarchyFlat);
+      });
 
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización

@@ -67,16 +67,16 @@
             <EntityType Name="cfw_queryType" sap:label="Informe de posición" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="bank_account"/>
+                    <PropertyRef Name="source"/>
                 </Key>
                 <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
+                <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
                 <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
                 <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
                 <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
-                <Property Name="planning_level" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:label="Nivel Tesorería"/>
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
                 <Property Name="house_bank" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio" sap:value-list="standard"/>
                 <Property Name="house_bank_account" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta"/>
-                <Property Name="source" Type="Edm.String" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
                 <Property Name="source_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Fuente" sap:quickinfo="Descripción de la fuente"/>
                 <Property Name="overdue_amount" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Overdue" sap:quickinfo="Importe fechas overdue"/>
                 <Property Name="overdue_critic" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>

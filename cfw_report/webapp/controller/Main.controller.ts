@@ -204,7 +204,7 @@ export default class Main extends BaseController {
       let parameters = eventDataReceived.getParameters();
       if (parameters.getParameter("data")) {
         modelValue = parameters.getParameter("data").results;
-        this.showColumnValues(modelValue);
+        console.log(modelValue);
         this.getOwnerComponent().accountBankState.setAccountData(modelValue);
       } else {
         this._messageState.AddErrorMessage(
@@ -716,6 +716,9 @@ export default class Main extends BaseController {
     // 1) desactivar el loading(puede ser que no este activo si no se ha seleccionado jerarquía)
     // 2) Limpia el modo de datos de la jerarquía
     if (this.getOwnerComponent().accountBankState.getAccountData().length > 0) {
+      // Se muestran las columnas de valore según los filtros en la smartable
+      this.showColumnValues();
+
       let hierViewModel = this.getOwnerComponent().queryModel.getProperty(
         QUERY_MODEL.HIER_SELECT_VIEW_MODEL
       ) as HierarchySelectViewModel;
@@ -810,10 +813,22 @@ export default class Main extends BaseController {
    * Muestras las columnas en base a los valores recuperados
    * @param queryValues
    */
-  private showColumnValues(queryValues: AccountsData): void {
-    if (queryValues.length > 0) {
-      let initialRowQuery = queryValues[0];
+  private showColumnValues(): void {
+    if (this.getOwnerComponent().accountBankState.getAccountData().length > 0) {
+      let initialRowQuery =
+        this.getOwnerComponent().accountBankState.getAccountData()[0];
       let tableColumns = this._stInternalTable.getColumns();
+
+      // Columna de overdue
+      let overdueColumn = tableColumns.find(
+        (column) =>
+          column.getId().indexOf(ENTITY_FIELDS_DATA.OVERDUE_AMOUNT) !== -1
+      );
+      if (overdueColumn)
+        overdueColumn.setVisible(
+          this.getOwnerComponent().accountBankState.checkOverdueColumnWithValues()
+        );
+
       this.getOwnerComponent()
         .metadataState.getAmountFields()
         .forEach((amountField) => {
