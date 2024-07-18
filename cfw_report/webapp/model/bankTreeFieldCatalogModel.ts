@@ -8,6 +8,10 @@ import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import { FieldsCatalogTree } from "cfwreport/types/types";
 import { HorizontalAlign } from "sap/ui/core/library";
 
+export interface PropsBuildFcat {
+  overdueColumnWithValues?: boolean;
+}
+
 export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTree> {
   private fieldsCatalog: FieldsCatalogTree;
   private metadataState: MetadataState;
@@ -26,10 +30,11 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
     this.fieldsCatalog = [];
   }
   public buildFieldCatalog(
-    rowHierarchyBankFlat: HierarchyBankFlat | undefined
+    rowHierarchyBankFlat?: HierarchyBankFlat,
+    params?: PropsBuildFcat
   ) {
     this.fieldPos = 1;
-    this.fieldsCatalog = this.getFixFields(); // Campos fijos
+    this.fieldsCatalog = this.getFixFields(params); // Campos fijos
 
     // Campos de cantidad, siempre que se haya pasado una fila de valores para poderla construir
     if (rowHierarchyBankFlat)
@@ -42,7 +47,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
    * Campos fijos del arbol
    * @returns Catalogo de campos
    */
-  public getFixFields(): FieldsCatalogTree {
+  public getFixFields(params?: PropsBuildFcat): FieldsCatalogTree {
     let fieldsCatalog: FieldsCatalogTree = [
       {
         name: FIELDS_TREE_ACCOUNT.NODE_VALUE,
@@ -138,19 +143,22 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         hAlign: HorizontalAlign.Begin,
       });
 
-    fieldInfo = this.metadataState.getFieldInfo(
-      FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
-    );
-    if (fieldInfo)
-      fieldsCatalog.push({
-        name: fieldInfo.name,
-        label: fieldInfo.label,
-        quickinfo: fieldInfo.quickinfo,
-        pos: this.fieldPos++,
-        type: ColumnType.Amount,
-        width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,
-        hAlign: HorizontalAlign.Begin,
-      });
+    // La columna de importe overdue se muestra si se indica por parámetro
+    if (params && params.overdueColumnWithValues) {
+      fieldInfo = this.metadataState.getFieldInfo(
+        FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+      );
+      if (fieldInfo)
+        fieldsCatalog.push({
+          name: fieldInfo.name,
+          label: fieldInfo.label,
+          quickinfo: fieldInfo.quickinfo,
+          pos: this.fieldPos++,
+          type: ColumnType.Amount,
+          width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,
+          hAlign: HorizontalAlign.Begin,
+        });
+    }
 
     return fieldsCatalog;
   }
@@ -162,6 +170,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
   ): FieldsCatalogTree {
     let fieldsCatalog: FieldsCatalogTree = [];
     let amountFields = this.metadataState.getAmountFields();
+
     for (let x = 0; x < amountFields.length; x++) {
       // Obtenemos el campo de la etiqueta que tendrá el campo de importe
       let labelField = amountFields[x].replace(

@@ -3,11 +3,13 @@ import {
   SOURCE_TYPES,
 } from "cfwreport/constants/smartConstants";
 import { AccountData, AccountsData } from "./accountBankModel";
-import BaseModel from "./baseModel";
+import BaseHierarchy from "./baseHierarchy";
 import { HierarchyBank, HierarchyBanks } from "./hierarchyBankModel";
 import {
   FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
+  FIELDS_TREE_INTERNAL,
+  NODE_TYPES,
 } from "cfwreport/constants/treeConstants";
 
 export type HierarchyBankFlat = Record<string, string | number>;
@@ -15,7 +17,7 @@ export type HierarchyBankFlats = HierarchyBankFlat[];
 
 export type HierarchyBankTree = Record<string, any>;
 
-export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTree> {
+export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBankTree> {
   private hierarchyFlat: HierarchyBankFlats;
   private hierarchyTree: HierarchyBankTree;
   private hierarchyBank: HierarchyBanks;
@@ -154,12 +156,16 @@ export default class HierarchyBankAccountModel extends BaseModel<HierarchyBankTr
       rowHierarchyFlat[FIELDS_TREE.NODE];
     rowTree[FIELDS_TREE_ACCOUNT.NODE_NAME] =
       rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
+
+    if (rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
+      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = true;
+    else rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
   }
   private buildHierarchyFlat(): HierarchyBankFlats {
     let hierarchyFlat: HierarchyBankFlats = [];
 
     this.accountData
-      .filter((row) => row.source === SOURCE_TYPES.SALDO_INI)
+      .filter((row) => row.source === SOURCE_TYPES.SALDO_FIN)
       .forEach((row) => {
         let hierarchyFlatRow = hierarchyFlat.find(
           (rowHierFlat) => rowHierFlat.node === row.bank_account

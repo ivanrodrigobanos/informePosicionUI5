@@ -24,6 +24,8 @@ import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import Text from "sap/m/Text";
 import {
   CUSTOM_DATA,
+  FIELDS_TREE_INTERNAL,
+  ID_BANK_TREE_TABLE,
   NUMBER_FIX_FIELDS,
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
@@ -41,6 +43,9 @@ import CustomData from "sap/ui/core/CustomData";
 import Conversion from "cfwreport/utils/conversion";
 import ObjectStatus from "sap/m/ObjectStatus";
 import Formatters from "cfwreport/utils/formatters";
+import Menu from "sap/m/table/columnmenu/Menu";
+import ActionItem from "sap/m/table/columnmenu/ActionItem";
+import FlexBox from "sap/m/FlexBox";
 
 /**
  * @namespace cfwreport.controller
@@ -60,6 +65,7 @@ export default class Main extends BaseController {
   private _filterBarValuesChanged: boolean;
   private _bankTreeMetadataHelper: MetadataHelper;
   private _bankTreeMDHInitialWidth: Record<string, string>;
+  private _bankTreeNodeValueColumnMenu: Menu;
 
   /*eslint-disable @typescript-eslint/no-empty-function*/
   public onInit(): void {
@@ -204,7 +210,7 @@ export default class Main extends BaseController {
       let parameters = eventDataReceived.getParameters();
       if (parameters.getParameter("data")) {
         modelValue = parameters.getParameter("data").results;
-        console.log(modelValue);
+
         this.getOwnerComponent().accountBankState.setAccountData(modelValue);
       } else {
         this._messageState.AddErrorMessage(
@@ -227,7 +233,6 @@ export default class Main extends BaseController {
   public async showHierarchySelect(event: any): Promise<void> {
     this._messageState.clearMessage();
 
-    //if (this.getOwnerComponent().accountBankState.getAccountData().length > 0) {
     let btnShowHierarchy = event.getSource() as Button;
     this._popOverHierarchySelect ??= await (<Promise<Popover>>this.loadFragment(
       {
@@ -237,13 +242,6 @@ export default class Main extends BaseController {
     ));
 
     this._popOverHierarchySelect.openBy(btnShowHierarchy);
-    /*} else {
-      MessageToast.show(
-        this.geti18nResourceBundle().getText(
-          "accountDataTable.hierarchyInfoAccountDataNoLoaded"
-        ) as string
-      );
-    }*/
   }
   /**
    * Gestiona la jerarquía seleccionada desde el popover
@@ -540,14 +538,14 @@ export default class Main extends BaseController {
   /**
    * Expande el primer nivel del arbol
    */
-  public onTreeExpandFirstLevel(event: any) {
+  public handlerTreeExpandFirstLevel(event: any) {
     let treeTable = event.getSource().getParent().getParent() as TreeTable;
     treeTable.expandToLevel(1);
   }
   /**
    * Expande los niveles seleccionados
    */
-  public onTreeExpandSelection(event: any) {
+  public handlerTreeExpandSelection(event: any) {
     // Source es el botón, su padre la toolbar, y el padre del toolbar la treeTable
     let treeTable = event.getSource().getParent().getParent() as TreeTable;
     treeTable.expand(treeTable.getSelectedIndices());
@@ -555,14 +553,14 @@ export default class Main extends BaseController {
   /**
    * Contrae todo
    */
-  public onTreeCollapseAll(event: any) {
+  public handlerTreeCollapseAll(event: any) {
     let treeTable = event.getSource().getParent().getParent() as TreeTable;
     treeTable.collapseAll();
   }
   /**
    * Contrae los niveles seleccionados
    */
-  public onTreeCollapseSelection(event: any) {
+  public handlerTreeCollapseSelection(event: any) {
     let treeTable = event.getSource().getParent().getParent() as TreeTable;
     treeTable.collapse(treeTable.getSelectedIndices());
   }
@@ -593,7 +591,7 @@ export default class Main extends BaseController {
         // Al ser una tabla dinámica el ID del campo es la concatenación del ID de la tabla+el índice de la tabla.
         // Al índice se le suma el numero de campos fijos para calcular correctamente el índice real del campo
         fieldsMDH.push({
-          key: `BankTreeTable-${index + NUMBER_FIX_FIELDS}`,
+          key: `${ID_BANK_TREE_TABLE}-${index + NUMBER_FIX_FIELDS}`,
           label: row.label,
           path: row.name,
           visible: true,
@@ -683,6 +681,41 @@ export default class Main extends BaseController {
       source: event.getSource(),
     });
   }
+  /**
+   * Gestiona el evento del menu contextual de la tabla
+   * @param event
+   */
+  public handlerTreeTableRowsUpdated() {
+    // En este evento entra varias veces mientras se renderiza la tabla, pero la asociación del menú contextual
+    // solo la hacemos si obtenemos la columna. Una vez renderizado ya no entrará más aunque se genere de nuevo el evento.
+    /*if (!this._bankTreeNodeValueColumnMenu) {
+      let idColumn =
+        this.getOwnerComponent().hierarchyBankState.getColumnIdTreeTable(
+          FIELDS_TREE_ACCOUNT.NODE_VALUE
+        );
+      if (idColumn !== "") {
+        this._bankTreeNodeValueColumnMenu = new Menu({
+          items: [
+            new ActionItem({
+              label: "My custom menu entry",
+              press: (oEvent: any) => {
+                console.log(oEvent);
+              },
+            }),
+          ],
+        });
+
+        (this.byId(idColumn) as Column).setHeaderMenu(
+          this._bankTreeNodeValueColumnMenu.getId()
+        );
+      }
+    }*/
+  }
+  /**
+   * Devuelve la clave el id interno de un objeto
+   * @param oControl
+   * @returns
+   */
   private getKey(oControl: any) {
     return (this.getView() as View).getLocalId(oControl.getId() as string);
   }
@@ -785,6 +818,28 @@ export default class Main extends BaseController {
             return Conversion.criticallyToValueState(Number(value));
           },
         },
+      });
+    }
+    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.NODE_VALUE) {
+      return new FlexBox({
+        direction: "Row",
+        alignItems: "Center",
+        items: [
+          new Button({
+            icon: "sap-icon://collections-insight",
+            visible: {
+              path: `${STATE_PATH.BANK}${FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL}`,
+            },
+          }).addStyleClass("sapUiTinyMarginEnd"),
+          new Text({
+            text: {
+              parts: [
+                { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
+                { path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.NODE_NAME}` },
+              ],
+            },
+          }),
+        ],
       });
     }
     return new Text({

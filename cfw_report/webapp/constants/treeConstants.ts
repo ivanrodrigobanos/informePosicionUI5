@@ -5,8 +5,13 @@ export const STATE_PATH = {
 export const FIELDS_TREE = {
   NODE: "node",
   NODE_NAME: "node_name",
+  NODE_LEVEL: "node_level",
+  NODE_TYPE: "node_type",
 };
 
+export const FIELDS_TREE_INTERNAL = {
+  SHOW_BTN_DETAIL: "showBtnDetail",
+};
 export const FIELDS_TREE_ACCOUNT = {
   NODE_VALUE: "accountNode",
   NODE_VALUE_WIDTH: "20rem",
@@ -34,3 +39,11 @@ export const CUSTOM_DATA = {
 };
 
 export const NUMBER_FIX_FIELDS = 1;
+
+export const ID_BANK_TREE_TABLE = "BankTreeTable";
+
+export const NODE_TYPES = {
+  ROOT: "R",
+  NODE: "N",
+  LEAF: "L",
+};

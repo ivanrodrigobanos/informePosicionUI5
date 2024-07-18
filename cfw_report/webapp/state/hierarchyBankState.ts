@@ -11,6 +11,7 @@ import HierarchyBankAccountModel, {
 } from "cfwreport/model/hierarchyBankAccountModel";
 import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel";
 import { FieldsCatalogTree } from "cfwreport/types/types";
+import { ID_BANK_TREE_TABLE } from "cfwreport/constants/treeConstants";
 
 export type HierarchyBankData = {
   hierarchyBank: HierarchyBankModel;
@@ -89,7 +90,11 @@ export default class HierarchyBankState extends BaseState<
       this.ownerComponent.accountBankState.getAccountData()
     );
     this.getData().treeFieldCatalog.buildFieldCatalog(
-      this.getHierarchyFlatData()[0]
+      this.getHierarchyFlatData()[0],
+      {
+        overdueColumnWithValues:
+          this.ownerComponent.accountBankState.checkOverdueColumnWithValues(),
+      }
     );
 
     this.updateModel();
@@ -110,5 +115,17 @@ export default class HierarchyBankState extends BaseState<
    */
   public getFixFieldsFieldCatalog(): FieldsCatalogTree {
     return this.data.treeFieldCatalog.getFixFields();
+  }
+  /**
+   * Devuelve el ID de la columna de la tree table en base al nombre de la columna
+   * @param columnName
+   * @returns
+   */
+  public getColumnIdTreeTable(columnName: string): string {
+    let index = this.getData()
+      .treeFieldCatalog.getData()
+      .findIndex((column) => column.name === columnName);
+    if (index !== -1) return `${ID_BANK_TREE_TABLE}-${index}`;
+    return "";
   }
 }

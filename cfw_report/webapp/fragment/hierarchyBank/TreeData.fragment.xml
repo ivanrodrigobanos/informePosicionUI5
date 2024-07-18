@@ -22,7 +22,7 @@
         busy="{model: 'queryModel', path:'/loadingHierProcess'}"
         alternateRowColors="true"
         threshold="40000"
-        sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
+        rowsUpdated="handlerTreeTableRowsUpdated"
     >
         <tree:extension>
             <OverflowToolbar
@@ -49,19 +49,19 @@
                 <Button
                     ariaLabelledBy="{i18n>bankAccountTree.btnExpandFirstLevel}"
                     icon="sap-icon://navigation-down-arrow"
-                    press="onTreeExpandFirstLevel" />
+                    press="handlerTreeExpandFirstLevel" />
                 <Button
                     ariaLabelledBy="{i18n>bankAccountTree.btnExpandSelection}"
                     icon="sap-icon://expand-group"
-                    press="onTreeExpandSelection" />
+                    press="handlerTreeExpandSelection" />
                 <Button icon="sap-icon://collapse-all"
                     ariaLabelledBy="{i18n>bankAccountTree.btnCollapseAll}"
-                    press="onTreeCollapseAll" />
+                    press="handlerTreeCollapseAll" />
                 <ToolbarSeparator />
                 <Button
                     ariaLabelledBy="{i18n>bankAccountTree.btnCollapseSelection}"
                     icon="sap-icon://collapse-group"
-                    press="onTreeCollapseSelection" />
+                    press="handlerTreeCollapseSelection" />
                 <Button icon="sap-icon://action-settings" press="handlerBankTreeTableConf" />
             </OverflowToolbar>
         </tree:extension>

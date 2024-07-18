@@ -1,3 +1,4 @@
+import { TextDisplayOption } from "cfwreport/types/hierarchyTypes";
 import NumberFormat from "sap/ui/core/format/NumberFormat";
 
 export default class Formatters {
@@ -13,4 +14,9 @@ export default class Formatters {
     });
     return format.format(amount, currency);
   }
+  static fieldKeyText(
+    key: string,
+    text: string,
+    displayOption: TextDisplayOption
+  ) {}
 }
