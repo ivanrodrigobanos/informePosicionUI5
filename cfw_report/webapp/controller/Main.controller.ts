@@ -4,7 +4,10 @@ import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import SmartTable from "sap/ui/comp/smarttable/SmartTable";
 import Table from "sap/ui/table/Table";
+import Menu from "sap/m/table/columnmenu/Menu";
+import ActionItem from "sap/m/table/columnmenu/ActionItem";
 import { ValueState } from "sap/ui/core/library";
+import FlexBox from "sap/m/FlexBox";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import { FiltersQuery, HierarchySelectViewModel } from "cfwreport/types/types";
@@ -16,36 +19,38 @@ import Button from "sap/m/Button";
 import Popover from "sap/m/Popover";
 import RadioButton from "sap/m/RadioButton";
 import Dialog from "sap/m/Dialog";
-import { AccountsData } from "cfwreport/model/accountBankModel";
-import { FieldCatalogTree } from "cfwreport/types/types";
-import Label from "sap/m/Label";
-import Column from "sap/ui/table/Column";
-import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
-import Text from "sap/m/Text";
-import {
-  CUSTOM_DATA,
-  FIELDS_TREE_INTERNAL,
-  ID_BANK_TREE_TABLE,
-  NUMBER_FIX_FIELDS,
-  STATE_PATH,
-} from "cfwreport/constants/treeConstants";
-import { FIELDS_TREE_ACCOUNT } from "cfwreport/constants/treeConstants";
-import TreeTable from "sap/ui/table/TreeTable";
-import MessageState from "cfwreport/state/messageState";
 import View from "sap/ui/core/mvc/View";
 import Item from "sap/ui/core/Item";
 import MessageToast from "sap/m/MessageToast";
+import ItemBase from "sap/m/table/columnmenu/ItemBase";
 import MetadataHelper, { MetadataObject } from "sap/m/p13n/MetadataHelper";
 import Engine from "sap/m/p13n/Engine";
 import SelectionController from "sap/m/p13n/SelectionController";
 import ColumnWidthController from "sap/m/table/ColumnWidthController";
 import CustomData from "sap/ui/core/CustomData";
-import Conversion from "cfwreport/utils/conversion";
 import ObjectStatus from "sap/m/ObjectStatus";
+import TreeTable from "sap/ui/table/TreeTable";
+import Text from "sap/m/Text";
+import { AccountsData } from "cfwreport/model/accountBankModel";
+import { FieldCatalogTree } from "cfwreport/types/types";
+import Label from "sap/m/Label";
+import Column from "sap/ui/table/Column";
+import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
+
+import {
+  CUSTOM_DATA,
+  FIELDS_TREE_INTERNAL,
+  ID_BANK_TREE_TABLE,
+  NUMBER_FIX_FIELDS,
+  PREFIX_TEXT_DISP_OPTION,
+  STATE_PATH,
+} from "cfwreport/constants/treeConstants";
+import { FIELDS_TREE_ACCOUNT } from "cfwreport/constants/treeConstants";
+import MessageState from "cfwreport/state/messageState";
+import Conversion from "cfwreport/utils/conversion";
 import Formatters from "cfwreport/utils/formatters";
-import Menu from "sap/m/table/columnmenu/Menu";
-import ActionItem from "sap/m/table/columnmenu/ActionItem";
-import FlexBox from "sap/m/FlexBox";
+import HierarchyBankState from "cfwreport/state/hierarchyBankState";
+import { TextDisplayOption } from "cfwreport/types/hierarchyTypes";
 
 /**
  * @namespace cfwreport.controller
@@ -236,7 +241,7 @@ export default class Main extends BaseController {
     let btnShowHierarchy = event.getSource() as Button;
     this._popOverHierarchySelect ??= await (<Promise<Popover>>this.loadFragment(
       {
-        id: this.getView()?.getId() as string,
+        id: `${this.getView()?.getId() as string}_HierarchySelect`,
         name: "cfwreport.fragment.HierarchySelect",
       }
     ));
@@ -686,30 +691,16 @@ export default class Main extends BaseController {
    * @param event
    */
   public handlerTreeTableRowsUpdated() {
-    // En este evento entra varias veces mientras se renderiza la tabla, pero la asociación del menú contextual
-    // solo la hacemos si obtenemos la columna. Una vez renderizado ya no entrará más aunque se genere de nuevo el evento.
-    /*if (!this._bankTreeNodeValueColumnMenu) {
-      let idColumn =
-        this.getOwnerComponent().hierarchyBankState.getColumnIdTreeTable(
-          FIELDS_TREE_ACCOUNT.NODE_VALUE
-        );
-      if (idColumn !== "") {
-        this._bankTreeNodeValueColumnMenu = new Menu({
-          items: [
-            new ActionItem({
-              label: "My custom menu entry",
-              press: (oEvent: any) => {
-                console.log(oEvent);
-              },
-            }),
-          ],
-        });
-
-        (this.byId(idColumn) as Column).setHeaderMenu(
-          this._bankTreeNodeValueColumnMenu.getId()
-        );
-      }
-    }*/
+    // Asociar el menu contextual a un campo de la tree table se tiene que hacer cuando se actualice las columnas ya que es una
+    // tabla dinámica y las columnas se crean a través de una factory. Pero hay que tener en cuenta que este método se llama varias
+    // veces y por eso hay que tener en cuenta para que solo se asocie una vez para evitar problemas de rendimiento.
+    if (!this._bankTreeNodeValueColumnMenu)
+      this._bankTreeNodeValueColumnMenu =
+        this.associateColumnTreeContextualMenu(
+          FIELDS_TREE_ACCOUNT.NODE_VALUE,
+          this.getOwnerComponent().hierarchyBankState,
+          this._bankTreeTable
+        ) as Menu;
   }
   /**
    * Devuelve la clave el id interno de un objeto
@@ -779,6 +770,8 @@ export default class Main extends BaseController {
   private getTemplateObjectforTableColumn(
     fieldCatalog: FieldCatalogTree
   ): Control {
+    var that = this;
+
     if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.COMPANY_CODE) {
       return new Text({
         text: {
@@ -826,7 +819,7 @@ export default class Main extends BaseController {
         alignItems: "Center",
         items: [
           new Button({
-            icon: "sap-icon://collections-insight",
+            icon: "sap-icon://payment-approval",
             visible: {
               path: `${STATE_PATH.BANK}${FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL}`,
             },
@@ -837,6 +830,17 @@ export default class Main extends BaseController {
                 { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
                 { path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.NODE_NAME}` },
               ],
+              formatter: function (key: string, text: string) {
+                return Formatters.fieldKeyText(
+                  key,
+                  text,
+                  that
+                    .getOwnerComponent()
+                    .tableVisualizationState.getDisplayTypeFieldText(
+                      fieldCatalog.name
+                    )
+                );
+              },
             },
           }),
         ],
@@ -956,5 +960,164 @@ export default class Main extends BaseController {
     // que los datos se pivotan de filas a columnas. Con lo cual no puede haber paginación
     // porque tanto se pivote en origen o en destino(que es como lo hacemos ahora) el problema estará igual.
     this._stInternalTable.setThreshold(40000);
+  }
+  /**
+   * Asocia a un menu contextual a un columna de una tabla
+   * @param fieldname Nombre del campo
+   * @param state estado que gestiona los datos del campo
+   * @param oTable Tabla donde esta la columna
+   */
+  private associateColumnTreeContextualMenu(
+    fieldname: string,
+    state: HierarchyBankState,
+    oTable: TreeTable
+  ): Menu | null {
+    let idColumn = "";
+    if (state instanceof HierarchyBankState)
+      idColumn =
+        this.getOwnerComponent().hierarchyBankState.getColumnIdTreeTable(
+          fieldname
+        );
+    // Solo se crea el menu, y se asocia, cuando se tenga el ID de la columna exista en la tabla.
+    if (idColumn !== "") {
+      let textItems = this.buildColumnMenuTextDisplayOptions(
+        FIELDS_TREE_ACCOUNT.NODE_VALUE,
+        oTable
+      );
+      let contextualMenu = new Menu({
+        items: textItems,
+      });
+
+      (this.byId(idColumn) as Column).setHeaderMenu(contextualMenu.getId());
+      return contextualMenu;
+    }
+    return null;
+  }
+  /**
+   * Construye las opciones del menu de opciones de visualizacion del texto
+   * @param fieldname nombre del campo
+   * @param oTable Tabla donde esta el campo
+   * @returns
+   */
+  private buildColumnMenuTextDisplayOptions(
+    fieldname: string,
+    oTable: TreeTable
+  ): ItemBase[] {
+    return [
+      new ActionItem({
+        id: `${PREFIX_TEXT_DISP_OPTION}${fieldname}_KEY`,
+        icon:
+          this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
+            fieldname
+          ) === TextDisplayOption.Key
+            ? "sap-icon://accept"
+            : undefined,
+        label: this.getOwnerComponent()
+          .getI18nBundle()
+          .getText("menuTextDisplayOptionKey"),
+        press: (event: any) => {
+          if (
+            this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
+              fieldname
+            ) !== TextDisplayOption.Key
+          ) {
+            this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
+              fieldname,
+              TextDisplayOption.Key
+            );
+            this.updateIconNodeValueColumnMenu(
+              this._bankTreeNodeValueColumnMenu,
+              event.getParameter("id") as string,
+              PREFIX_TEXT_DISP_OPTION
+            );
+
+            oTable.getBinding("rows").getModel()?.refresh(true);
+          }
+        },
+      }),
+      new ActionItem({
+        id: `${PREFIX_TEXT_DISP_OPTION}${fieldname}_TEXT`,
+        icon:
+          this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
+            fieldname
+          ) === TextDisplayOption.Text
+            ? "sap-icon://accept"
+            : undefined,
+        label: this.getOwnerComponent()
+          .getI18nBundle()
+          .getText("menuTextDisplayOptionText"),
+        press: (event: any) => {
+          if (
+            this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
+              fieldname
+            ) !== TextDisplayOption.Text
+          ) {
+            this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
+              fieldname,
+              TextDisplayOption.Text
+            );
+
+            this.updateIconNodeValueColumnMenu(
+              this._bankTreeNodeValueColumnMenu,
+              event.getParameter("id") as string,
+              PREFIX_TEXT_DISP_OPTION
+            );
+
+            oTable.getBinding("rows").getModel()?.refresh(true);
+          }
+        },
+      }),
+      new ActionItem({
+        id: `${PREFIX_TEXT_DISP_OPTION}${fieldname}_TEXTKEY`,
+        icon:
+          this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
+            fieldname
+          ) === TextDisplayOption.TextKey
+            ? "sap-icon://accept"
+            : undefined,
+        label: this.getOwnerComponent()
+          .getI18nBundle()
+          .getText("menuTextDisplayOptionTextKey"),
+        press: (event: any) => {
+          if (
+            this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
+              fieldname
+            ) !== TextDisplayOption.TextKey
+          ) {
+            this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
+              fieldname,
+              TextDisplayOption.TextKey
+            );
+
+            this.updateIconNodeValueColumnMenu(
+              this._bankTreeNodeValueColumnMenu,
+              event.getParameter("id") as string,
+              PREFIX_TEXT_DISP_OPTION
+            );
+
+            oTable.getBinding("rows").getModel()?.refresh(true);
+          }
+        },
+      }),
+    ];
+  }
+  /**
+   * Actualiza el icono de las opciones del menu de la columna
+   * @param columnMenu Objeto con el menu
+   * @param pressId id del elemento pulsado
+   * @param prefixID prefijo que agrupa las opciones de menu
+   */
+  private updateIconNodeValueColumnMenu(
+    columnMenu: Menu,
+    pressId: string,
+    prefixID: string
+  ) {
+    columnMenu
+      .getItems()
+      .filter((item) => item.getId().includes(prefixID))
+      .forEach((item: any) => {
+        if (item.getId() === pressId) item.setIcon("sap-icon://accept");
+        else item.setIcon("");
+      });
   }
 }

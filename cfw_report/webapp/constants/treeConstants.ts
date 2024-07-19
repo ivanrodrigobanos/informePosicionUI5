@@ -47,3 +47,5 @@ export const NODE_TYPES = {
   NODE: "N",
   LEAF: "L",
 };
+
+export const PREFIX_TEXT_DISP_OPTION = "MENU_TEXT_DISPLAY_";

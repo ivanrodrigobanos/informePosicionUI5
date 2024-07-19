@@ -16,6 +16,7 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import MetadataState from "./state/metadataState";
 import Messaging from "sap/ui/core/Messaging";
 import { FILTER_DAYS } from "./constants/smartConstants";
+import TableVisualizationState from "./state/tableVisualizationState";
 
 /**
  * @namespace cfwreport
@@ -29,6 +30,7 @@ export default class Component extends BaseComponent {
   public metadataState: MetadataState;
   public queryModel: JSONModel;
   public messageModel: JSONModel;
+  public tableVisualizationState: TableVisualizationState;
 
   /**
    * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
@@ -52,10 +54,12 @@ export default class Component extends BaseComponent {
 
     // Clase encargada de gestionar los metadatos del servicio
     this.metadataState = new MetadataState(this);
-    // Clase encarga de gestionar las peticion de jerarquía de bancos
+    // Clase encargada de gestionar las peticion de jerarquía de bancos
     this.hierarchyBankState = new HierarchyBankState(this);
-    // Clase encarga de gestionar los datos de cuentas
+    // Clase encargada de gestionar los datos de cuentas
     this.accountBankState = new AccountBankState(this);
+    // Clase encargada de gestionar visualizaciones en las tablas
+    this.tableVisualizationState = new TableVisualizationState(this);
   }
 
   /**

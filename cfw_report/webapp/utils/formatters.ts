@@ -18,5 +18,12 @@ export default class Formatters {
     key: string,
     text: string,
     displayOption: TextDisplayOption
-  ) {}
+  ) {
+    if (displayOption === TextDisplayOption.Key) return key;
+    else if (displayOption === TextDisplayOption.Text) return text;
+    else if (displayOption === TextDisplayOption.TextKey)
+      return `${text} (${key})`;
+
+    return "";
+  }
 }

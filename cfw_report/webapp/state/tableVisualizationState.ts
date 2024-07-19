@@ -1,24 +1,36 @@
-import { TextDisplayOption } from "cfwreport/types/hierarchyTypes";
 import BaseStateModel from "./baseStateModel";
 import AppComponent from "../Component";
+import TextDisplayFieldModel from "cfwreport/model/textDisplayFieldModel";
+import { TextDisplayOption } from "cfwreport/types/hierarchyTypes";
 
 export type TableVisData = {
-  displayTypeField: Record<string, TextDisplayOption>;
+  textDisplayField: TextDisplayFieldModel;
 };
 
 export default class TableVisualizationState extends BaseStateModel<TableVisData> {
   constructor(oComponent: AppComponent) {
-    super(
-      oComponent,
-      new HierarchyBankService(oComponent.getModel() as ODataModel)
-    );
+    super(oComponent);
     this.data = {
-      hierarchyBank: new HierarchyBankModel(),
-      hierarchyBankAccount: new HierarchyBankAccountModel(),
-      treeFieldCatalog: new BankTreeFieldCatalogModel(
-        this.ownerComponent.metadataState,
-        this.ownerComponent.getI18nBundle()
-      ),
+      textDisplayField: new TextDisplayFieldModel(),
     };
+  }
+  /**
+   * Obtiene como se tiene que visualizar un campo de texto
+   * @param fieldname Nombre del campo
+   * @returns
+   */
+  public getDisplayTypeFieldText(fieldname: string): TextDisplayOption {
+    return this.getData().textDisplayField.getDisplayTypeField(fieldname);
+  }
+  /**
+   * Establece como se va a visualizar un campo
+   * @param fieldname
+   * @param option
+   */
+  public setDisplayTypeFieldText(fieldname: string, option: TextDisplayOption) {
+    return this.getData().textDisplayField.setDisplayTypeField(
+      fieldname,
+      option
+    );
   }
 }
