@@ -23,6 +23,7 @@
         alternateRowColors="true"
         threshold="40000"
         rowsUpdated="handlerTreeTableRowsUpdated"
+        sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
     >
         <tree:extension>
             <OverflowToolbar
@@ -59,7 +60,7 @@
                     press="handlerTreeCollapseAll" />
                 <ToolbarSeparator />
                 <Button
-                    ariaLabelledBy="{i18n>bankAccountTree.btnCollapseSelection}"
+                    ariaLabelledBy="{i18n>bankAccountTree.btnFieldsPersonalization}"
                     icon="sap-icon://collapse-group"
                     press="handlerTreeCollapseSelection" />
                 <Button icon="sap-icon://action-settings" press="handlerBankTreeTableConf" />

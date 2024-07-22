@@ -23,10 +23,7 @@ import View from "sap/ui/core/mvc/View";
 import Item from "sap/ui/core/Item";
 import MessageToast from "sap/m/MessageToast";
 import ItemBase from "sap/m/table/columnmenu/ItemBase";
-import MetadataHelper, { MetadataObject } from "sap/m/p13n/MetadataHelper";
 import Engine from "sap/m/p13n/Engine";
-import SelectionController from "sap/m/p13n/SelectionController";
-import ColumnWidthController from "sap/m/table/ColumnWidthController";
 import CustomData from "sap/ui/core/CustomData";
 import ObjectStatus from "sap/m/ObjectStatus";
 import TreeTable from "sap/ui/table/TreeTable";
@@ -40,8 +37,6 @@ import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import {
   CUSTOM_DATA,
   FIELDS_TREE_INTERNAL,
-  ID_BANK_TREE_TABLE,
-  NUMBER_FIX_FIELDS,
   PREFIX_TEXT_DISP_OPTION,
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
@@ -51,11 +46,13 @@ import Conversion from "cfwreport/utils/conversion";
 import Formatters from "cfwreport/utils/formatters";
 import HierarchyBankState from "cfwreport/state/hierarchyBankState";
 import { TextDisplayOption } from "cfwreport/types/hierarchyTypes";
+import BankTreeViewController from "./BankTreeViewController";
 
 /**
  * @namespace cfwreport.controller
  */
 export default class Main extends BaseController {
+  private _bankTreeViewController: BankTreeViewController;
   private _sfb: SmartFilterBar;
   private _st: SmartTable;
   private _stInternalTable: Table;
@@ -68,16 +65,20 @@ export default class Main extends BaseController {
   private _btnShowMessageAppRaw: Button;
   private _btnShowMessageAppTree: Button;
   private _filterBarValuesChanged: boolean;
-  private _bankTreeMetadataHelper: MetadataHelper;
-  private _bankTreeMDHInitialWidth: Record<string, string>;
   private _bankTreeNodeValueColumnMenu: Menu;
 
-  /*eslint-disable @typescript-eslint/no-empty-function*/
   public onInit(): void {
+    this._bankTreeViewController = new BankTreeViewController(
+      this.getOwnerComponent(),
+      this.byId("BankTreeTable") as TreeTable,
+      this.getView() as View
+    );
+
     this._sfb = this.byId("SFBQuery") as SmartFilterBar;
     this._st = this.byId("SFTQuery") as SmartTable;
     this._navContainter = this.byId("navContainer") as NavContainer;
     this._bankTreeTable = this.byId("BankTreeTable") as TreeTable;
+
     this._btnShowMessageAppRaw = this.byId("btnShowMessageAppRaw") as Button;
     this._btnShowMessageAppTree = this.byId("btnShowMessageAppTree") as Button;
 
@@ -97,10 +98,7 @@ export default class Main extends BaseController {
     // Controla si se han modificado los valores de los filtros
     this._filterBarValuesChanged = true;
 
-    this._bankTreeMDHInitialWidth = {};
-
-    this._bankTreeTable.setFixedColumnCount(NUMBER_FIX_FIELDS); // Campos fijos en la jerarquía del arbol
-    this._bankTreeTable.setRowMode("Auto");
+    this._bankTreeViewController.initPropsTreeTable();
   }
 
   /**
@@ -374,7 +372,7 @@ export default class Main extends BaseController {
         QUERY_MODEL.HIERARCHY_SHOWN
       )
     )
-      this.registerFieldsEngineBankTree();
+      this._bankTreeViewController.registerFieldsEngineBankTree();
 
     // Se inicial proceso de generacion de la jerarquía de bancos.
     this.getOwnerComponent().queryModel.setProperty(
@@ -579,105 +577,7 @@ export default class Main extends BaseController {
     // Se lanza el proceso de lectura de datos de la smartable
     this._st.rebindTable(true);
   }
-  /**
-   * Registra en la tabla de jerarquía de bancos la personalización de campos
-   */
-  public registerFieldsEngineBankTree() {
-    let fixFields =
-      this.getOwnerComponent().hierarchyBankState.getFixFieldsFieldCatalog();
 
-    let fieldsMDH: MetadataObject[] = [];
-
-    // Se excluye el campo fijo del valor del nodo para que no entre dentro del state, ya que no puede tocarse para
-    // que la jerarquía se vea correctamente.
-    fixFields
-      .filter((row) => row.name !== FIELDS_TREE_ACCOUNT.NODE_VALUE)
-      .forEach((row, index) => {
-        // Al ser una tabla dinámica el ID del campo es la concatenación del ID de la tabla+el índice de la tabla.
-        // Al índice se le suma el numero de campos fijos para calcular correctamente el índice real del campo
-        fieldsMDH.push({
-          key: `${ID_BANK_TREE_TABLE}-${index + NUMBER_FIX_FIELDS}`,
-          label: row.label,
-          path: row.name,
-          visible: true,
-        });
-        this._bankTreeMDHInitialWidth[row.name] = row.width;
-      });
-    this._bankTreeMetadataHelper = new MetadataHelper(fieldsMDH);
-
-    Engine.getInstance().register(this._bankTreeTable, {
-      helper: this._bankTreeMetadataHelper,
-      controller: {
-        Columns: new SelectionController({
-          targetAggregation: "columns",
-          control: this._bankTreeTable,
-        }),
-        /*Sorter: new SortController({
-						control: this._bankTreeTable
-					}),
-					Groups: new GroupController({
-						control: this._bankTreeTable
-					}),*/
-        ColumnWidth: new ColumnWidthController({
-          control: this._bankTreeTable,
-        }),
-      },
-    });
-
-    Engine.getInstance().attachStateChange(
-      this.handlerBankTreeMDHStateChange.bind(this)
-    );
-  }
-  /**
-   * Gestiona la modificación de los estados de la personalización de la tabla
-   * de jerarquía de bancos.
-   */
-  public handlerBankTreeMDHStateChange(event: any) {
-    const oState = event.getParameter("state");
-
-    if (!oState) {
-      return;
-    }
-    let tableColumns = this._bankTreeTable.getColumns();
-    tableColumns.forEach((column, columnIndex) => {
-      let columnKey = this.getKey(column);
-
-      // Sacamos el nombre interno en el catalogo de campos, ya que en la columna ese campo
-      // se pierde aunque se pase como id en la columna.
-      let internalField = column
-        .getCustomData()
-        .find((row) => row.getKey() === CUSTOM_DATA.INTERNAL_FIELD)
-        ?.getValue();
-
-      // El campo donde esta la jerarquía y los importes no se tocan porque no aparecen en la personalización de campos
-      if (
-        internalField !== FIELDS_TREE_ACCOUNT.NODE_VALUE &&
-        internalField.indexOf(ENTITY_FIELDS_DATA.AMOUNT_DATA) === -1
-      ) {
-        // Si la clave de la columna no esta en el estado es que no la quieren ver, en caso contrario la vuelvo a mostrar, aunque
-        // puede ser que ya este en visible.
-        let stateIndex = oState.Columns.findIndex(
-          (row: any) => row.key === columnKey
-        );
-        if (stateIndex === -1) {
-          column.setVisible(false);
-        } else {
-          column.setVisible(true);
-
-          // Si la columna es visible miro si la posición en la tabla y en la del state son la misma.
-          // Si no lo son se mueve la columna de la tabla a la posición del state. Eso si, a la posición
-          // se le suma el numero de campos fijos para que se posicione en el sitio correcto.
-          if (columnIndex !== stateIndex) {
-            this._bankTreeTable.removeColumn(column);
-            this._bankTreeTable.insertColumn(
-              column,
-              (stateIndex as number) + NUMBER_FIX_FIELDS
-            );
-          }
-        }
-      }
-    });
-  }
   /**
    * Gestiona la configuración del tree tabla de bancos
    */
@@ -972,15 +872,12 @@ export default class Main extends BaseController {
     state: HierarchyBankState,
     oTable: TreeTable
   ): Menu | null {
-    let idColumn = "";
-    if (state instanceof HierarchyBankState)
-      idColumn =
-        this.getOwnerComponent().hierarchyBankState.getColumnIdTreeTable(
-          fieldname
-        );
+    let idColumn = this.getIdColumnFromState(state, fieldname);
+
     // Solo se crea el menu, y se asocia, cuando se tenga el ID de la columna exista en la tabla.
     if (idColumn !== "") {
       let textItems = this.buildColumnMenuTextDisplayOptions(
+        state,
         FIELDS_TREE_ACCOUNT.NODE_VALUE,
         oTable
       );
@@ -995,11 +892,13 @@ export default class Main extends BaseController {
   }
   /**
    * Construye las opciones del menu de opciones de visualizacion del texto
+   * @param state estado que gestiona los datos del campo
    * @param fieldname nombre del campo
    * @param oTable Tabla donde esta el campo
    * @returns
    */
   private buildColumnMenuTextDisplayOptions(
+    state: HierarchyBankState,
     fieldname: string,
     oTable: TreeTable
   ): ItemBase[] {
@@ -1020,19 +919,15 @@ export default class Main extends BaseController {
             this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
               fieldname
             ) !== TextDisplayOption.Key
-          ) {
-            this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
-              fieldname,
-              TextDisplayOption.Key
-            );
-            this.updateIconNodeValueColumnMenu(
+          )
+            this.pressMenuOptionTextDisplay(
+              state,
+              oTable,
               this._bankTreeNodeValueColumnMenu,
-              event.getParameter("id") as string,
-              PREFIX_TEXT_DISP_OPTION
+              fieldname,
+              TextDisplayOption.Key,
+              event.getParameter("id") as string
             );
-
-            oTable.getBinding("rows").getModel()?.refresh(true);
-          }
         },
       }),
       new ActionItem({
@@ -1051,20 +946,15 @@ export default class Main extends BaseController {
             this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
               fieldname
             ) !== TextDisplayOption.Text
-          ) {
-            this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
-              fieldname,
-              TextDisplayOption.Text
-            );
-
-            this.updateIconNodeValueColumnMenu(
+          )
+            this.pressMenuOptionTextDisplay(
+              state,
+              oTable,
               this._bankTreeNodeValueColumnMenu,
-              event.getParameter("id") as string,
-              PREFIX_TEXT_DISP_OPTION
+              fieldname,
+              TextDisplayOption.Text,
+              event.getParameter("id") as string
             );
-
-            oTable.getBinding("rows").getModel()?.refresh(true);
-          }
         },
       }),
       new ActionItem({
@@ -1083,40 +973,81 @@ export default class Main extends BaseController {
             this.getOwnerComponent().tableVisualizationState.getDisplayTypeFieldText(
               fieldname
             ) !== TextDisplayOption.TextKey
-          ) {
-            this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
-              fieldname,
-              TextDisplayOption.TextKey
-            );
-
-            this.updateIconNodeValueColumnMenu(
+          )
+            this.pressMenuOptionTextDisplay(
+              state,
+              oTable,
               this._bankTreeNodeValueColumnMenu,
-              event.getParameter("id") as string,
-              PREFIX_TEXT_DISP_OPTION
+              fieldname,
+              TextDisplayOption.TextKey,
+              event.getParameter("id") as string
             );
-
-            oTable.getBinding("rows").getModel()?.refresh(true);
-          }
         },
       }),
     ];
   }
   /**
+   * Pasos cuando se pulsa una opción del menú del cambio de tipo de visualización
+   * de un campo de texto
+   * @param state estado que gestiona los datos del campo
+   * @param oTable Tabla
+   * @param columnMenu Menu contextual del menu
+   * @param fieldname Nombre del campo
+   * @param option Opción seleccionada
+   * @param optionIdSelected ID de le menú seleccionado
+   */
+  private pressMenuOptionTextDisplay(
+    state: HierarchyBankState,
+    oTable: TreeTable,
+    columnMenu: Menu,
+    fieldname: string,
+    option: TextDisplayOption,
+    optionIdSelected: string
+  ) {
+    // Cambio del tipo de visualización del campo
+    this.getOwnerComponent().tableVisualizationState.setDisplayTypeFieldText(
+      fieldname,
+      option
+    );
+    // Actualiza el icono en el menu
+    this.updateIconNodeValueColumnMenu(
+      columnMenu,
+      optionIdSelected,
+      PREFIX_TEXT_DISP_OPTION
+    );
+    // Fuerza el refresco total de datos, esto hace que entre en los formatters.
+    oTable.getBinding("rows").getModel()?.refresh(true);
+
+    let idColumn = this.getIdColumnFromState(state, fieldname);
+    (this.byId(idColumn) as Column).setHeaderMenu(columnMenu.getId());
+  }
+  /**
+   * Recupera el Id interno del treetable a partir del nombre de campo y el state
+   * que gestiona sus datos
+   * @param state State que gestiona los procesos
+   * @param fieldname Nombre del campo
+   * @returns
+   */
+  private getIdColumnFromState(state: HierarchyBankState, fieldname: string) {
+    return state.getColumnIdTreeTable(fieldname);
+  }
+  /**
    * Actualiza el icono de las opciones del menu de la columna
    * @param columnMenu Objeto con el menu
-   * @param pressId id del elemento pulsado
+   * @param optionIdSelected id del elemento pulsado
    * @param prefixID prefijo que agrupa las opciones de menu
    */
   private updateIconNodeValueColumnMenu(
     columnMenu: Menu,
-    pressId: string,
+    optionIdSelected: string,
     prefixID: string
   ) {
     columnMenu
       .getItems()
       .filter((item) => item.getId().includes(prefixID))
       .forEach((item: any) => {
-        if (item.getId() === pressId) item.setIcon("sap-icon://accept");
+        if (item.getId() === optionIdSelected)
+          item.setIcon("sap-icon://accept");
         else item.setIcon("");
       });
   }

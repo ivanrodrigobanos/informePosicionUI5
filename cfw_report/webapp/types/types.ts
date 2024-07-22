@@ -39,5 +39,7 @@ export interface FieldCatalogTree {
   currencyField?: string;
   width: string;
   hAlign: HorizontalAlign;
+  allowPersonalization: boolean;
+  internalID: string;
 }
 export type FieldsCatalogTree = FieldCatalogTree[];

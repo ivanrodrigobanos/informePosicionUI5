@@ -117,6 +117,13 @@ export default class HierarchyBankState extends BaseState<
     return this.data.treeFieldCatalog.getFixFields();
   }
   /**
+   * Devuelve el catalogo de campos
+   * @returns
+   */
+  public getFieldCatalog(): FieldsCatalogTree {
+    return this.data.treeFieldCatalog.getData();
+  }
+  /**
    * Devuelve el ID de la columna de la tree table en base al nombre de la columna
    * @param columnName
    * @returns
