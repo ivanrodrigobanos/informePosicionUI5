@@ -11,8 +11,3 @@ export const FILTER_DAYS = {
   FROM: 7,
   TO: 7,
 };
-export const SOURCE_TYPES = {
-  SALDO_INI: "SDOVALINI",
-  SALDO_FIN: "SDOVALFIN",
-  MOVIMIENTOS: "MOVIMIENTOS",
-};

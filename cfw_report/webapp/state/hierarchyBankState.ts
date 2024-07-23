@@ -3,14 +3,13 @@ import AppComponent from "../Component";
 import HierarchyBankService from "cfwreport/service/hierarchyBankService";
 import ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import HierarchyBankModel, {
-  HierarchyBankFlats,
   HierarchyBanks,
 } from "cfwreport/model/hierarchyBankModel";
 import HierarchyBankAccountModel, {
   HierarchyBankTree,
 } from "cfwreport/model/hierarchyBankAccountModel";
 import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel";
-import { FieldsCatalogTree } from "cfwreport/types/types";
+import { FieldsCatalogTree, HierarchysFlat } from "cfwreport/types/types";
 import { ID_BANK_TREE_TABLE } from "cfwreport/constants/treeConstants";
 
 export type HierarchyBankData = {
@@ -48,7 +47,7 @@ export default class HierarchyBankState extends BaseState<
    * Devuelve los datos de la jeraquía en formato plano con los datos de las cuentas
    * @returns Datos de la jerarquía
    */
-  public getHierarchyFlatData(): HierarchyBankFlats {
+  public getHierarchyFlatData(): HierarchysFlat {
     return this.getData().hierarchyBankAccount.getFlatData();
   }
   /**

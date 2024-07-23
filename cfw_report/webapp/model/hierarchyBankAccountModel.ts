@@ -1,7 +1,4 @@
-import {
-  ENTITY_FIELDS_DATA,
-  SOURCE_TYPES,
-} from "cfwreport/constants/smartConstants";
+import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import { AccountData, AccountsData } from "./accountBankModel";
 import BaseHierarchy from "./baseHierarchy";
 import { HierarchyBank, HierarchyBanks } from "./hierarchyBankModel";
@@ -10,15 +7,18 @@ import {
   FIELDS_TREE_ACCOUNT,
   FIELDS_TREE_INTERNAL,
   NODE_TYPES,
+  SOURCE_TYPES,
 } from "cfwreport/constants/treeConstants";
+import {
+  HierarchyFlat,
+  HierarchysFlat,
+  HierarchyTree,
+} from "cfwreport/types/types";
 
-export type HierarchyBankFlat = Record<string, string | number>;
-export type HierarchyBankFlats = HierarchyBankFlat[];
-
-export type HierarchyBankTree = Record<string, any>;
+export type HierarchyBankTree = HierarchyTree;
 
 export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBankTree> {
-  private hierarchyFlat: HierarchyBankFlats;
+  private hierarchyFlat: HierarchysFlat;
   private hierarchyTree: HierarchyBankTree;
   private hierarchyBank: HierarchyBanks;
   private accountData: AccountsData;
@@ -36,7 +36,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     }
   }
 
-  public getFlatData(): HierarchyBankFlats {
+  public getFlatData(): HierarchysFlat {
     return this.hierarchyFlat;
   }
   public getData(): HierarchyBankTree {
@@ -110,12 +110,15 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    */
   fillTreeAccountData(
     rowTree: HierarchyBankTree,
-    rowHierarchyFlat: HierarchyBankFlat
+    rowHierarchyFlat: HierarchyFlat
   ) {
     // Hago esta ñapa para pasar solo los campos que son de la cuenta.
     Object.keys(this.accountData[0]).forEach((key) => {
       rowTree[key] = rowHierarchyFlat[key as keyof AccountData];
     });
+
+    rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = true;
+    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = true;
   }
   public clearData(): void {
     this.hierarchyFlat = [];
@@ -128,7 +131,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    */
   private fillTreeAmountData(
     rowTree: HierarchyBankTree,
-    rowHierarchyFlat: HierarchyBankFlat
+    rowHierarchyFlat: HierarchyFlat
   ) {
     Object.keys(rowHierarchyFlat)
       .filter(
@@ -150,19 +153,20 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    */
   private fillTreeNodeField(
     rowTree: HierarchyBankTree,
-    rowHierarchyFlat: HierarchyBankFlat
+    rowHierarchyFlat: HierarchyFlat
   ) {
     rowTree[FIELDS_TREE_ACCOUNT.NODE_VALUE] =
       rowHierarchyFlat[FIELDS_TREE.NODE];
     rowTree[FIELDS_TREE_ACCOUNT.NODE_NAME] =
       rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
 
-    if (rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
-      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = true;
-    else rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
+    // Aprovecho para añadir dos campos especificos que se usarán en path de componentes para inicializalos.
+    // Alguno de ellos cuando se esta en el nodo de cuenta se cambiará su valor en caso necesario
+    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
+    rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
   }
-  private buildHierarchyFlat(): HierarchyBankFlats {
-    let hierarchyFlat: HierarchyBankFlats = [];
+  private buildHierarchyFlat(): HierarchysFlat {
+    let hierarchyFlat: HierarchysFlat = [];
 
     this.accountData
       .filter((row) => row.source === SOURCE_TYPES.SALDO_FIN)
@@ -202,8 +206,8 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param hierarchyFlat Array de la jerarquía plana
    */
   addSumUpperNodesFlat(
-    hierarchyFlatRow: HierarchyBankFlat,
-    hierarchyFlat: HierarchyBankFlats
+    hierarchyFlatRow: HierarchyFlat,
+    hierarchyFlat: HierarchysFlat
   ) {
     let hierarchyFlatUpperIndex = hierarchyFlat.findIndex(
       (row) => row.node === hierarchyFlatRow.parent_node
@@ -247,7 +251,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
   /**Añade el nodo superior a la jerarquía plana */
   addUpperNodeFlat(
     parent_node: string | number,
-    hierarchyFlat: HierarchyBankFlats
+    hierarchyFlat: HierarchysFlat
   ): number {
     let hierarchyData = this.hierarchyBank.find(
       (rowHier) => rowHier.node === parent_node
@@ -255,7 +259,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
 
     if (!hierarchyData) return -1;
 
-    let newRow: HierarchyBankFlat = {};
+    let newRow: HierarchyFlat = {};
     Object.keys(hierarchyData).forEach((key) => {
       newRow[key] = hierarchyData[key as keyof HierarchyBank];
     });
@@ -271,14 +275,14 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    */
   private addAccountHierarchyFlat(
     accountData: AccountData,
-    hierarchyFlat: HierarchyBankFlats
-  ): HierarchyBankFlat {
+    hierarchyFlat: HierarchysFlat
+  ): HierarchyFlat {
     let hierarchyData = this.hierarchyBank.find(
       (rowHier) => rowHier.node === accountData.bank_account
     ) as HierarchyBank;
 
     // Pasamos los datos de la jeraquía
-    let newRow: HierarchyBankFlat = {};
+    let newRow: HierarchyFlat = {};
     Object.keys(hierarchyData).forEach((key) => {
       newRow[key] = hierarchyData[key as keyof HierarchyBank];
     });

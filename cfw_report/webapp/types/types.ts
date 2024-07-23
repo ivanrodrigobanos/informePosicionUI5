@@ -1,6 +1,11 @@
 import { HorizontalAlign, ValueState } from "sap/ui/core/library";
 import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 
+export type HierarchyFlat = Record<string, string | number>;
+export type HierarchysFlat = HierarchyFlat[];
+export type HierarchyTree = Record<string, any>;
+export type HierarchysTree = HierarchyTree[];
+
 export type FiltersQuery = {
   dateFrom: Date;
   dateFromValueState: ValueState;

@@ -12,9 +12,6 @@ export interface HierarchyBank {
 }
 export type HierarchyBanks = HierarchyBank[];
 
-export type HierarchyBankFlat = Record<string, string | number>;
-export type HierarchyBankFlats = HierarchyBankFlat[];
-
 export default class HierarchyBankModel extends BaseModel<HierarchyBanks> {
   private _hierarchy: HierarchyBanks;
 

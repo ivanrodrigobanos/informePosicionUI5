@@ -34,36 +34,36 @@
                 <vm:VariantManagement id="hierarchyBankTreeTable" for="BankTreeTable" />
                 <ToolbarSpacer />
                 <Button
-                    ariaLabelledBy="{i18n>accountDataTable.refresh}"
+                    tooltip="{i18n>accountDataTable.refresh}"
                     icon="sap-icon://synchronize"
                     press="handlerRefreshData" />
                 <ToolbarSeparator />
                 <Button
-                    ariaLabelledBy="{i18n>bankAccountTree.btnNavAccountQuery}"
-                    text="{i18n>bankAccountTree.btnNavAccountQuery}"
+                    tooltip="{i18n>treeTable.btnNavAccountQuery}"
+                    text="{i18n>treeTable.btnNavAccountQuery}"
                     press="navigationAccountQuery" />
                 <Button
-                    ariaLabelledBy="{i18n>bankAccountTree.btnChangeHierarchy}"
-                    text="{i18n>bankAccountTree.btnChangeHierarchy}"
+                    tooltip="{i18n>treeTable.btnChangeHierarchy}"
+                    text="{i18n>treeTable.btnChangeHierarchy}"
                     press="handlerChangeBankHier" />
                 <ToolbarSeparator />
                 <Button
-                    ariaLabelledBy="{i18n>bankAccountTree.btnExpandFirstLevel}"
+                    tooltip="{i18n>treeTable.btnExpandFirstLevel}"
                     icon="sap-icon://navigation-down-arrow"
                     press="handlerTreeExpandFirstLevel" />
                 <Button
-                    ariaLabelledBy="{i18n>bankAccountTree.btnExpandSelection}"
+                    tooltip="{i18n>treeTable.btnExpandSelection}"
                     icon="sap-icon://expand-group"
                     press="handlerTreeExpandSelection" />
                 <Button icon="sap-icon://collapse-all"
-                    ariaLabelledBy="{i18n>bankAccountTree.btnCollapseAll}"
+                    ariaLabelledBy="{i18n>treeTable.btnCollapseAll}"
                     press="handlerTreeCollapseAll" />
                 <ToolbarSeparator />
                 <Button
-                    ariaLabelledBy="{i18n>bankAccountTree.btnFieldsPersonalization}"
+                    tooltip="{i18n>treeTable.btnCollapseSelection}"
                     icon="sap-icon://collapse-group"
                     press="handlerTreeCollapseSelection" />
-                <Button icon="sap-icon://action-settings" press="handlerBankTreeTableConf" />
+                <Button icon="sap-icon://action-settings" press="handlerTablePersonalization" />
             </OverflowToolbar>
         </tree:extension>
         <tree:layoutData>

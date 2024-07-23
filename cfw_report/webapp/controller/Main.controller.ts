@@ -10,7 +10,11 @@ import { ValueState } from "sap/ui/core/library";
 import FlexBox from "sap/m/FlexBox";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
-import { FiltersQuery, HierarchySelectViewModel } from "cfwreport/types/types";
+import {
+  FiltersQuery,
+  HierarchySelectViewModel,
+  HierarchyTree,
+} from "cfwreport/types/types";
 import DateFormat from "cfwreport/utils/dateFormat";
 import NavContainer from "sap/m/NavContainer";
 import { NAVIGATION_ID } from "cfwreport/constants/navigation";
@@ -37,6 +41,7 @@ import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import {
   CUSTOM_DATA,
   FIELDS_TREE_INTERNAL,
+  ID_BANK_TREE_TABLE,
   PREFIX_TEXT_DISP_OPTION,
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
@@ -84,7 +89,7 @@ export default class Main extends BaseController {
 
     this.setModel(
       this.getOwnerComponent().hierarchyBankState.getModel(),
-      "hierarchyBankState"
+      STATE_PATH.BANK
     );
     this.setModel(
       this.getOwnerComponent().accountBankState.getModel(),
@@ -361,55 +366,16 @@ export default class Main extends BaseController {
   public processBuildBankHier(IDHierarchy: string, navigate: boolean) {
     this._messageState.clearMessage();
 
-    // Solo si los filtros cambian se limpia el modelo, de esta manera no hay refrescos innecesarios en la tabla
-    if (this._filterBarValuesChanged)
-      this.getOwnerComponent().hierarchyBankState.clearModelValue(true); // No se refresca el catalogo
-
-    // Si no se ha mostrado todavía la jerarquía se registran los campos que podrán ser modificados
-    // en la personalización del menú
-    if (
-      !this.getOwnerComponent().queryModel.getProperty(
-        QUERY_MODEL.HIERARCHY_SHOWN
-      )
-    )
-      this._bankTreeViewController.registerFieldsEngineBankTree();
-
-    // Se inicial proceso de generacion de la jerarquía de bancos.
-    this.getOwnerComponent().queryModel.setProperty(
-      QUERY_MODEL.LOADING_HIER_PROCESS,
-      true
-    );
-    this.getOwnerComponent()
-      .hierarchyBankState.processHierarchyWithAccountData(IDHierarchy)
-      .then(() => {
-        if (
-          !this.getOwnerComponent().queryModel.getProperty(
-            QUERY_MODEL.HIERARCHY_SHOWN
-          )
-        )
-          this._bankTreeTable.expandToLevel(1);
-
-        this.getOwnerComponent().queryModel.setProperty(
-          QUERY_MODEL.LOADING_HIER_PROCESS,
-          false
-        );
-        this.getOwnerComponent().queryModel.setProperty(
-          QUERY_MODEL.HIERARCHY_SHOWN,
-          true
-        );
-      })
-      .catch(() => {
+    this._bankTreeViewController.processBuildBankHier(
+      IDHierarchy,
+      this._filterBarValuesChanged,
+      () => {},
+      () => {
         this.showMessageApp(this._btnShowMessageAppTree)
           .then(() => {})
           .catch(() => {});
-
-        this.getOwnerComponent().queryModel.setProperty(
-          QUERY_MODEL.LOADING_HIER_PROCESS,
-          false
-        );
-        // Si hay error no queremos que se vean los datos previos que pueda tener
-        this.getOwnerComponent().hierarchyBankState.clearModelValue();
-      });
+      }
+    );
 
     if (navigate) this.navigateToHierarchyBank();
   }
@@ -500,19 +466,28 @@ export default class Main extends BaseController {
    * @returns
    */
   public factoryHierarchyFieldCatalog(sId: string, oContext: any) {
-    let fieldCatalog = this.getOwnerComponent()
-      .hierarchyBankState.getModel()
-      .getProperty(oContext.sPath as string) as FieldCatalogTree;
+    let fieldCatalog: Partial<FieldCatalogTree> = {};
+    let statePath = "";
+    if (sId.includes(ID_BANK_TREE_TABLE)) {
+      fieldCatalog = this.getOwnerComponent()
+        .hierarchyBankState.getModel()
+        .getProperty(oContext.sPath as string) as FieldCatalogTree;
+
+      statePath = STATE_PATH.BANK;
+    }
 
     return new Column(sId, {
-      id: fieldCatalog.name,
+      id: fieldCatalog?.name,
       visible: true,
       width: fieldCatalog.width,
       label: new Label({
         text: fieldCatalog.label,
       }),
       hAlign: fieldCatalog.hAlign,
-      template: this.getTemplateObjectforTableColumn(fieldCatalog),
+      template: this.getTemplateObjectforTableColumn(
+        fieldCatalog as FieldCatalogTree,
+        statePath
+      ),
       customData: new CustomData({
         key: CUSTOM_DATA.INTERNAL_FIELD,
         value: fieldCatalog.name,
@@ -581,10 +556,14 @@ export default class Main extends BaseController {
   /**
    * Gestiona la configuración del tree tabla de bancos
    */
-  public async handlerBankTreeTableConf(event: any) {
-    await Engine.getInstance().show(this._bankTreeTable, ["Columns"], {
-      source: event.getSource(),
-    });
+  public async handlerTablePersonalization(event: any) {
+    await Engine.getInstance().show(
+      event.getSource().getParent().getParent() as Control,
+      ["Columns"],
+      {
+        source: event.getSource(),
+      }
+    );
   }
   /**
    * Gestiona el evento del menu contextual de la tabla
@@ -665,89 +644,131 @@ export default class Main extends BaseController {
    * Devuevle el control donde se pinta el valor en las tablas dinámicas
    * en base a la configuración del campo
    * @param fieldCatalog Datos del catalogo de campo
+   * @param statePath Path de acceso al modelo de datos
    * @returns
    */
   private getTemplateObjectforTableColumn(
-    fieldCatalog: FieldCatalogTree
+    fieldCatalog: FieldCatalogTree,
+    statePath: string
   ): Control {
-    var that = this;
+    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.COMPANY_CODE)
+      return this.templateObjectCompany(fieldCatalog.name, statePath);
 
-    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.COMPANY_CODE) {
-      return new Text({
-        text: {
-          parts: [
-            { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
-            {
-              path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME}`,
-            },
-          ],
-          formatter: function (companyCode: string, companyCodeName: string) {
-            if (companyCode && companyCodeName)
-              return `${companyCodeName} (${companyCode})`;
-            else return "";
-          },
-        },
-      });
-    }
+    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.NODE_VALUE)
+      return this.templateObjectNodeValue(fieldCatalog.name, statePath);
 
     if (fieldCatalog.type === ColumnType.Amount) {
-      let criticField = fieldCatalog.name.replace(
-        ENTITY_FIELDS_DATA.AMOUNT_DATA,
-        ENTITY_FIELDS_DATA.AMOUNT_CRITICITY
-      );
-      return new ObjectStatus({
-        text: {
-          parts: [
-            { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
-            { path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.CURRENCY}` },
-          ],
-          formatter: function (amount: number, currency: string) {
-            return Formatters.amount2String(amount, currency);
-          },
-        },
-        state: {
-          path: `${STATE_PATH.BANK}${criticField}`,
-          formatter: function (value: any) {
-            return Conversion.criticallyToValueState(Number(value));
-          },
-        },
-      });
+      return this.templateObjectAmount(fieldCatalog.name, statePath);
     }
-    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.NODE_VALUE) {
-      return new FlexBox({
-        direction: "Row",
-        alignItems: "Center",
-        items: [
-          new Button({
-            icon: "sap-icon://payment-approval",
-            visible: {
-              path: `${STATE_PATH.BANK}${FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL}`,
-            },
-          }).addStyleClass("sapUiTinyMarginEnd"),
-          new Text({
-            text: {
-              parts: [
-                { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
-                { path: `${STATE_PATH.BANK}${FIELDS_TREE_ACCOUNT.NODE_NAME}` },
-              ],
-              formatter: function (key: string, text: string) {
-                return Formatters.fieldKeyText(
-                  key,
-                  text,
-                  that
-                    .getOwnerComponent()
-                    .tableVisualizationState.getDisplayTypeFieldText(
-                      fieldCatalog.name
-                    )
-                );
-              },
-            },
-          }),
-        ],
-      });
-    }
+
     return new Text({
-      text: { path: `${STATE_PATH.BANK}${fieldCatalog.name}` },
+      text: { path: `${statePath}>${fieldCatalog.name}` },
+    });
+  }
+  /**
+   * Template del control para la columna del nodo
+   * @param name
+   * @param statePath
+   * @returns
+   */
+  private templateObjectNodeValue(name: string, statePath: string): Control {
+    var that = this;
+    return new FlexBox({
+      direction: "Row",
+      alignItems: "Center",
+      items: [
+        new Button({
+          icon: "sap-icon://payment-approval",
+          busy: {
+            path: `${statePath}>${FIELDS_TREE_INTERNAL.LOADING_VALUES}`,
+          },
+          busyIndicatorSize: "Medium",
+          visible: {
+            path: `${statePath}>${FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL}`,
+          },
+          press(oEvent: any) {
+            let oRow = oEvent.getSource().getParent();
+            let sPath = oRow.getBindingContext(statePath).getPath() as string;
+
+            if (statePath === STATE_PATH.BANK)
+              that._bankTreeViewController.processAddPlanningLevelData([
+                that
+                  .getOwnerComponent()
+                  .hierarchyBankState.getModel()
+                  .getProperty(sPath) as HierarchyTree,
+              ]);
+          },
+        }).addStyleClass("sapUiTinyMarginEnd"),
+        new Text({
+          text: {
+            parts: [
+              { path: `${statePath}>${name}` },
+              { path: `${statePath}>${FIELDS_TREE_ACCOUNT.NODE_NAME}` },
+            ],
+            formatter: function (key: string, text: string) {
+              return Formatters.fieldKeyText(
+                key,
+                text,
+                that
+                  .getOwnerComponent()
+                  .tableVisualizationState.getDisplayTypeFieldText(name)
+              );
+            },
+          },
+        }),
+      ],
+    });
+  }
+  /**
+   * Template del control para la columna de importe
+   * @param name
+   * @param statePath
+   * @returns
+   */
+  private templateObjectAmount(name: string, statePath: string): Control {
+    let criticField = name.replace(
+      ENTITY_FIELDS_DATA.AMOUNT_DATA,
+      ENTITY_FIELDS_DATA.AMOUNT_CRITICITY
+    );
+    return new ObjectStatus({
+      text: {
+        parts: [
+          { path: `${statePath}>${name}` },
+          { path: `${statePath}>${FIELDS_TREE_ACCOUNT.CURRENCY}` },
+        ],
+        formatter: function (amount: number, currency: string) {
+          return Formatters.amount2String(amount, currency);
+        },
+      },
+      state: {
+        path: `${statePath}>${criticField}`,
+        formatter: function (value: any) {
+          return Conversion.criticallyToValueState(Number(value));
+        },
+      },
+    });
+  }
+  /**
+   * Template del control para la columna de sociedad
+   * @param name
+   * @param statePath
+   * @returns
+   */
+  private templateObjectCompany(name: string, statePath: string): Control {
+    return new Text({
+      text: {
+        parts: [
+          { path: `${statePath}>${name}` },
+          {
+            path: `${statePath}>${FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME}`,
+          },
+        ],
+        formatter: function (companyCode: string, companyCodeName: string) {
+          if (companyCode && companyCodeName)
+            return `${companyCodeName} (${companyCode})`;
+          else return "";
+        },
+      },
     });
   }
   /**

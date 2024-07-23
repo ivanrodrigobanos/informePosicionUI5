@@ -1,5 +1,5 @@
 export const STATE_PATH = {
-  BANK: "hierarchyBankState>",
+  BANK: "hierarchyBankState",
 };
 
 export const FIELDS_TREE = {
@@ -11,11 +11,12 @@ export const FIELDS_TREE = {
 
 export const FIELDS_TREE_INTERNAL = {
   SHOW_BTN_DETAIL: "showBtnDetail",
+  LOADING_VALUES: "loadingValues",
 };
 export const FIELDS_TREE_ACCOUNT = {
-  NODE_VALUE: "accountNode",
-  NODE_VALUE_WIDTH: "20rem",
-  NODE_NAME: "accountNodeName",
+  NODE_VALUE: "nodeKey",
+  NODE_VALUE_WIDTH: "30rem",
+  NODE_NAME: "nodeName",
   NODE_NAME_WIDTH: "15rem",
   BANK_ACCOUNT_PARTNER: "bank_account_partner",
   BANK_ACCOUNT_PARTNER_WIDTH: "15rem",
@@ -49,3 +50,9 @@ export const NODE_TYPES = {
 };
 
 export const PREFIX_TEXT_DISP_OPTION = "MENU_TEXT_DISPLAY_";
+
+export const SOURCE_TYPES = {
+  SALDO_INI: "SDOVALINI",
+  SALDO_FIN: "SDOVALFIN",
+  MOVIMIENTOS: "MOVIMIENTOS",
+};
