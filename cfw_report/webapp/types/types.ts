@@ -15,7 +15,6 @@ export type FiltersQuery = {
   dateToValueStateMessage: string;
   company_code: string[];
   displayCurrency: string;
-  holiday_calendar: string;
 };
 
 export type AccountDataQueryViewModel = {

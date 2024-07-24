@@ -6,7 +6,6 @@ import {
   FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
   FIELDS_TREE_INTERNAL,
-  NODE_TYPES,
   SOURCE_TYPES,
 } from "cfwreport/constants/treeConstants";
 import {
@@ -117,7 +116,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
       rowTree[key] = rowHierarchyFlat[key as keyof AccountData];
     });
 
-    rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = true;
+    rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
     rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = true;
   }
   public clearData(): void {

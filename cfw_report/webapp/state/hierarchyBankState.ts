@@ -10,7 +10,10 @@ import HierarchyBankAccountModel, {
 } from "cfwreport/model/hierarchyBankAccountModel";
 import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel";
 import { FieldsCatalogTree, HierarchysFlat } from "cfwreport/types/types";
-import { ID_BANK_TREE_TABLE } from "cfwreport/constants/treeConstants";
+import {
+  FIELDS_TREE_ACCOUNT,
+  ID_BANK_TREE_TABLE,
+} from "cfwreport/constants/treeConstants";
 
 export type HierarchyBankData = {
   hierarchyBank: HierarchyBankModel;
@@ -63,7 +66,7 @@ export default class HierarchyBankState extends BaseState<
    * @param hierarchyName Nombre que se componente <categoria>/<id> -> CM01/EZTEST
    * @param account Array de cuentas
    */
-  public async ReadHierarchy(hierarchyName: string) {
+  public async readHierarchy(hierarchyName: string) {
     let hierarchyId = hierarchyName.split("/")[1];
     let hierarchyCategory = hierarchyName.split("/")[0];
     let values = await this.service.readHiearchy(
@@ -82,7 +85,7 @@ export default class HierarchyBankState extends BaseState<
   public async processHierarchyWithAccountData(
     hierarchyName: string
   ): Promise<HierarchyBankTree> {
-    await this.ReadHierarchy(hierarchyName);
+    await this.readHierarchy(hierarchyName);
 
     this.getData().hierarchyBankAccount = new HierarchyBankAccountModel(
       this.getData().hierarchyBank.getData(),
@@ -98,6 +101,23 @@ export default class HierarchyBankState extends BaseState<
 
     this.updateModel();
     return this.getHierarchyTreeData();
+  }
+  /**
+   * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía.
+   * Para ganar en velocidad los datos los añadiré directamente a la jerarquía que se usa en los controles,
+   * porque es un nivel que no existe en la jerarquía de bancos
+   * @param hierPath Path del nivel de jerarquía donde esta la cuenta.
+   */
+  public async processAddPlvHierarchy(hierPath: string): Promise<string> {
+    let valuesModel = this.getModel().getProperty(hierPath);
+    let filterValues = this.ownerComponent.getFiltersValues();
+
+    await this.ownerComponent.accountBankState.readAccountDataPlv({
+      bank_account: valuesModel[FIELDS_TREE_ACCOUNT.NODE_VALUE],
+      ...filterValues,
+    });
+
+    return hierPath;
   }
   /**
    * Limpieza de los modelos de datos

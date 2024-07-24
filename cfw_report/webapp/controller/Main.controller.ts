@@ -10,11 +10,7 @@ import { ValueState } from "sap/ui/core/library";
 import FlexBox from "sap/m/FlexBox";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
-import {
-  FiltersQuery,
-  HierarchySelectViewModel,
-  HierarchyTree,
-} from "cfwreport/types/types";
+import { FiltersQuery, HierarchySelectViewModel } from "cfwreport/types/types";
 import DateFormat from "cfwreport/utils/dateFormat";
 import NavContainer from "sap/m/NavContainer";
 import { NAVIGATION_ID } from "cfwreport/constants/navigation";
@@ -32,7 +28,7 @@ import CustomData from "sap/ui/core/CustomData";
 import ObjectStatus from "sap/m/ObjectStatus";
 import TreeTable from "sap/ui/table/TreeTable";
 import Text from "sap/m/Text";
-import { AccountsData } from "cfwreport/model/accountBankModel";
+import { AccountsData } from "cfwreport/types/accountBankTypes";
 import { FieldCatalogTree } from "cfwreport/types/types";
 import Label from "sap/m/Label";
 import Column from "sap/ui/table/Column";
@@ -149,6 +145,15 @@ export default class Main extends BaseController {
         }
       }
     }
+
+    // Se pasan los filtros internos de la filterbar
+    let internalValues = this._sfb.getFilterData() as any;
+    filterValues.displayCurrency = internalValues.p_displaycurrency;
+    filterValues.company_code = [];
+    internalValues.company_code.items.forEach((item: any) => {
+      filterValues.company_code.push(item.key as string);
+    });
+
     this.getOwnerComponent().setFiltersValues(filterValues);
   }
   /**
@@ -688,14 +693,10 @@ export default class Main extends BaseController {
           },
           press(oEvent: any) {
             let oRow = oEvent.getSource().getParent();
-            let sPath = oRow.getBindingContext(statePath).getPath() as string;
 
             if (statePath === STATE_PATH.BANK)
               that._bankTreeViewController.processAddPlanningLevelData([
-                that
-                  .getOwnerComponent()
-                  .hierarchyBankState.getModel()
-                  .getProperty(sPath) as HierarchyTree,
+                oRow.getBindingContext(statePath).getPath() as string,
               ]);
           },
         }).addStyleClass("sapUiTinyMarginEnd"),

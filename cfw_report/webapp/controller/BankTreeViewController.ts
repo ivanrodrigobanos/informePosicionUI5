@@ -8,11 +8,12 @@ import View from "sap/ui/core/mvc/View";
 import TreeTable from "sap/ui/table/TreeTable";
 import {
   CUSTOM_DATA,
+  FIELDS_TREE_INTERNAL,
   NUMBER_FIX_FIELDS,
 } from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import Button from "sap/m/Button";
-import { HierarchysTree } from "cfwreport/types/types";
+import { HierarchyTree } from "cfwreport/types/types";
 
 export default class BankTreeViewController extends BaseStateSimple {
   private _bankTreeTable: TreeTable;
@@ -196,10 +197,43 @@ export default class BankTreeViewController extends BaseStateSimple {
   }
   /**
    * Proceso para añadir los datos de nivel de tesoreria
-   * @param values
+   * @param paths
    */
-  processAddPlanningLevelData(values: HierarchysTree) {
-    console.log(values);
+  processAddPlanningLevelData(paths: string[]) {
+    paths.forEach((path) => {
+      // Se informa el loader en el botón pulsado
+      this.setLoadingPath(path, true);
+
+      this.ownerComponent.hierarchyBankState
+        .processAddPlvHierarchy(path)
+        .then((response) => {
+          this.setLoadingPath(path, false);
+        })
+        .catch(() => {
+          this.setLoadingPath(path, false);
+        });
+    });
+  }
+  /**
+   * Devuelve los valores a partir de un path
+   * @param path
+   * @returns
+   */
+  public getValuesFromPath(path: string): HierarchyTree {
+    return this.ownerComponent.hierarchyBankState
+      .getModel()
+      .getProperty(path) as HierarchyTree;
+  }
+  /**
+   * Pone un path de la jerarquía con el loading
+   * @param path
+   * @param loading
+   */
+  private setLoadingPath(path: string, loading: boolean) {
+    let value = this.getValuesFromPath(path);
+
+    value[FIELDS_TREE_INTERNAL.LOADING_VALUES] = loading;
+    this.ownerComponent.hierarchyBankState.getModel().setProperty(path, value);
   }
 
   /**

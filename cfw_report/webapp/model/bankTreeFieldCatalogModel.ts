@@ -4,11 +4,10 @@ import {
   FIELDS_TREE_ACCOUNT,
   ID_BANK_TREE_TABLE,
 } from "cfwreport/constants/treeConstants";
-import { HierarchyBankFlat } from "./hierarchyBankModel";
 import MetadataState from "cfwreport/state/metadataState";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
-import { FieldsCatalogTree } from "cfwreport/types/types";
+import { FieldsCatalogTree, HierarchyFlat } from "cfwreport/types/types";
 import { HorizontalAlign } from "sap/ui/core/library";
 
 export interface PropsBuildFcat {
@@ -33,7 +32,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
     this.fieldsCatalog = [];
   }
   public buildFieldCatalog(
-    rowHierarchyBankFlat?: HierarchyBankFlat,
+    rowHierarchyBankFlat?: HierarchyFlat,
     params?: PropsBuildFcat
   ) {
     this.fieldsCatalog = this.getFixFields(params); // Campos fijos
@@ -183,7 +182,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
    * Campos de importe
    */
   private amountFields(
-    rowHierarchyBankFlat: HierarchyBankFlat,
+    rowHierarchyBankFlat: HierarchyFlat,
     pos: number
   ): FieldsCatalogTree {
     let fieldsCatalog: FieldsCatalogTree = [];

@@ -1,22 +1,7 @@
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import BaseModel from "./baseModel";
 import { HierarchyNodes } from "cfwreport/types/hierarchyTypes";
-
-export type AccountAmount = Record<string, number | string>;
-export interface AccountData extends AccountAmount {
-  bank_account: string;
-  bank_account_partner: string;
-  company_code: string;
-  company_code_name: string;
-  currency: string;
-  house_bank: string;
-  house_bank_account: string;
-  planning_level: string;
-  overdue_amount: number;
-  source: string;
-}
-
-export type AccountsData = AccountData[];
+import { AccountData, AccountsData } from "cfwreport/types/accountBankTypes";
 
 export default class AccountBankModel extends BaseModel<AccountsData> {
   private accountsData: AccountsData;
@@ -46,7 +31,7 @@ export default class AccountBankModel extends BaseModel<AccountsData> {
   public transformData(data: any[]): AccountsData {
     let accountsData: AccountsData = [];
 
-    data.forEach((rowData) => {
+    data.forEach((rowData: any) => {
       let accountData: Partial<AccountData> = {};
 
       Object.keys(rowData).forEach((key) => {

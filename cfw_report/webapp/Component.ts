@@ -106,7 +106,6 @@ export default class Component extends BaseComponent {
       dateTo: dateTo,
       dateToValueState: ValueState.None,
       dateToValueStateMessage: "",
-      holiday_calendar: "",
     };
     this.setFiltersValues(initFilters);
 

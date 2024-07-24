@@ -3,11 +3,19 @@ import AppComponent from "../Component";
 import AccountBankService from "cfwreport/service/accountBankService";
 import AccountBankModel from "cfwreport/model/accountBankModel";
 import ODataModel from "sap/ui/model/odata/v2/ODataModel";
-import { AccountsData } from "cfwreport/model/accountBankModel";
 import { HierarchyNodes } from "cfwreport/types/hierarchyTypes";
+import { AccountsData } from "cfwreport/types/accountBankTypes";
 
+export type FiltersAccountData = {
+  dateFrom: Date;
+  dateTo: Date;
+  company_code: string[];
+  displayCurrency: string;
+  bank_account: string;
+};
 export type AccountValue = {
   accountData: AccountBankModel;
+  accountPlvData: AccountBankModel;
 };
 
 export default class AccountBankState extends BaseState<
@@ -19,7 +27,10 @@ export default class AccountBankState extends BaseState<
       oComponent,
       new AccountBankService(oComponent.getModel() as ODataModel)
     );
-    this.data = { accountData: new AccountBankModel() };
+    this.data = {
+      accountData: new AccountBankModel(),
+      accountPlvData: new AccountBankModel(),
+    };
   }
   /**
    * Metodo que guarda los datos de las cuentas. Estos datos provienen de los
@@ -31,11 +42,29 @@ export default class AccountBankState extends BaseState<
     this.updateModel();
   }
   /**
+   * Lectura de los datos de cuenta con el nivel de tesoreria
+   * @param data Datos de las cuentas
+   */
+  public async readAccountDataPlv(filters: FiltersAccountData) {
+    let values = await this.service.readAccountPlv(filters);
+
+    this.getData().accountPlvData = new AccountBankModel(values);
+    this.updateModel();
+  }
+
+  /**
    * Devuelve los datos de cuentas bancarias
    * @returns Array de cuentas bancarias
    */
   getAccountData(): AccountsData {
     return this.getData().accountData.getData();
+  }
+  /**
+   * Devuelve los datos de cuentas bancarias con niveles de tesoreria
+   * @returns Array de cuentas bancarias
+   */
+  getAccountDataPlv(): AccountsData {
+    return this.getData().accountPlvData.getData();
   }
   /**
    * Devuelve las cuentas unicas dentro de los datos de cuentas bancarias
