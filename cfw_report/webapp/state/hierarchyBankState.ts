@@ -12,6 +12,7 @@ import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel
 import { FieldsCatalogTree, HierarchysFlat } from "cfwreport/types/types";
 import {
   FIELDS_TREE_ACCOUNT,
+  FIELDS_TREE_INTERNAL,
   ID_BANK_TREE_TABLE,
 } from "cfwreport/constants/treeConstants";
 
@@ -108,14 +109,23 @@ export default class HierarchyBankState extends BaseState<
    * porque es un nivel que no existe en la jerarquía de bancos
    * @param hierPath Path del nivel de jerarquía donde esta la cuenta.
    */
-  public async processAddPlvHierarchy(hierPath: string): Promise<string> {
+  public async addPlvHierarchyFromPath(hierPath: string): Promise<string> {
     let valuesModel = this.getModel().getProperty(hierPath);
     let filterValues = this.ownerComponent.getFiltersValues();
 
-    await this.ownerComponent.accountBankState.readAccountDataPlv({
-      bank_account: valuesModel[FIELDS_TREE_ACCOUNT.NODE_VALUE],
+    let values = await this.ownerComponent.accountBankState.readAccountDataPlv({
+      bank_account: [valuesModel[FIELDS_TREE_ACCOUNT.NODE_VALUE]],
       ...filterValues,
     });
+    if (values.length > 0) {
+      let rowsHierarchy =
+        this.getData().hierarchyBankAccount.buildHierarchyPlv(values);
+      valuesModel.accounts = rowsHierarchy;
+      valuesModel[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false; // No se puede volver a buscar
+
+      this.getModel().setProperty(hierPath, valuesModel);
+      this.updateModel();
+    }
 
     return hierPath;
   }

@@ -8,7 +8,7 @@ import Menu from "sap/m/table/columnmenu/Menu";
 import ActionItem from "sap/m/table/columnmenu/ActionItem";
 import { ValueState } from "sap/ui/core/library";
 import FlexBox from "sap/m/FlexBox";
-import { QUERY_MODEL } from "cfwreport/constants/models";
+import { MESSAGE_MODEL, QUERY_MODEL } from "cfwreport/constants/models";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import { FiltersQuery, HierarchySelectViewModel } from "cfwreport/types/types";
 import DateFormat from "cfwreport/utils/dateFormat";
@@ -42,7 +42,6 @@ import {
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
 import { FIELDS_TREE_ACCOUNT } from "cfwreport/constants/treeConstants";
-import MessageState from "cfwreport/state/messageState";
 import Conversion from "cfwreport/utils/conversion";
 import Formatters from "cfwreport/utils/formatters";
 import HierarchyBankState from "cfwreport/state/hierarchyBankState";
@@ -61,45 +60,50 @@ export default class Main extends BaseController {
   private _popOverHierarchySelect: Popover;
   private _popOverChangeBankHier: Popover;
   private _bankTreeTable: TreeTable;
-  private _messageState: MessageState;
   private _popOverMessagesApp: Popover;
   private _btnShowMessageAppRaw: Button;
-  private _btnShowMessageAppTree: Button;
+  private _btnShowMsgAppBankTree: Button;
   private _filterBarValuesChanged: boolean;
   private _bankTreeNodeValueColumnMenu: Menu;
 
-  public onInit(): void {
-    this._bankTreeViewController = new BankTreeViewController(
-      this.getOwnerComponent(),
-      this.byId("BankTreeTable") as TreeTable,
-      this.getView() as View
-    );
-
+  public async onInit(): Promise<void> {
     this._sfb = this.byId("SFBQuery") as SmartFilterBar;
     this._st = this.byId("SFTQuery") as SmartTable;
     this._navContainter = this.byId("navContainer") as NavContainer;
     this._bankTreeTable = this.byId("BankTreeTable") as TreeTable;
 
+    // Inicializacion de componentes, como popover
+    await this._initComponents();
+
     this._btnShowMessageAppRaw = this.byId("btnShowMessageAppRaw") as Button;
-    this._btnShowMessageAppTree = this.byId("btnShowMessageAppTree") as Button;
+    this._btnShowMsgAppBankTree = this.byId("btnShowMsgAppBankTree") as Button;
 
     this.setModel(
       this.getOwnerComponent().hierarchyBankState.getModel(),
-      STATE_PATH.BANK
+      STATE_PATH.HIERARCHY_BANK
     );
     this.setModel(
       this.getOwnerComponent().accountBankState.getModel(),
-      "accountBankState"
+      STATE_PATH.ACCOUNT_BANK
     );
-    this._messageState = new MessageState(
-      this.getOwnerComponent(),
-      this.getView() as View
+    this.setModel(
+      this.getOwnerComponent().messageState.getModel(),
+      MESSAGE_MODEL
     );
 
     // Controla si se han modificado los valores de los filtros
     this._filterBarValuesChanged = true;
 
+    this._bankTreeViewController = new BankTreeViewController(
+      this.getOwnerComponent(),
+      this.byId("BankTreeTable") as TreeTable,
+      this.getView() as View
+    );
     this._bankTreeViewController.initPropsTreeTable();
+    this._bankTreeViewController.setPopOverMessageApp(this._popOverMessagesApp);
+    this._bankTreeViewController.setBtnShowMessageApp(
+      this._btnShowMsgAppBankTree
+    );
   }
 
   /**
@@ -146,14 +150,6 @@ export default class Main extends BaseController {
       }
     }
 
-    // Se pasan los filtros internos de la filterbar
-    let internalValues = this._sfb.getFilterData() as any;
-    filterValues.displayCurrency = internalValues.p_displaycurrency;
-    filterValues.company_code = [];
-    internalValues.company_code.items.forEach((item: any) => {
-      filterValues.company_code.push(item.key as string);
-    });
-
     this.getOwnerComponent().setFiltersValues(filterValues);
   }
   /**
@@ -189,7 +185,7 @@ export default class Main extends BaseController {
    * @param event
    */
   public onBeforeRebindTable(event: any) {
-    this._messageState.clearMessage();
+    this.getOwnerComponent().messageState.clearMessage();
 
     // Procesos antes de la lectura de datos
     this.preAccountProcessLoadData();
@@ -226,14 +222,12 @@ export default class Main extends BaseController {
 
         this.getOwnerComponent().accountBankState.setAccountData(modelValue);
       } else {
-        this._messageState.AddErrorMessage(
+        this.getOwnerComponent().messageState.AddErrorMessage(
           this.geti18nResourceBundle().getText(
             "accountDataTable.errorGetService"
           ) as string
         );
-        this.showMessageApp(this._btnShowMessageAppRaw)
-          .then(() => {})
-          .catch(() => {});
+        this._popOverMessagesApp.openBy(this._btnShowMessageAppRaw);
       }
       this.postAccountProcessLoadData();
     });
@@ -244,7 +238,7 @@ export default class Main extends BaseController {
    * @param event
    */
   public async showHierarchySelect(event: any): Promise<void> {
-    this._messageState.clearMessage();
+    this.getOwnerComponent().messageState.clearMessage();
 
     let btnShowHierarchy = event.getSource() as Button;
     this._popOverHierarchySelect ??= await (<Promise<Popover>>this.loadFragment(
@@ -369,16 +363,14 @@ export default class Main extends BaseController {
    * @param navigate Navega a la vista de jerarquía
    */
   public processBuildBankHier(IDHierarchy: string, navigate: boolean) {
-    this._messageState.clearMessage();
+    this.getOwnerComponent().messageState.clearMessage();
 
     this._bankTreeViewController.processBuildBankHier(
       IDHierarchy,
       this._filterBarValuesChanged,
       () => {},
       () => {
-        this.showMessageApp(this._btnShowMessageAppTree)
-          .then(() => {})
-          .catch(() => {});
+        this._popOverMessagesApp.openBy(this._btnShowMsgAppBankTree);
       }
     );
 
@@ -478,7 +470,7 @@ export default class Main extends BaseController {
         .hierarchyBankState.getModel()
         .getProperty(oContext.sPath as string) as FieldCatalogTree;
 
-      statePath = STATE_PATH.BANK;
+      statePath = STATE_PATH.HIERARCHY_BANK;
     }
 
     return new Column(sId, {
@@ -503,21 +495,10 @@ export default class Main extends BaseController {
    * Muestra los mensajes de aplicación desde las vistas
    * @param event
    */
-  public async onShowMessageApp(event: any) {
-    await this.showMessageApp(event.getSource() as Button);
+  public onShowMessageApp(event: any) {
+    this._popOverMessagesApp.openBy(event.getSource() as Button);
   }
-  /**
-   * Muestra los mensajes de la aplicación
-   * @param event
-   */
-  public async showMessageApp(button: Button): Promise<void> {
-    this._popOverMessagesApp ??= await (<Promise<Popover>>this.loadFragment({
-      id: this.getView()?.getId() as string,
-      name: "cfwreport.fragment.MessageApp",
-    }));
 
-    this._popOverMessagesApp.openBy(button);
-  }
   /**
    * Expande el primer nivel del arbol
    */
@@ -586,6 +567,7 @@ export default class Main extends BaseController {
           this._bankTreeTable
         ) as Menu;
   }
+
   /**
    * Devuelve la clave el id interno de un objeto
    * @param oControl
@@ -599,9 +581,13 @@ export default class Main extends BaseController {
    * Botón "Ir" de la smartfilterbar y botón refrescar en la toolbar de las dos tablas
    */
   private preAccountProcessLoadData() {
+    // Actualizo los filtros internos(sociedad o moneda) en el modelo de filtros.
+    this.updateInternalFilterModel();
     // Solo si los filtros cambian se limpia el modelo, de esta manera no hay refrescos innecesarios en la tabla
-    if (this._filterBarValuesChanged)
+    if (this._filterBarValuesChanged) {
       this.getOwnerComponent().accountBankState.clearModelValue();
+      this.getOwnerComponent().hierarchyBankState.clearModelValue();
+    }
 
     // Se mira si la jerarquía ya ha sido mostrada. Si es así, se inician procesos
     if (
@@ -694,10 +680,11 @@ export default class Main extends BaseController {
           press(oEvent: any) {
             let oRow = oEvent.getSource().getParent();
 
-            if (statePath === STATE_PATH.BANK)
+            if (statePath === STATE_PATH.HIERARCHY_BANK) {
               that._bankTreeViewController.processAddPlanningLevelData([
                 oRow.getBindingContext(statePath).getPath() as string,
               ]);
+            }
           },
         }).addStyleClass("sapUiTinyMarginEnd"),
         new Text({
@@ -1072,5 +1059,32 @@ export default class Main extends BaseController {
           item.setIcon("sap-icon://accept");
         else item.setIcon("");
       });
+  }
+  /**
+   * Inicialización de componentes
+   */
+  private async _initComponents() {
+    this._popOverMessagesApp ??= await (<Promise<Popover>>this.loadFragment({
+      id: this.getView()?.getId() as string,
+      name: "cfwreport.fragment.MessageApp",
+    }));
+  }
+  /**
+   * Informo los filtros internos de la smartfilterbar al modelo propio de filtros.
+   * Los filtros internos son los de sociedad o moneda, que los gestiona internamente la smartfilterbar
+   *
+   */
+  private updateInternalFilterModel() {
+    let filterValues = this.getOwnerComponent().getFiltersValues();
+
+    let internalValues = this._sfb.getFilterData() as any;
+    filterValues.displayCurrency = internalValues.p_displaycurrency;
+    filterValues.company_code = [];
+    if (internalValues.company_code)
+      internalValues.company_code.items.forEach((item: any) => {
+        filterValues.company_code.push(item.key as string);
+      });
+
+    this.getOwnerComponent().setFiltersValues(filterValues);
   }
 }

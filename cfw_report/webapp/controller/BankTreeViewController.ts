@@ -6,13 +6,14 @@ import SelectionController from "sap/m/p13n/SelectionController";
 import ColumnWidthController from "sap/m/table/ColumnWidthController";
 import View from "sap/ui/core/mvc/View";
 import TreeTable from "sap/ui/table/TreeTable";
+import Button from "sap/m/Button";
+import Popover from "sap/m/Popover";
 import {
   CUSTOM_DATA,
   FIELDS_TREE_INTERNAL,
   NUMBER_FIX_FIELDS,
 } from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
-import Button from "sap/m/Button";
 import { HierarchyTree } from "cfwreport/types/types";
 
 export default class BankTreeViewController extends BaseStateSimple {
@@ -20,7 +21,8 @@ export default class BankTreeViewController extends BaseStateSimple {
   private _bankTreeMDHInitialWidth: Record<string, string>;
   private _bankTreeMetadataHelper: MetadataHelper;
   private _view: View;
-  private _btnShowMessageAppTree: Button;
+  private _btnShowMsgApp: Button;
+  private _popOverMessagesApp: Popover;
 
   constructor(oComponent: AppComponent, treeTable: TreeTable, view: View) {
     super(oComponent);
@@ -28,9 +30,7 @@ export default class BankTreeViewController extends BaseStateSimple {
     this._bankTreeMDHInitialWidth = {};
     this.setTreeTable(treeTable);
     this.setView(view);
-    this._btnShowMessageAppTree = this._view.byId(
-      "btnShowMessageAppTree"
-    ) as Button;
+    // this._btnShowMsgApp = this._view.byId("btnShowMsgAppBankTree") as Button;
   }
   public setView(view: View) {
     this._view = view;
@@ -40,6 +40,12 @@ export default class BankTreeViewController extends BaseStateSimple {
   }
   public getTreeTable(): TreeTable {
     return this._bankTreeTable;
+  }
+  public setPopOverMessageApp(popover: Popover) {
+    this._popOverMessagesApp = popover;
+  }
+  public setBtnShowMessageApp(button: Button) {
+    this._btnShowMsgApp = button;
   }
   public initPropsTreeTable() {
     this._bankTreeTable.setFixedColumnCount(NUMBER_FIX_FIELDS); // Campos fijos en la jerarquía del arbol
@@ -200,19 +206,51 @@ export default class BankTreeViewController extends BaseStateSimple {
    * @param paths
    */
   processAddPlanningLevelData(paths: string[]) {
+    this.ownerComponent.messageState.clearMessage();
+    let promises: Promise<any>[] = [];
+    /*let xx = [
+      "/hierarchyBankAccount/hierarchyTree/accounts/0/accounts/1/accounts/0",
+      "/hierarchyBankAccount/hierarchyTree/accounts/0/accounts/1/accounts/1",
+    ];*/
     paths.forEach((path) => {
       // Se informa el loader en el botón pulsado
       this.setLoadingPath(path, true);
 
-      this.ownerComponent.hierarchyBankState
-        .processAddPlvHierarchy(path)
+      promises.push(
+        this.ownerComponent.hierarchyBankState.addPlvHierarchyFromPath(path)
+      );
+
+      /*this.ownerComponent.hierarchyBankState
+        .addPlvHierarchyFromPath(path)
         .then((response) => {
-          this.setLoadingPath(path, false);
+          this.setLoadingPath(response, false);
         })
         .catch(() => {
           this.setLoadingPath(path, false);
-        });
+          this.ownerComponent.messageState.AddErrorMessage(
+            this.ownerComponent
+              .getI18nBundle()
+              .getText("bankAccountTree.msgErrorServicePlv") as string
+          );
+        });*/
     });
+    Promise.all(promises)
+      .then((response) => {
+        response.forEach((value) => {
+          this.setLoadingPath(value as string, false);
+        });
+      })
+      .catch(() => {
+        paths.forEach((path) => {
+          this.setLoadingPath(path, false);
+
+          this.ownerComponent.messageState.AddErrorMessage(
+            this.ownerComponent
+              .getI18nBundle()
+              .getText("bankAccountTree.msgErrorServicePlv") as string
+          );
+        });
+      });
   }
   /**
    * Devuelve los valores a partir de un path

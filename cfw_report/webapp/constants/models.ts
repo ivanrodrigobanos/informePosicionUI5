@@ -8,4 +8,4 @@ export const QUERY_MODEL = {
   LOADING_HIER_PROCESS: "/loadingHierProcess",
   HIERARCHY_SHOWN: "/hierarchyShown",
 };
-export const MESSAGE_MODEL = "messageApp";
+export const MESSAGE_MODEL = "messageState";

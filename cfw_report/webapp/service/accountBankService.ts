@@ -29,17 +29,25 @@ export default class AccountBankService extends BaseService {
         DateFormat.convertUTCDateToLocalDate(filterValues.dateFrom)
       ),
       new Filter(
-        "p_keydate",
+        "p_enddate",
         FilterOperator.EQ,
-        DateFormat.convertUTCDateToLocalDate(filterValues.dateFrom)
+        DateFormat.convertUTCDateToLocalDate(filterValues.dateTo)
       ),
       new Filter(
         "p_displaycurrency",
         FilterOperator.EQ,
         filterValues.displayCurrency
       ),
-      new Filter("bank_account", FilterOperator.EQ, filterValues.bank_account),
     ];
+    filterValues.bank_account.forEach((row) => {
+      filtersService.push(new Filter("bank_account", FilterOperator.EQ, row));
+    });
+
+    if (filterValues.source)
+      filtersService.push(
+        new Filter("source", FilterOperator.EQ, filterValues.source)
+      );
+
     filterValues.company_code.forEach((company) => {
       filtersService.push(
         new Filter("company_code", FilterOperator.EQ, company)

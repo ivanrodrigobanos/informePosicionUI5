@@ -11,11 +11,11 @@ export type FiltersAccountData = {
   dateTo: Date;
   company_code: string[];
   displayCurrency: string;
-  bank_account: string;
+  bank_account: string[];
+  source?: string;
 };
 export type AccountValue = {
   accountData: AccountBankModel;
-  accountPlvData: AccountBankModel;
 };
 
 export default class AccountBankState extends BaseState<
@@ -29,7 +29,6 @@ export default class AccountBankState extends BaseState<
     );
     this.data = {
       accountData: new AccountBankModel(),
-      accountPlvData: new AccountBankModel(),
     };
   }
   /**
@@ -45,11 +44,10 @@ export default class AccountBankState extends BaseState<
    * Lectura de los datos de cuenta con el nivel de tesoreria
    * @param data Datos de las cuentas
    */
-  public async readAccountDataPlv(filters: FiltersAccountData) {
-    let values = await this.service.readAccountPlv(filters);
-
-    this.getData().accountPlvData = new AccountBankModel(values);
-    this.updateModel();
+  public readAccountDataPlv(
+    filters: FiltersAccountData
+  ): Promise<AccountsData> {
+    return this.service.readAccountPlv(filters);
   }
 
   /**
@@ -58,13 +56,6 @@ export default class AccountBankState extends BaseState<
    */
   getAccountData(): AccountsData {
     return this.getData().accountData.getData();
-  }
-  /**
-   * Devuelve los datos de cuentas bancarias con niveles de tesoreria
-   * @returns Array de cuentas bancarias
-   */
-  getAccountDataPlv(): AccountsData {
-    return this.getData().accountPlvData.getData();
   }
   /**
    * Devuelve las cuentas unicas dentro de los datos de cuentas bancarias

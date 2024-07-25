@@ -1,16 +1,27 @@
-import BaseStateSimple from "./baseStateSimple";
+import { ButtonType } from "sap/m/library";
+import BaseStateModel from "./baseStateModel";
 import AppComponent from "../Component";
-import View from "sap/ui/core/mvc/View";
 import MessageType from "sap/ui/core/message/MessageType";
-import Message from "sap/ui/core/message/Message";
-import Messaging from "sap/ui/core/Messaging";
+import MessageModel from "cfwreport/model/messageModel";
 
-export default class MessageState extends BaseStateSimple {
-  private view: View;
-  constructor(oComponent: AppComponent, view: View) {
+export type MessageData = {
+  messages: MessageModel;
+  showMessage: boolean;
+  highestSeverityType: ButtonType;
+  highestSeverityNumber: number;
+  highestSeverityIcon: string;
+};
+export default class MessageState extends BaseStateModel<MessageData> {
+  constructor(oComponent: AppComponent) {
     super(oComponent);
 
-    this.view = view;
+    this.data = {
+      messages: new MessageModel(),
+      showMessage: false,
+      highestSeverityType: ButtonType.Neutral,
+      highestSeverityNumber: 0,
+      highestSeverityIcon: "",
+    };
   }
   /**
    * Añade un mensaje
@@ -23,13 +34,11 @@ export default class MessageState extends BaseStateSimple {
     message: string,
     additionalText?: string
   ) {
-    const oMessage = new Message({
-      message: message,
-      type: type,
-      additionalText: additionalText ?? "",
-      processor: this.view.getModel(),
-    });
-    Messaging.addMessages(oMessage);
+    this.getData().messages.addMessage(type, message, additionalText);
+    this.getData().showMessage = true;
+    this.determineHighestSeverity();
+
+    this.updateModel();
   }
   /**
    * Añade un mensaje informativo
@@ -67,6 +76,36 @@ export default class MessageState extends BaseStateSimple {
    * Limpia todos los mensajes
    */
   public clearMessage() {
-    Messaging.removeAllMessages();
+    this.getData().messages.clearData();
+    this.getData().showMessage = false;
+
+    this.updateModel();
+  }
+  /**
+   * Determina la severidad del boton de mensajes y el numero de mensajes con esa severidad
+   */
+  private determineHighestSeverity() {
+    let highestSeverity = this.getData().messages.getHighestSeverity();
+
+    // Tipo de botón y el icono del mismo
+    if (highestSeverity === MessageType.Error) {
+      this.getData().highestSeverityType = ButtonType.Negative;
+      this.getData().highestSeverityIcon = "sap-icon://error";
+    } else if (highestSeverity === MessageType.Warning) {
+      this.getData().highestSeverityType = ButtonType.Critical;
+      this.getData().highestSeverityIcon = "sap-icon://alert";
+    } else if (
+      highestSeverity === MessageType.Success ||
+      highestSeverity === MessageType.Information
+    ) {
+      this.getData().highestSeverityType = ButtonType.Success;
+      this.getData().highestSeverityIcon = "sap-icon://sys-enter-2";
+    } else {
+      this.getData().highestSeverityType = ButtonType.Neutral;
+      this.getData().highestSeverityIcon = "sap-icon://information";
+    }
+
+    this.getData().highestSeverityNumber =
+      this.getData().messages.getNumberMessageSeverity(highestSeverity);
   }
 }

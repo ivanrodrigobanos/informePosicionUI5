@@ -17,6 +17,7 @@ import MetadataState from "./state/metadataState";
 import Messaging from "sap/ui/core/Messaging";
 import { FILTER_DAYS } from "./constants/smartConstants";
 import TableVisualizationState from "./state/tableVisualizationState";
+import MessageState from "./state/messageState";
 
 /**
  * @namespace cfwreport
@@ -31,6 +32,7 @@ export default class Component extends BaseComponent {
   public queryModel: JSONModel;
   public messageModel: JSONModel;
   public tableVisualizationState: TableVisualizationState;
+  public messageState: MessageState;
 
   /**
    * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
@@ -50,7 +52,7 @@ export default class Component extends BaseComponent {
     this.initQueryModelData();
 
     // Modelo para los mensajes
-    this.setModel(Messaging.getMessageModel(), MESSAGE_MODEL);
+    //this.setModel(Messaging.getMessageModel(), MESSAGE_MODEL);
 
     // Clase encargada de gestionar los metadatos del servicio
     this.metadataState = new MetadataState(this);
@@ -60,6 +62,8 @@ export default class Component extends BaseComponent {
     this.accountBankState = new AccountBankState(this);
     // Clase encargada de gestionar visualizaciones en las tablas
     this.tableVisualizationState = new TableVisualizationState(this);
+    // Clase encarga de gestionar los mensajes
+    this.messageState = new MessageState(this);
   }
 
   /**

@@ -30,9 +30,12 @@
                     </content>
                     <footer>
                         <OverflowToolbar>
-                            <Button icon="sap-icon://message-popup" id="btnShowMessageAppRaw"
-                                text="{= ${messageApp>/}.length }"
-                                visible="{= ${messageApp>/}.length > 0 }"
+                            <Button
+                                id="btnShowMessageAppRaw"
+                                icon="{path:'messageState>/highestSeverityIcon'}"
+                                text="{path:'messageState>/highestSeverityNumber'}"
+                                type="{path:'messageState>/highestSeverityType'}"
+                                visible="{path:'messageState>/showMessage'}"
                                 press="onShowMessageApp" />
                             <ToolbarSpacer />
 
@@ -46,9 +49,11 @@
                     </content>
                     <footer>
                         <OverflowToolbar>
-                            <Button icon="sap-icon://message-popup" id="btnShowMessageAppTree"
-                                text="{= ${messageApp>/}.length }"
-                                visible="{= ${messageApp>/}.length > 0 }"
+                            <Button id="btnShowMsgAppBankTree"
+                                icon="{path:'messageState>/highestSeverityIcon'}"
+                                text="{path:'messageState>/highestSeverityNumber'}"
+                                type="{path:'messageState>/highestSeverityType'}"
+                                visible="{path:'messageState>/showMessage'}"
                                 press="onShowMessageApp" />
                             <ToolbarSpacer />
 

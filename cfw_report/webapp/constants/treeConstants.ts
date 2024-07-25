@@ -1,5 +1,6 @@
 export const STATE_PATH = {
-  BANK: "hierarchyBankState",
+  HIERARCHY_BANK: "hierarchyBankState",
+  ACCOUNT_BANK: "accountBankState",
 };
 
 export const FIELDS_TREE = {
@@ -30,6 +31,7 @@ export const FIELDS_TREE_ACCOUNT = {
   HOUSE_BANK_ACCOUNT_WIDTH: "6rem",
   PLANNING_LEVEL: "planning_level",
   PLANNING_LEVEL_WIDTH: "7rem",
+  PLANNING_LEVEL_NAME: "planning_level_name",
   AMOUNT_DATA_WIDTH: "9rem",
   OVERDUE_AMOUNT: "overdue_amount",
   OVERDUE_AMOUNT_WIDTH: "7rem",

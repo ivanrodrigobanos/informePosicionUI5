@@ -1,5 +1,4 @@
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
-import { AccountData, AccountsData } from "./accountBankModel";
 import BaseHierarchy from "./baseHierarchy";
 import { HierarchyBank, HierarchyBanks } from "./hierarchyBankModel";
 import {
@@ -13,6 +12,7 @@ import {
   HierarchysFlat,
   HierarchyTree,
 } from "cfwreport/types/types";
+import { AccountData, AccountsData } from "cfwreport/types/accountBankTypes";
 
 export type HierarchyBankTree = HierarchyTree;
 
@@ -42,6 +42,27 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     return this.hierarchyTree;
   }
   /**
+   * Contruye la jerarquía de niveles de tesoeria. Esta jerarquía no tiene subniveles
+   * solo se construye los registors planos (como si fuera el último nivel en la jerarquía de cuentas)
+   * @param values
+   */
+  public buildHierarchyPlv(values: AccountsData): HierarchyBankTree {
+    let rowTreeArray: Array<HierarchyBankTree> = [];
+    values.forEach((value) => {
+      let rowTree: HierarchyBankTree = {};
+      this.fillTreeAmountData(rowTree, value); // Campos de importe
+      this.fillTreeAccountData(rowTree, value);
+      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false; // No hay mas subniveles
+      rowTree[FIELDS_TREE_ACCOUNT.NODE_VALUE] =
+        value[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL];
+      rowTree[FIELDS_TREE_ACCOUNT.NODE_NAME] =
+        value[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL_NAME];
+
+      rowTreeArray.push(rowTree);
+    });
+    return rowTreeArray;
+  }
+  /**
    * Construye la jerarquía en formato arbol, nodos anidados, a partir de
    * la jerarquía plana.
    * @returns Jerarquía en formato arbol
@@ -69,7 +90,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param parentRowTree fila del nodo superior
    * @param parentNode Nodo superior
    */
-  fillTreeSubnodes(
+  private fillTreeSubnodes(
     parentRowTree: HierarchyBankTree,
     parentNode: string | number
   ) {
@@ -107,7 +128,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param rowTree Registro del tree table
    * @param rowHierarchyFlat registro de la jerarquía plana
    */
-  fillTreeAccountData(
+  private fillTreeAccountData(
     rowTree: HierarchyBankTree,
     rowHierarchyFlat: HierarchyFlat
   ) {
@@ -123,28 +144,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     this.hierarchyFlat = [];
     this.hierarchyTree = [];
   }
-  /**
-   * Rellena los campos de importe y cabecera que tendrá el importe del registro de la jerarquía plana a la del arbol
-   * @param rowTree Registro del tree table
-   * @param rowHierarchyFlat registro de la jerarquía plana
-   */
-  private fillTreeAmountData(
-    rowTree: HierarchyBankTree,
-    rowHierarchyFlat: HierarchyFlat
-  ) {
-    Object.keys(rowHierarchyFlat)
-      .filter(
-        (rowKey) =>
-          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA) ||
-          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL) ||
-          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_CRITICITY)
-      )
-      .forEach((key) => {
-        rowTree[key] = rowHierarchyFlat[key];
-      });
-    rowTree[FIELDS_TREE_ACCOUNT.CURRENCY] =
-      rowHierarchyFlat[FIELDS_TREE_ACCOUNT.CURRENCY];
-  }
+
   /**
    * Rellena el campo del valor del nodo
    * @param rowTree Registro del tree table
@@ -204,7 +204,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param hierarchyFlatRow Registro de la jerarquía plana
    * @param hierarchyFlat Array de la jerarquía plana
    */
-  addSumUpperNodesFlat(
+  private addSumUpperNodesFlat(
     hierarchyFlatRow: HierarchyFlat,
     hierarchyFlat: HierarchysFlat
   ) {
@@ -248,7 +248,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     }
   }
   /**Añade el nodo superior a la jerarquía plana */
-  addUpperNodeFlat(
+  private addUpperNodeFlat(
     parent_node: string | number,
     hierarchyFlat: HierarchysFlat
   ): number {

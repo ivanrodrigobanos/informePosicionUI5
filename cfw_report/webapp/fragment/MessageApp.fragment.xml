@@ -2,12 +2,12 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
     <MessagePopover
-        items="{messageApp>/}"
+        items="{path:'messageState>/messages/messages'}"
         initiallyExpanded="true">
         <MessageItem
-            type="{messageApp>type}"
-            title="{messageApp>message}"
-            subtitle="{messageApp>additionalText}"
-            description="{messageApp>description}" />
+            type="{messageState>type}"
+            title="{messageState>message}"
+            subtitle="{messageState>additionalText}"
+            description="{messageState>description}" />
     </MessagePopover>
 </core:FragmentDefinition>
