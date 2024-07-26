@@ -8,17 +8,17 @@ export const FIELDS_TREE = {
   NODE_NAME: "node_name",
   NODE_LEVEL: "node_level",
   NODE_TYPE: "node_type",
+  PARENT_NODE: "parent_node",
+  NODE_DISPLAY_ORDER: "node_display_order",
 };
 
 export const FIELDS_TREE_INTERNAL = {
   SHOW_BTN_DETAIL: "showBtnDetail",
   LOADING_VALUES: "loadingValues",
+  CHILD_NODE: "accounts",
 };
 export const FIELDS_TREE_ACCOUNT = {
-  NODE_VALUE: "nodeKey",
   NODE_VALUE_WIDTH: "30rem",
-  NODE_NAME: "nodeName",
-  NODE_NAME_WIDTH: "15rem",
   BANK_ACCOUNT_PARTNER: "bank_account_partner",
   BANK_ACCOUNT_PARTNER_WIDTH: "15rem",
   COMPANY_CODE: "company_code",
@@ -49,6 +49,7 @@ export const NODE_TYPES = {
   ROOT: "R",
   NODE: "N",
   LEAF: "L",
+  PLANNING_LEVEL: "PLV",
 };
 
 export const PREFIX_TEXT_DISP_OPTION = "MENU_TEXT_DISPLAY_";

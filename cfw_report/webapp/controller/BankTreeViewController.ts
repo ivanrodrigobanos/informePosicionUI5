@@ -1,4 +1,4 @@
-import BaseStateSimple from "cfwreport/state/baseStateSimple";
+import TreeTableController from "./TreeTableController";
 import AppComponent from "../Component";
 import MetadataHelper, { MetadataObject } from "sap/m/p13n/MetadataHelper";
 import Engine from "sap/m/p13n/Engine";
@@ -11,45 +11,30 @@ import Popover from "sap/m/Popover";
 import {
   CUSTOM_DATA,
   FIELDS_TREE_INTERNAL,
-  NUMBER_FIX_FIELDS,
 } from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { HierarchyTree } from "cfwreport/types/types";
 
-export default class BankTreeViewController extends BaseStateSimple {
-  private _bankTreeTable: TreeTable;
+export default class BankTreeViewController extends TreeTableController {
+  //private treeTable: TreeTable;
   private _bankTreeMDHInitialWidth: Record<string, string>;
   private _bankTreeMetadataHelper: MetadataHelper;
-  private _view: View;
   private _btnShowMsgApp: Button;
   private _popOverMessagesApp: Popover;
 
   constructor(oComponent: AppComponent, treeTable: TreeTable, view: View) {
-    super(oComponent);
+    super(oComponent, treeTable, view);
 
     this._bankTreeMDHInitialWidth = {};
-    this.setTreeTable(treeTable);
-    this.setView(view);
+
     // this._btnShowMsgApp = this._view.byId("btnShowMsgAppBankTree") as Button;
   }
-  public setView(view: View) {
-    this._view = view;
-  }
-  public setTreeTable(treeTable: TreeTable) {
-    this._bankTreeTable = treeTable;
-  }
-  public getTreeTable(): TreeTable {
-    return this._bankTreeTable;
-  }
+
   public setPopOverMessageApp(popover: Popover) {
     this._popOverMessagesApp = popover;
   }
   public setBtnShowMessageApp(button: Button) {
     this._btnShowMsgApp = button;
-  }
-  public initPropsTreeTable() {
-    this._bankTreeTable.setFixedColumnCount(NUMBER_FIX_FIELDS); // Campos fijos en la jerarquía del arbol
-    this._bankTreeTable.setRowMode("Auto");
   }
   /**
    * Proceso que registra los campos que se van a ver en la personalización de la tabla
@@ -74,21 +59,21 @@ export default class BankTreeViewController extends BaseStateSimple {
 
     this._bankTreeMetadataHelper = new MetadataHelper(fieldsMDH);
 
-    Engine.getInstance().register(this._bankTreeTable, {
+    Engine.getInstance().register(this.treeTable, {
       helper: this._bankTreeMetadataHelper,
       controller: {
         Columns: new SelectionController({
           targetAggregation: "columns",
-          control: this._bankTreeTable,
+          control: this.treeTable,
         }),
         /*Sorter: new SortController({
-						control: this._bankTreeTable
+						control: this.treeTable
 					}),
 					Groups: new GroupController({
-						control: this._bankTreeTable
+						control: this.treeTable
 					}),*/
         ColumnWidth: new ColumnWidthController({
-          control: this._bankTreeTable,
+          control: this.treeTable,
         }),
       },
     });
@@ -107,7 +92,7 @@ export default class BankTreeViewController extends BaseStateSimple {
     if (!oState) {
       return;
     }
-    let tableColumns = this._bankTreeTable.getColumns();
+    let tableColumns = this.treeTable.getColumns();
     let fieldCatalog = this.ownerComponent.hierarchyBankState.getFieldCatalog();
     tableColumns.forEach((column, columnIndex) => {
       let columnKey = this.getKey(column);
@@ -136,8 +121,8 @@ export default class BankTreeViewController extends BaseStateSimple {
           // Si no lo son se mueve la columna de la tabla a la posición del state. Eso si, a la posición
           // se le suma el numero de campos fijos para que se posicione en el sitio correcto.
           if (columnIndex !== stateIndex) {
-            this._bankTreeTable.removeColumn(column);
-            this._bankTreeTable.insertColumn(column, rowFcat.pos);
+            this.treeTable.removeColumn(column);
+            this.treeTable.insertColumn(column, rowFcat.pos);
           }
         }
       }
@@ -178,7 +163,7 @@ export default class BankTreeViewController extends BaseStateSimple {
             QUERY_MODEL.HIERARCHY_SHOWN
           )
         )
-          this._bankTreeTable.expandToLevel(1);
+          this.treeTable.expandToLevel(1);
 
         this.ownerComponent.queryModel.setProperty(
           QUERY_MODEL.LOADING_HIER_PROCESS,
@@ -219,25 +204,12 @@ export default class BankTreeViewController extends BaseStateSimple {
       promises.push(
         this.ownerComponent.hierarchyBankState.addPlvHierarchyFromPath(path)
       );
-
-      /*this.ownerComponent.hierarchyBankState
-        .addPlvHierarchyFromPath(path)
-        .then((response) => {
-          this.setLoadingPath(response, false);
-        })
-        .catch(() => {
-          this.setLoadingPath(path, false);
-          this.ownerComponent.messageState.AddErrorMessage(
-            this.ownerComponent
-              .getI18nBundle()
-              .getText("bankAccountTree.msgErrorServicePlv") as string
-          );
-        });*/
     });
     Promise.all(promises)
       .then((response) => {
-        response.forEach((value) => {
-          this.setLoadingPath(value as string, false);
+        response.forEach((path) => {
+          this.setLoadingPath(path as string, false);
+          this.expandNodeFromPath(path as string);
         });
       })
       .catch(() => {
@@ -280,6 +252,6 @@ export default class BankTreeViewController extends BaseStateSimple {
    * @returns
    */
   private getKey(oControl: any) {
-    return this._view.getLocalId(oControl.getId() as string);
+    return this.view.getLocalId(oControl.getId() as string);
   }
 }

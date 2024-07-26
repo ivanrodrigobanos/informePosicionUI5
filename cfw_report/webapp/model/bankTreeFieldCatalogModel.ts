@@ -1,6 +1,7 @@
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import BaseModel from "./baseModel";
 import {
+  FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
   ID_BANK_TREE_TABLE,
 } from "cfwreport/constants/treeConstants";
@@ -56,7 +57,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
     let pos = 0;
     let fieldsCatalog: FieldsCatalogTree = [
       {
-        name: FIELDS_TREE_ACCOUNT.NODE_VALUE,
+        name: FIELDS_TREE.NODE,
         label: this.i18nBundle.getText(
           "bankAccountTree.labelColumnNode"
         ) as string,

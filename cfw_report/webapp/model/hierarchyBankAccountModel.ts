@@ -5,6 +5,7 @@ import {
   FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
   FIELDS_TREE_INTERNAL,
+  NODE_TYPES,
   SOURCE_TYPES,
 } from "cfwreport/constants/treeConstants";
 import {
@@ -42,25 +43,37 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     return this.hierarchyTree;
   }
   /**
-   * Contruye la jerarquía de niveles de tesoeria. Esta jerarquía no tiene subniveles
-   * solo se construye los registors planos (como si fuera el último nivel en la jerarquía de cuentas)
+   * Añade los datos del planning level de una cuenta a la jerarquía plana.
    * @param values
    */
-  public buildHierarchyPlv(values: AccountsData): HierarchyBankTree {
-    let rowTreeArray: Array<HierarchyBankTree> = [];
-    values.forEach((value) => {
-      let rowTree: HierarchyBankTree = {};
-      this.fillTreeAmountData(rowTree, value); // Campos de importe
-      this.fillTreeAccountData(rowTree, value);
-      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false; // No hay mas subniveles
-      rowTree[FIELDS_TREE_ACCOUNT.NODE_VALUE] =
-        value[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL];
-      rowTree[FIELDS_TREE_ACCOUNT.NODE_NAME] =
-        value[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL_NAME];
+  public addPlvAccount2HierFlat(node: string, values: AccountsData) {
+    let nodeIndex = this.hierarchyFlat.findIndex(
+      (row) => row[FIELDS_TREE.NODE] === node
+    );
 
-      rowTreeArray.push(rowTree);
-    });
-    return rowTreeArray;
+    if (nodeIndex === -1) return;
+
+    // Se añaden los registros que no sean saldo final
+    values
+      .filter((row) => row.source !== SOURCE_TYPES.SALDO_FIN)
+      .forEach((value) => {
+        let rowTree: HierarchyFlat = {};
+        rowTree = this.fillAccountDataInRowHierFlat(value, rowTree); // Campos de importe
+        rowTree[FIELDS_TREE.NODE] = value[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL];
+        rowTree[FIELDS_TREE.NODE_NAME] =
+          value[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL_NAME];
+        rowTree[FIELDS_TREE.PARENT_NODE] = node;
+        rowTree[FIELDS_TREE.NODE_TYPE] = NODE_TYPES.PLANNING_LEVEL;
+        rowTree[FIELDS_TREE.NODE_LEVEL] =
+          Number(this.hierarchyFlat[nodeIndex][FIELDS_TREE.NODE_LEVEL]) + 1;
+        rowTree[FIELDS_TREE.NODE_DISPLAY_ORDER] =
+          this.hierarchyFlat[nodeIndex][FIELDS_TREE.NODE_DISPLAY_ORDER];
+
+        this.hierarchyFlat.push(rowTree);
+      });
+
+    // Se actualiza el importe en el nodo de la cuenta
+    let oldValues = structuredClone(this.hierarchyFlat[nodeIndex]);
   }
   /**
    * Construye la jerarquía en formato arbol, nodos anidados, a partir de
@@ -81,7 +94,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     // Rellena los nodos inferiores
     this.fillTreeSubnodes(rowTree, this.hierarchyFlat[0].node);
 
-    hierarchyTree.accounts = [rowTree];
+    hierarchyTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = [rowTree];
 
     return hierarchyTree;
   }
@@ -98,11 +111,11 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     // Si el nodo padre no tiene nodo inferior ni continuamos.
     if (
       this.hierarchyFlat.findIndex(
-        (rowFlat) => rowFlat.parent_node === parentNode
+        (rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode
       ) !== -1
     ) {
       this.hierarchyFlat
-        .filter((rowFlat) => rowFlat.parent_node === parentNode)
+        .filter((rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode)
         .forEach((rowFlat) => {
           let rowTree: HierarchyBankTree = {};
 
@@ -111,16 +124,16 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
 
           // El tipo nodo L es el nodo de cuenta y no tendrá más niveles por debajo. Además, en este nodo hay que informar
           // los campos de la propia cuenta
-          if (rowFlat.node_type === "L") {
+          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF) {
             this.fillTreeAccountData(rowTree, rowFlat);
           } else {
-            this.fillTreeSubnodes(rowTree, rowFlat.node);
+            this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE]);
           }
 
           rowTreeArray.push(rowTree);
         });
 
-      parentRowTree.accounts = rowTreeArray;
+      parentRowTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = rowTreeArray;
     }
   }
   /**
@@ -154,10 +167,8 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     rowTree: HierarchyBankTree,
     rowHierarchyFlat: HierarchyFlat
   ) {
-    rowTree[FIELDS_TREE_ACCOUNT.NODE_VALUE] =
-      rowHierarchyFlat[FIELDS_TREE.NODE];
-    rowTree[FIELDS_TREE_ACCOUNT.NODE_NAME] =
-      rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
+    rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE.NODE];
+    rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
 
     // Aprovecho para añadir dos campos especificos que se usarán en path de componentes para inicializalos.
     // Alguno de ellos cuando se esta en el nodo de cuenta se cambiará su valor en caso necesario
@@ -183,14 +194,33 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
 
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización
-    return hierarchyFlat.sort((a, b) => {
-      if ((a.node_level as number) < (b.node_level as number)) {
+    return this._sortHierarchyFlat(hierarchyFlat);
+  }
+  /**
+   * Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
+   * su orden de visualización
+   * @param hierarchy
+   * @returns
+   */
+  private _sortHierarchyFlat(hierarchy: HierarchysFlat): HierarchysFlat {
+    return hierarchy.sort((a, b) => {
+      if (
+        (a[FIELDS_TREE.NODE_LEVEL] as number) <
+        (b[FIELDS_TREE.NODE_LEVEL] as number)
+      ) {
         return -1;
-      } else if ((a.node_level as number) === (b.node_level as number)) {
-        if ((a.node_display_order as number) > (b.node_display_order as number))
+      } else if (
+        (a[FIELDS_TREE.NODE_LEVEL] as number) ===
+        (b[FIELDS_TREE.NODE_LEVEL] as number)
+      ) {
+        if (
+          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) >
+          (b[FIELDS_TREE.NODE_DISPLAY_ORDER] as number)
+        )
           return -1;
         else if (
-          (a.node_display_order as number) < (b.node_display_order as number)
+          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) <
+          (b[FIELDS_TREE.NODE_DISPLAY_ORDER] as number)
         )
           return 1;
         else return 0;
@@ -209,11 +239,12 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     hierarchyFlat: HierarchysFlat
   ) {
     let hierarchyFlatUpperIndex = hierarchyFlat.findIndex(
-      (row) => row.node === hierarchyFlatRow.parent_node
+      (row) =>
+        row[FIELDS_TREE.NODE] === hierarchyFlatRow[FIELDS_TREE.PARENT_NODE]
     );
     if (hierarchyFlatUpperIndex === -1)
       hierarchyFlatUpperIndex = this.addUpperNodeFlat(
-        hierarchyFlatRow.parent_node,
+        hierarchyFlatRow[FIELDS_TREE.PARENT_NODE],
         hierarchyFlat
       );
 
@@ -253,7 +284,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     hierarchyFlat: HierarchysFlat
   ): number {
     let hierarchyData = this.hierarchyBank.find(
-      (rowHier) => rowHier.node === parent_node
+      (rowHier: any) => rowHier[FIELDS_TREE.NODE] === parent_node
     ) as HierarchyBank;
 
     if (!hierarchyData) return -1;
@@ -277,7 +308,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     hierarchyFlat: HierarchysFlat
   ): HierarchyFlat {
     let hierarchyData = this.hierarchyBank.find(
-      (rowHier) => rowHier.node === accountData.bank_account
+      (rowHier: any) => rowHier[FIELDS_TREE.NODE] === accountData.bank_account
     ) as HierarchyBank;
 
     // Pasamos los datos de la jeraquía
@@ -286,13 +317,31 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
       newRow[key] = hierarchyData[key as keyof HierarchyBank];
     });
     // Pasamos los datos de la cuenta
-    Object.keys(accountData).forEach((key) => {
+    newRow = this.fillAccountDataInRowHierFlat(accountData, newRow);
+    /*Object.keys(accountData).forEach((key) => {
       newRow[key] = accountData[key as keyof AccountData];
-    });
+    });*/
 
     hierarchyFlat.push(newRow);
 
     // Devuelve la posición insertada
+    return newRow;
+  }
+  /**
+   * Informa los campos de la cuenta en un registro de jerarquía plana
+   * @param accountData
+   * @param hierarchyFlat
+   */
+  private fillAccountDataInRowHierFlat(
+    accountData: AccountData,
+    hierarchyFlat: HierarchyFlat
+  ): HierarchyFlat {
+    let newRow = structuredClone(hierarchyFlat);
+
+    Object.keys(accountData).forEach((key) => {
+      newRow[key] = accountData[key as keyof AccountData];
+    });
+
     return newRow;
   }
 }

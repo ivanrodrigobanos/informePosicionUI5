@@ -36,6 +36,7 @@ import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 
 import {
   CUSTOM_DATA,
+  FIELDS_TREE,
   FIELDS_TREE_INTERNAL,
   ID_BANK_TREE_TABLE,
   PREFIX_TEXT_DISP_OPTION,
@@ -562,7 +563,7 @@ export default class Main extends BaseController {
     if (!this._bankTreeNodeValueColumnMenu)
       this._bankTreeNodeValueColumnMenu =
         this.associateColumnTreeContextualMenu(
-          FIELDS_TREE_ACCOUNT.NODE_VALUE,
+          FIELDS_TREE.NODE,
           this.getOwnerComponent().hierarchyBankState,
           this._bankTreeTable
         ) as Menu;
@@ -645,7 +646,7 @@ export default class Main extends BaseController {
     if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.COMPANY_CODE)
       return this.templateObjectCompany(fieldCatalog.name, statePath);
 
-    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.NODE_VALUE)
+    if (fieldCatalog.name === FIELDS_TREE.NODE)
       return this.templateObjectNodeValue(fieldCatalog.name, statePath);
 
     if (fieldCatalog.type === ColumnType.Amount) {
@@ -669,7 +670,7 @@ export default class Main extends BaseController {
       alignItems: "Center",
       items: [
         new Button({
-          icon: "sap-icon://payment-approval",
+          icon: "sap-icon://expand-all",
           busy: {
             path: `${statePath}>${FIELDS_TREE_INTERNAL.LOADING_VALUES}`,
           },
@@ -691,7 +692,7 @@ export default class Main extends BaseController {
           text: {
             parts: [
               { path: `${statePath}>${name}` },
-              { path: `${statePath}>${FIELDS_TREE_ACCOUNT.NODE_NAME}` },
+              { path: `${statePath}>${FIELDS_TREE.NODE_NAME}` },
             ],
             formatter: function (key: string, text: string) {
               return Formatters.fieldKeyText(
@@ -887,7 +888,7 @@ export default class Main extends BaseController {
     if (idColumn !== "") {
       let textItems = this.buildColumnMenuTextDisplayOptions(
         state,
-        FIELDS_TREE_ACCOUNT.NODE_VALUE,
+        FIELDS_TREE.NODE,
         oTable
       );
       let contextualMenu = new Menu({
