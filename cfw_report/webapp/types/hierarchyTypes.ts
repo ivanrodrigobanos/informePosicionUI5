@@ -8,3 +8,9 @@ export enum TextDisplayOption {
   Text = "Text",
   TextKey = "Text (key)",
 }
+export interface NodeAndPathControl {
+  path: string;
+  node: string;
+}
+export interface NodeDetailInfo extends NodeAndPathControl {}
+export type NodesDetailInfo = NodeDetailInfo[];

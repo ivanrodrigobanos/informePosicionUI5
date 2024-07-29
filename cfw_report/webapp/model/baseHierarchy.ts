@@ -13,6 +13,8 @@ import { AccountData } from "cfwreport/types/accountBankTypes";
 
 export default abstract class BaseHierarchy<T> extends Object {
   private busy: boolean;
+  protected hierarchyFlat: HierarchysFlat;
+
   constructor() {
     super();
     this.busy = false;
@@ -23,6 +25,37 @@ export default abstract class BaseHierarchy<T> extends Object {
 
   public abstract getData(): T;
   public abstract clearData(): void;
+  /**
+   * Determina la criticidad en los nodos en la jerarquía plana
+   * @param hierarchyFlat
+   */
+  public determineCriticNodesHierFlat() {
+    this.hierarchyFlat
+      .filter(
+        (rowHier) =>
+          rowHier[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE ||
+          rowHier[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT
+      )
+      .forEach((rowHier) => {
+        let hierIndex = this.hierarchyFlat.findIndex(
+          (row) => row[FIELDS_TREE.NODE] === rowHier[FIELDS_TREE.NODE]
+        );
+        this.getAmountFields(rowHier)
+          .filter((rowKey) => rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
+          .forEach((rowKey) => {
+            let criticField = rowKey.replace(
+              ENTITY_FIELDS_DATA.AMOUNT_DATA,
+              ENTITY_FIELDS_DATA.AMOUNT_CRITICITY
+            );
+
+            this.hierarchyFlat[hierIndex][criticField] =
+              Number(this.hierarchyFlat[hierIndex][rowKey]) < 0
+                ? CRITICALLY.ERROR
+                : CRITICALLY.NEUTRAL;
+          });
+      });
+  }
+
   /**
    * Rellena los campos de importe y cabecera que tendrá el importe del registro de la jerarquía plana a la del arbol
    * @param rowTree Registro del tree table
@@ -62,15 +95,13 @@ export default abstract class BaseHierarchy<T> extends Object {
    * @param accountOldValue Importe original que se tiene que restar al nodo padre
    * @param accountNewValue Nuevo importe que se sumará al nodo padre
    * @param parentNode Id del nodo padre
-   * @param hierarchyFlat Jerarquía plana
    */
   protected updateAmountParentNodes(
     accountOldValue: HierarchyBankTree,
     accountNewValue: HierarchyBankTree,
-    parentNode: string,
-    hierarchyFlat: HierarchysFlat
+    parentNode: string
   ) {
-    let hierarchyFlatUpperIndex = hierarchyFlat.findIndex(
+    let hierarchyFlatUpperIndex = this.hierarchyFlat.findIndex(
       (row) => row[FIELDS_TREE.NODE] === parentNode
     );
     if (hierarchyFlatUpperIndex !== -1) {
@@ -78,13 +109,13 @@ export default abstract class BaseHierarchy<T> extends Object {
         .filter((rowKey) => rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
         .forEach((rowKey) => {
           // Primero se resta el valor antiguo al nodo padre
-          hierarchyFlat[hierarchyFlatUpperIndex][rowKey] =
-            Number(hierarchyFlat[hierarchyFlatUpperIndex][rowKey]) -
+          this.hierarchyFlat[hierarchyFlatUpperIndex][rowKey] =
+            Number(this.hierarchyFlat[hierarchyFlatUpperIndex][rowKey]) -
             Number(accountOldValue[rowKey]);
 
           // se le añade el nuevo valor
-          hierarchyFlat[hierarchyFlatUpperIndex][rowKey] =
-            Number(hierarchyFlat[hierarchyFlatUpperIndex][rowKey]) +
+          this.hierarchyFlat[hierarchyFlatUpperIndex][rowKey] =
+            Number(this.hierarchyFlat[hierarchyFlatUpperIndex][rowKey]) +
             Number(accountNewValue[rowKey]);
         });
 
@@ -92,48 +123,11 @@ export default abstract class BaseHierarchy<T> extends Object {
       this.updateAmountParentNodes(
         accountOldValue,
         accountNewValue,
-        hierarchyFlat[hierarchyFlatUpperIndex][
+        this.hierarchyFlat[hierarchyFlatUpperIndex][
           FIELDS_TREE.PARENT_NODE
-        ] as string,
-        hierarchyFlat
+        ] as string
       );
     }
-  }
-  /**
-   * Determina la criticidad en los nodos en la jerarquía plana
-   * @param hierarchyFlat
-   */
-  protected determineCriticNodesHierFlat(
-    hierarchyFlat: HierarchysFlat
-  ): HierarchysFlat {
-    let newHierarchy = [...hierarchyFlat];
-
-    hierarchyFlat
-      .filter(
-        (rowHier) =>
-          rowHier[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE ||
-          rowHier[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT
-      )
-      .forEach((rowHier) => {
-        let hierIndex = hierarchyFlat.findIndex(
-          (row) => row[FIELDS_TREE.NODE] === rowHier[FIELDS_TREE.NODE]
-        );
-        this.getAmountFields(rowHier)
-          .filter((rowKey) => rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
-          .forEach((rowKey) => {
-            let criticField = rowKey.replace(
-              ENTITY_FIELDS_DATA.AMOUNT_DATA,
-              ENTITY_FIELDS_DATA.AMOUNT_CRITICITY
-            );
-
-            newHierarchy[hierIndex][criticField] =
-              Number(newHierarchy[hierIndex][rowKey]) < 0
-                ? CRITICALLY.ERROR
-                : CRITICALLY.NEUTRAL;
-          });
-      });
-
-    return newHierarchy;
   }
 
   /**

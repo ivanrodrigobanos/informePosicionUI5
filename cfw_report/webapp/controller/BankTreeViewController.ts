@@ -14,6 +14,7 @@ import {
 } from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { HierarchyTree } from "cfwreport/types/types";
+import { NodeAndPathControl } from "cfwreport/types/hierarchyTypes";
 
 export default class BankTreeViewController extends TreeTableController {
   //private treeTable: TreeTable;
@@ -173,6 +174,17 @@ export default class BankTreeViewController extends TreeTableController {
           QUERY_MODEL.HIERARCHY_SHOWN,
           true
         );
+        // Se mira si hay nodos los cuales se ha mostrado el detalle. Si es así se lanza el proceso
+        // que es el mismo que se haría manualmente para volver a obtener sus valores
+        if (
+          this.ownerComponent.hierarchyBankState.getNodesDetailInfo().length > 0
+        )
+          this.processAddPlanningLevelData(
+            this.ownerComponent.hierarchyBankState
+              .getNodesDetailInfo()
+              .map((row) => row.path)
+          );
+
         if (handlerOnSuccess) handlerOnSuccess();
       })
       .catch(() => {
@@ -207,8 +219,14 @@ export default class BankTreeViewController extends TreeTableController {
         // Una vez finalizado las distintas búsquedas se:recalcula la criticidad en los nodos superior y se regenera el arbol para la TreeTable
         this.ownerComponent.hierarchyBankState.redetermineCriticNodesHierFlat();
         this.ownerComponent.hierarchyBankState.rebuildHierarchyTree();
-        response.forEach((path) => {
-          this.expandNodeFromPath(path as string);
+
+        // Por cada registro procesado se expande su nivel y se guarda que ese nodo se ha expandido
+        response.forEach((rowResponse: NodeAndPathControl) => {
+          this.ownerComponent.hierarchyBankState.addNodeDetailInfo(
+            rowResponse.node,
+            rowResponse.path
+          );
+          this.expandNodeFromPath(rowResponse.path);
         });
       })
       .catch(() => {

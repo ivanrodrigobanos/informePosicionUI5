@@ -14,11 +14,17 @@ import {
   FIELDS_TREE,
   ID_BANK_TREE_TABLE,
 } from "cfwreport/constants/treeConstants";
+import {
+  NodeAndPathControl,
+  NodesDetailInfo,
+} from "cfwreport/types/hierarchyTypes";
+import HierarchyGeneralModel from "cfwreport/model/hierarchyGeneralModel";
 
 export type HierarchyBankData = {
   hierarchyBank: HierarchyBankModel;
   hierarchyBankAccount: HierarchyBankAccountModel;
   treeFieldCatalog: BankTreeFieldCatalogModel;
+  generalInfo: HierarchyGeneralModel;
 };
 
 export default class HierarchyBankState extends BaseState<
@@ -31,6 +37,7 @@ export default class HierarchyBankState extends BaseState<
       new HierarchyBankService(oComponent.getModel() as ODataModel)
     );
     this.data = {
+      generalInfo: new HierarchyGeneralModel(),
       hierarchyBank: new HierarchyBankModel(),
       hierarchyBankAccount: new HierarchyBankAccountModel(),
       treeFieldCatalog: new BankTreeFieldCatalogModel(
@@ -61,6 +68,23 @@ export default class HierarchyBankState extends BaseState<
   public getHierarchyTreeData(): HierarchyBankTree {
     return this.getData().hierarchyBankAccount.getData();
   }
+  /**
+   * Añade el nodo que se ha mostrado información detallada,
+   * actualmente es el de la cuenta.
+   * @param node Id del nodo
+   * @param treePath path del arbol donde se ha hecho el detalle
+   */
+  public addNodeDetailInfo = (node: string, treePath: string) => {
+    this.getData().generalInfo.addNodeDetailInfo(node, treePath);
+  };
+  /**
+   * Devuelve los nodos expandidos con su detalle
+   * @returns
+   */
+  public getNodesDetailInfo = (): NodesDetailInfo => {
+    return this.getData().generalInfo.getNodesDetailInfo();
+  };
+
   /**
    * Obtención de la jerarquía a partir de un nombre de jerarquía y cuentas
    * @param hierarchyName Nombre que se componente <categoria>/<id> -> CM01/EZTEST
@@ -113,35 +137,48 @@ export default class HierarchyBankState extends BaseState<
    * Permite determinar la criticidad en los nodos cuando hay cambios en la jerarquía.
    */
   public redetermineCriticNodesHierFlat() {
-    this.getData().hierarchyBankAccount.redetermineCriticNodesHierFlat();
+    this.getData().hierarchyBankAccount.determineCriticNodesHierFlat();
     this.updateModel();
   }
+
   /**
-   * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía.
-   * Para ganar en velocidad los datos los añadiré directamente a la jerarquía que se usa en los controles,
-   * porque es un nivel que no existe en la jerarquía de bancos
+   * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía a partir del path
+   * de un control
    * @param hierPath Path del nivel de jerarquía donde esta la cuenta.
    */
-  public async addPlvHierarchyFromPath(hierPath: string): Promise<string> {
+  public async addPlvHierarchyFromPath(
+    hierPath: string
+  ): Promise<NodeAndPathControl> {
     let hierarchyValue = this.getModel().getProperty(
       hierPath
     ) as HierarchyBankTree;
 
+    await this.addPlvHierarchyFromAccount(
+      hierarchyValue[FIELDS_TREE.NODE] as string
+    );
+
+    return { node: hierarchyValue[FIELDS_TREE.NODE] as string, path: hierPath };
+  }
+  /**
+   * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía.
+   * @param hierPath Path del nivel de jerarquía donde esta la cuenta.
+   */
+  public async addPlvHierarchyFromAccount(account: string): Promise<string> {
     let filterValues = this.ownerComponent.getFiltersValues();
 
     let valuesPlv =
       await this.ownerComponent.accountBankState.readAccountDataPlv({
-        bank_account: [hierarchyValue[FIELDS_TREE.NODE]],
+        bank_account: [account],
         ...filterValues,
       });
     if (valuesPlv.length > 0) {
       this.getData().hierarchyBankAccount.addPlvAccount2HierFlat(
-        hierarchyValue[FIELDS_TREE.NODE] as string,
+        account,
         valuesPlv
       );
     }
 
-    return hierPath;
+    return account;
   }
 
   /**

@@ -18,7 +18,6 @@ import { AccountData, AccountsData } from "cfwreport/types/accountBankTypes";
 export type HierarchyBankTree = HierarchyTree;
 
 export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBankTree> {
-  private hierarchyFlat: HierarchysFlat;
   private hierarchyTree: HierarchyBankTree;
   private hierarchyBank: HierarchyBanks;
   private accountData: AccountsData;
@@ -31,10 +30,10 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     if (hierarchyBank && accountData) {
       this.hierarchyBank = hierarchyBank;
       this.accountData = accountData;
-      this.hierarchyFlat = this.buildHierarchyFlat();
+      this.buildHierarchyFlat();
       // La criticidad en nodos superiores se determina una vez se ha montado toda la jerarquía y los totales
       // están calculados
-      this.redetermineCriticNodesHierFlat();
+      this.determineCriticNodesHierFlat();
       this.hierarchyTree = this._buildHierarchyTree();
     }
   }
@@ -45,6 +44,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
   public getData(): HierarchyBankTree {
     return this.hierarchyTree;
   }
+
   /**
    * Construye la jerarquía para el arbol borrando los registros previos
    */
@@ -100,16 +100,9 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
       this.updateAmountParentNodes(
         oldValues,
         this.hierarchyFlat[nodeIndex],
-        this.hierarchyFlat[nodeIndex][FIELDS_TREE.PARENT_NODE] as string,
-        this.hierarchyFlat
+        this.hierarchyFlat[nodeIndex][FIELDS_TREE.PARENT_NODE] as string
       );
     }
-  }
-  /**
-   * Permite determinar la criticidad en los nodos cuando hay cambios en la jerarquía.
-   */
-  public redetermineCriticNodesHierFlat() {
-    this.hierarchyFlat = this.determineCriticNodesHierFlat(this.hierarchyFlat);
   }
 
   /**
@@ -238,27 +231,29 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
     rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
   }
-  private buildHierarchyFlat(): HierarchysFlat {
-    let hierarchyFlat: HierarchysFlat = [];
+  private buildHierarchyFlat() {
+    this.hierarchyFlat = [];
 
     this.accountData
       .filter((row) => row.source === SOURCE_TYPES.SALDO_FIN)
       .forEach((row) => {
-        let hierarchyFlatRow = hierarchyFlat.find(
+        let hierarchyFlatRow = this.hierarchyFlat.find(
           (rowHierFlat) => rowHierFlat.node === row.bank_account
         );
 
         // Añade los datos de la cuenta a la jerarquía plana y nos devuelve el indice donde se ha insertado
         if (!hierarchyFlatRow)
-          hierarchyFlatRow = this.addAccountHierarchyFlat(row, hierarchyFlat);
+          hierarchyFlatRow = this.addAccountHierarchyFlat(
+            row,
+            this.hierarchyFlat
+          );
 
-        if (hierarchyFlatRow)
-          this.addSumUpperNodesFlat(hierarchyFlatRow, hierarchyFlat);
+        if (hierarchyFlatRow) this.addSumUpperNodesFlat(hierarchyFlatRow);
       });
 
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización
-    return this._sortHierarchyFlat(hierarchyFlat);
+    this.hierarchyFlat = this._sortHierarchyFlat(this.hierarchyFlat);
   }
   /**
    * Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
@@ -298,23 +293,20 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param hierarchyFlatRow Registro de la jerarquía plana
    * @param hierarchyFlat Array de la jerarquía plana
    */
-  private addSumUpperNodesFlat(
-    hierarchyFlatRow: HierarchyFlat,
-    hierarchyFlat: HierarchysFlat
-  ) {
-    let hierarchyFlatUpperIndex = hierarchyFlat.findIndex(
+  private addSumUpperNodesFlat(hierarchyFlatRow: HierarchyFlat) {
+    let hierarchyFlatUpperIndex = this.hierarchyFlat.findIndex(
       (row) =>
         row[FIELDS_TREE.NODE] === hierarchyFlatRow[FIELDS_TREE.PARENT_NODE]
     );
     if (hierarchyFlatUpperIndex === -1)
       hierarchyFlatUpperIndex = this.addUpperNodeFlat(
-        hierarchyFlatRow[FIELDS_TREE.PARENT_NODE],
-        hierarchyFlat
+        hierarchyFlatRow[FIELDS_TREE.PARENT_NODE]
       );
 
     if (hierarchyFlatUpperIndex !== -1) {
-      hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.CURRENCY] =
-        hierarchyFlatRow[FIELDS_TREE_ACCOUNT.CURRENCY];
+      this.hierarchyFlat[hierarchyFlatUpperIndex][
+        FIELDS_TREE_ACCOUNT.CURRENCY
+      ] = hierarchyFlatRow[FIELDS_TREE_ACCOUNT.CURRENCY];
 
       this.getAmountFields(hierarchyFlatRow)
         .filter(
@@ -325,29 +317,24 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
         )
         .forEach((key) => {
           if (key.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
-            if (hierarchyFlat[hierarchyFlatUpperIndex][key])
-              hierarchyFlat[hierarchyFlatUpperIndex][key] =
-                (hierarchyFlat[hierarchyFlatUpperIndex][key] as number) +
+            if (this.hierarchyFlat[hierarchyFlatUpperIndex][key])
+              this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
+                (this.hierarchyFlat[hierarchyFlatUpperIndex][key] as number) +
                 (hierarchyFlatRow[key] as number);
             else
-              hierarchyFlat[hierarchyFlatUpperIndex][key] =
+              this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
                 hierarchyFlatRow[key];
           else
-            hierarchyFlat[hierarchyFlatUpperIndex][key] = hierarchyFlatRow[key];
+            this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
+              hierarchyFlatRow[key];
         });
 
       // Se vuelve a llamar al método para que sumarize el nodo padre
-      this.addSumUpperNodesFlat(
-        hierarchyFlat[hierarchyFlatUpperIndex],
-        hierarchyFlat
-      );
+      this.addSumUpperNodesFlat(this.hierarchyFlat[hierarchyFlatUpperIndex]);
     }
   }
   /**Añade el nodo superior a la jerarquía plana */
-  private addUpperNodeFlat(
-    parent_node: string | number,
-    hierarchyFlat: HierarchysFlat
-  ): number {
+  private addUpperNodeFlat(parent_node: string | number): number {
     let hierarchyData = this.hierarchyBank.find(
       (rowHier: any) => rowHier[FIELDS_TREE.NODE] === parent_node
     ) as HierarchyBank;
@@ -358,10 +345,10 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     Object.keys(hierarchyData).forEach((key) => {
       newRow[key] = hierarchyData[key as keyof HierarchyBank];
     });
-    hierarchyFlat.push(newRow);
+    this.hierarchyFlat.push(newRow);
 
     // se devuelve el indice del registro insertado
-    return hierarchyFlat.findIndex((row) => row.node === parent_node);
+    return this.hierarchyFlat.findIndex((row) => row.node === parent_node);
   }
   /**
    * Añade el registro de la cuenta y nivel de jerarquía

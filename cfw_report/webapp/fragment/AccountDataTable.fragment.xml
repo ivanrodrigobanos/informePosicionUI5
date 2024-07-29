@@ -17,7 +17,6 @@
         beforeRebindTable="onBeforeRebindTable"
         initialise="onSTInitialised"
         persistencyKey="SmartAccountDataTable"
-        editTogglable="true" app:useSmartToggle="true"
     >
         <sft:customToolbar>
             <OverflowToolbar design="Transparent">
