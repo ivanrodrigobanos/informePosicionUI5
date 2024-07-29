@@ -167,7 +167,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
           label: fieldInfo.label,
           quickinfo: fieldInfo.quickinfo,
           internalID: `${ID_BANK_TREE_TABLE}-${pos}`,
-          allowPersonalization: true,
+          allowPersonalization: false,
           pos: pos++,
           type: ColumnType.Amount,
           width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,

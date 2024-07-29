@@ -193,22 +193,21 @@ export default class BankTreeViewController extends TreeTableController {
   processAddPlanningLevelData(paths: string[]) {
     this.ownerComponent.messageState.clearMessage();
     let promises: Promise<any>[] = [];
-    /*let xx = [
-      "/hierarchyBankAccount/hierarchyTree/accounts/0/accounts/1/accounts/0",
-      "/hierarchyBankAccount/hierarchyTree/accounts/0/accounts/1/accounts/1",
-    ];*/
+
     paths.forEach((path) => {
       // Se informa el loader en el botón pulsado
       this.setLoadingPath(path, true);
-
+      // Se añade la promesa encargada de buscar los datos y añadirlos a la jerarquía plana.
       promises.push(
         this.ownerComponent.hierarchyBankState.addPlvHierarchyFromPath(path)
       );
     });
     Promise.all(promises)
       .then((response) => {
+        // Una vez finalizado las distintas búsquedas se:recalcula la criticidad en los nodos superior y se regenera el arbol para la TreeTable
+        this.ownerComponent.hierarchyBankState.redetermineCriticNodesHierFlat();
+        this.ownerComponent.hierarchyBankState.rebuildHierarchyTree();
         response.forEach((path) => {
-          this.setLoadingPath(path as string, false);
           this.expandNodeFromPath(path as string);
         });
       })

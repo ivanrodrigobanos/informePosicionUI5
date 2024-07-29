@@ -59,3 +59,11 @@ export const SOURCE_TYPES = {
   SALDO_FIN: "SDOVALFIN",
   MOVIMIENTOS: "MOVIMIENTOS",
 };
+
+export const CRITICALLY = {
+  SUCCES: 3,
+  WARNING: 2,
+  ERROR: 1,
+  INFORMATION: 5,
+  NEUTRAL: 0,
+};

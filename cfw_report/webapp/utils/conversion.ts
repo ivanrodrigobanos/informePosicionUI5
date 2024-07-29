@@ -1,3 +1,4 @@
+import { CRITICALLY } from "cfwreport/constants/treeConstants";
 import { ValueState } from "sap/ui/core/library";
 
 export default class Conversion {
@@ -7,10 +8,10 @@ export default class Conversion {
    * @returns Criticidad en formato ValueState
    */
   static criticallyToValueState(criticality: number): ValueState {
-    if (criticality === 3) return ValueState.Success;
-    if (criticality === 2) return ValueState.Warning;
-    if (criticality === 1) return ValueState.Error;
-    if (criticality === 5) return ValueState.Information;
+    if (criticality === CRITICALLY.SUCCES) return ValueState.Success;
+    if (criticality === CRITICALLY.WARNING) return ValueState.Warning;
+    if (criticality === CRITICALLY.ERROR) return ValueState.Error;
+    if (criticality === CRITICALLY.INFORMATION) return ValueState.Information;
     return ValueState.None;
   }
 }

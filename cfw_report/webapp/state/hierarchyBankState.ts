@@ -103,6 +103,20 @@ export default class HierarchyBankState extends BaseState<
     return this.getHierarchyTreeData();
   }
   /**
+   * Regenerado la jerarquía para el arbol a partir de los datos de jerarquía planos.
+   */
+  public rebuildHierarchyTree() {
+    this.getData().hierarchyBankAccount.buildHierarchyTree();
+    this.updateModel();
+  }
+  /**
+   * Permite determinar la criticidad en los nodos cuando hay cambios en la jerarquía.
+   */
+  public redetermineCriticNodesHierFlat() {
+    this.getData().hierarchyBankAccount.redetermineCriticNodesHierFlat();
+    this.updateModel();
+  }
+  /**
    * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía.
    * Para ganar en velocidad los datos los añadiré directamente a la jerarquía que se usa en los controles,
    * porque es un nivel que no existe en la jerarquía de bancos
@@ -125,12 +139,6 @@ export default class HierarchyBankState extends BaseState<
         hierarchyValue[FIELDS_TREE.NODE] as string,
         valuesPlv
       );
-      //hierarchyValue[FIELDS_TREE_INTERNAL.CHILD_NODE] = rowsHierarchy;
-      //hierarchyValue[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false; // No se puede volver a buscar
-
-      //this.getModel().setProperty(hierPath, hierarchyValue);
-
-      this.updateModel();
     }
 
     return hierPath;
