@@ -38,24 +38,9 @@
                     text="{i18n>hierarchySelect.liquidity}"
                     select="handlerSelectHierarchy"
                 />
-                <FlexBox
-                    class="sapUiSmallMarginBegin"
-                    direction="Column"
-                >
-                    <Label
-                        text="{i18n>hierarchySelect.liquidity.label}:"
-                        labelFor="idLiquidityHierarchy"
-                        required="true"
-                    />
-                    <Input
-                        width="100%"
-                        id="idLiquidityHierarchy"
-                        type="Text"
-                        showSuggestion="false"
-                        enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidityEnabled'}"
-                        value="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidity'}"
-                    />
-                </FlexBox>
+                <core:Fragment
+                    fragmentName="cfwreport.fragment.hierarchyLiquidity.ComboLiquidityHierarchy"
+                    type="XML" />
             </FlexBox>
         </FlexBox>
     </Popover>

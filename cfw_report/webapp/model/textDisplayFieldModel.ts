@@ -19,7 +19,7 @@ export default class TextDisplayFieldModel extends BaseModel<TextDisplayField> {
   public getDisplayTypeField(fieldname: string): TextDisplayOption {
     // Si no existe pongo por defecto que solo se ve la clave
     if (!this._data[fieldname])
-      this.setDisplayTypeField(fieldname, TextDisplayOption.TextKey);
+      this.setDisplayTypeField(fieldname, TextDisplayOption.Text);
 
     return this._data[fieldname];
   }

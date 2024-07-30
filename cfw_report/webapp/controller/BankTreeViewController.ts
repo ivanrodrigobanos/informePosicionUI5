@@ -251,6 +251,10 @@ export default class BankTreeViewController extends TreeTableController {
       .getModel()
       .getProperty(path) as HierarchyTree;
   }
+  public applyPersonalization() {
+    //this._bankTreeMetadataHelper
+    debugger;
+  }
   /**
    * Pone un path de la jerarquía con el loading
    * @param path

@@ -4,6 +4,7 @@ import {
   HierarchyCategory,
   HierarchyID,
   HierarchyNodes,
+  ParamsReadHierarchy,
 } from "cfwreport/types/hierarchyTypes";
 import { HierarchyBanks } from "cfwreport/model/hierarchyBankModel";
 import Filter from "sap/ui/model/Filter";
@@ -21,16 +22,27 @@ export default class HierarchyBankService extends BaseService {
    * @param hierarchy_id ID de jerarquía
    * @param hierarchy_category Tipo de jerarquía
    * @param accounts Cuentas a obtener su jerarquía
+   * @param params Parametros para la lectura
    */
   public async readHiearchy(
     hierarchy_id: HierarchyID,
     hierarchy_category: HierarchyCategory,
-    accounts: HierarchyNodes
+    accounts: HierarchyNodes,
+    params?: ParamsReadHierarchy
   ): Promise<HierarchyBanks> {
     let filtersService: Filter[] = [
       new Filter("hierarchy_id", FilterOperator.EQ, hierarchy_id),
       new Filter("hierarchy_category", FilterOperator.EQ, hierarchy_category),
     ];
+
+    if (params && params.include_noasign)
+      filtersService.push(
+        new Filter(
+          "include_noasign",
+          FilterOperator.EQ,
+          params.include_noasign ? "X" : ""
+        )
+      );
 
     accounts.forEach((item) => {
       filtersService.push(new Filter("node", FilterOperator.EQ, item));

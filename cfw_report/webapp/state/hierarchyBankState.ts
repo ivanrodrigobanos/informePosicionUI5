@@ -17,6 +17,7 @@ import {
 import {
   NodeAndPathControl,
   NodesDetailInfo,
+  ParamsReadHierarchy,
 } from "cfwreport/types/hierarchyTypes";
 import HierarchyGeneralModel from "cfwreport/model/hierarchyGeneralModel";
 
@@ -88,15 +89,20 @@ export default class HierarchyBankState extends BaseState<
   /**
    * Obtención de la jerarquía a partir de un nombre de jerarquía y cuentas
    * @param hierarchyName Nombre que se componente <categoria>/<id> -> CM01/EZTEST
+   * @param params Parametros para la lectura
    * @param account Array de cuentas
    */
-  public async readHierarchy(hierarchyName: string) {
+  public async readHierarchy(
+    hierarchyName: string,
+    params?: ParamsReadHierarchy
+  ) {
     let hierarchyId = hierarchyName.split("/")[1];
     let hierarchyCategory = hierarchyName.split("/")[0];
     let values = await this.service.readHiearchy(
       hierarchyId,
       hierarchyCategory,
-      this.ownerComponent.accountBankState.getUniqueBankAccount()
+      this.ownerComponent.accountBankState.getUniqueBankAccount(),
+      params
     );
     this.getData().hierarchyBank = new HierarchyBankModel(values);
     this.updateModel();
@@ -104,12 +110,14 @@ export default class HierarchyBankState extends BaseState<
   /**
    * Proceso de construcción de la jerarquía
    * @param hierarchyName Nombre de la jerarquía
+   * @param params Parametros para la lectura
    * @returns
    */
   public async processHierarchyWithAccountData(
-    hierarchyName: string
+    hierarchyName: string,
+    params?: ParamsReadHierarchy
   ): Promise<HierarchyBankTree> {
-    await this.readHierarchy(hierarchyName);
+    await this.readHierarchy(hierarchyName, params);
 
     this.getData().hierarchyBankAccount = new HierarchyBankAccountModel(
       this.getData().hierarchyBank.getData(),

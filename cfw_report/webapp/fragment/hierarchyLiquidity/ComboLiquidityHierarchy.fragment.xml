@@ -7,24 +7,24 @@
         direction="Column"
     >
         <Label
-            text="{i18n>hierarchySelect.bank.label}:"
-            labelFor="idBankHierarchy"
+            text="{i18n>hierarchySelect.liquidity.label}:"
+            labelFor="idLiquidityHierarchy"
             required="true"
         />
         <ComboBox
-            id="idBankHierarchy"
+            id="idLiquidityHierarchy"
             showSecondaryValues="true"
             filterSecondaryValues="true"
-            selectedKey="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBank'}"
-            enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankEnabled'}"
+            selectedKey="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidity'}"
+            enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidityEnabled'}"
             items="{
-						path: '/dir_bank_hier',
+						path: '/dir_liq_hier',
                         suspended: true,
 						sorter: { path: 'hierarchy_name' }
 					}"
             loadItems="handlerLoadHierDir"
-            valueState="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankValueState'}"
-            valueStateText="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankValueStateText'}"
+            valueState="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidityValueState'}"
+            valueStateText="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidityValueStateText'}"
         >
             <core:ListItem
                 key="{hierarchy}"

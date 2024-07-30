@@ -76,6 +76,56 @@
                     </Collection>
                 </Annotation>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.dir_liq_hierType">
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Datos generales"/>
+                            <PropertyValue Property="ID" String="DGENERALES"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.Identification"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Directorio jerarquías bancos"/>
+                        <PropertyValue Property="TypeNamePlural" String="Directorio jerarquías bancos"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="hierarchy"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="hierarchy"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="hierarchy"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="hierarchy_name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="hierarchy"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="hierarchy_name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_hier_bankType/include_noasign">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_hier_bankType">
                 <Annotation Term="UI.HeaderInfo">
                     <Record>
@@ -122,6 +172,9 @@
                     </Collection>
                 </Annotation>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/currency">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/source">
                 <Annotation Term="Common.Text" Path="source_name">
                     <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
@@ -151,18 +204,6 @@
                         </Record>
                         <Record Type="UI.DataField">
                             <PropertyValue Property="Value" Path="bank_account_partner"/>
-                        </Record>
-                        <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="company_code"/>
-                        </Record>
-                        <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="currency"/>
-                        </Record>
-                        <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="house_bank"/>
-                        </Record>
-                        <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="house_bank_account"/>
                         </Record>
                         <Record Type="UI.DataField">
                             <PropertyValue Property="Value" Path="source"/>

@@ -14,3 +14,7 @@ export interface NodeAndPathControl {
 }
 export interface NodeDetailInfo extends NodeAndPathControl {}
 export type NodesDetailInfo = NodeDetailInfo[];
+
+export interface ParamsReadHierarchy {
+  include_noasign?: boolean;
+}

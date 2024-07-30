@@ -273,7 +273,7 @@ export default class Main extends BaseController {
         hierViewModel.inputIDBankValueState = ValueState.Error;
         hierViewModel.inputIDBankValueStateText =
           this.geti18nResourceBundle().getText(
-            "hierarchySelect.mandatoryBankHier"
+            "hierarchySelect.mandatoryHier"
           ) as string;
       } else {
         if (hierViewModel.inputIDBank === hierViewModel.inputIDBankPrevious) {
@@ -307,7 +307,7 @@ export default class Main extends BaseController {
         hierViewModel.inputIDLiquidityValueState = ValueState.Error;
         hierViewModel.inputIDLiquidityValueStateText =
           this.geti18nResourceBundle().getText(
-            "hierarchySelect.mandatoryBankHier"
+            "hierarchySelect.mandatoryHier"
           ) as string;
       } else {
         if (
@@ -347,7 +347,7 @@ export default class Main extends BaseController {
    * Gestiona el loading de la lectura de jerarquias en el combo
    * @param event
    */
-  public handlerLoadHierBank(event: any) {
+  public handlerLoadHierDir(event: any) {
     // Al inicio de la carga se asocia la función para que se puede filtrar por patron
     event.getSource().setFilterFunction((sTerm: string, oItem: Item): any => {
       return (
@@ -675,6 +675,9 @@ export default class Main extends BaseController {
             path: `${statePath}>${FIELDS_TREE_INTERNAL.LOADING_VALUES}`,
           },
           busyIndicatorSize: "Medium",
+          tooltip: this.getOwnerComponent()
+            .getI18nBundle()
+            .getText("bankAccountTree.btnDetailPlv"),
           visible: {
             path: `${statePath}>${FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL}`,
           },
@@ -1030,6 +1033,8 @@ export default class Main extends BaseController {
 
     let idColumn = this.getIdColumnFromState(state, fieldname);
     (this.byId(idColumn) as Column).setHeaderMenu(columnMenu.getId());
+
+    this._bankTreeViewController.applyPersonalization();
   }
   /**
    * Recupera el Id interno del treetable a partir del nombre de campo y el state

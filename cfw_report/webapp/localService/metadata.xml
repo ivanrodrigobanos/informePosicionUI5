@@ -51,6 +51,13 @@
                 <Property Name="hierarchy_id" Type="Edm.String" MaxLength="42" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
                 <Property Name="hierarchy_type" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Clase jerarquía" sap:quickinfo="Tipo de jerarquía"/>
             </EntityType>
+            <EntityType Name="dir_liq_hierType" sap:label="Directorios de jerarquías de posiciones liquidez" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="hierarchy"/>
+                </Key>
+                <Property Name="hierarchy" Type="Edm.String" Nullable="false" MaxLength="42" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
+                <Property Name="hierarchy_name" Type="Edm.String" MaxLength="50" sap:label="Descripción" sap:quickinfo="Descripción de jerarquía"/>
+            </EntityType>
             <EntityType Name="cfw_hier_bankType" sap:label="Jerarquía de bancos" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="node"/>
@@ -63,14 +70,16 @@
                 <Property Name="hierarchy_id" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
                 <Property Name="hierarchy_category" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Tipo" sap:quickinfo="Subtipos de jerarquía"/>
                 <Property Name="node_display_order" Type="Edm.Int32" sap:label="Orden visualiz.IU" sap:quickinfo="Ordre de visualización IU de nodo"/>
+                <Property Name="include_noasign" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Incl. No Asignados" sap:quickinfo="Incluir no asignados"/>
             </EntityType>
             <EntityType Name="cfw_queryType" sap:label="Informe de posición" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="bank_account"/>
                     <PropertyRef Name="source"/>
                 </Key>
-                <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
+                <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="bank_account_name" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
+                <Property Name="bank_account_name" Type="Edm.String" MaxLength="60" sap:label="Descripción" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
                 <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
                 <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
@@ -182,8 +191,9 @@
                     <PropertyRef Name="bank_account"/>
                     <PropertyRef Name="source"/>
                 </Key>
-                <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
+                <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="bank_account_name" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
+                <Property Name="bank_account_name" Type="Edm.String" MaxLength="60" sap:label="Descripción" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
                 <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
                 <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
@@ -554,6 +564,7 @@
             </Association>
             <EntityContainer Name="cds_xstrcmxui_cash_flow_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx pdf">
                 <EntitySet Name="dir_bank_hier" EntityType="cds_xstrcmxui_cash_flow.dir_bank_hierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="dir_liq_hier" EntityType="cds_xstrcmxui_cash_flow.dir_liq_hierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_hier_bank" EntityType="cds_xstrcmxui_cash_flow.cfw_hier_bankType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query" EntityType="cds_xstrcmxui_cash_flow.cfw_queryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
@@ -870,6 +881,23 @@
                 </Annotation>
             </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/dir_bank_hier" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/dir_liq_hier" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
                         <PropertyValue Property="Deletable" Bool="false"/>
