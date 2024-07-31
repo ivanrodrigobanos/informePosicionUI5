@@ -45,5 +45,6 @@ export interface FieldCatalogTree {
   hAlign: HorizontalAlign;
   allowPersonalization: boolean;
   internalID: string;
+  visible: boolean;
 }
 export type FieldsCatalogTree = FieldCatalogTree[];

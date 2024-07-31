@@ -476,7 +476,7 @@ export default class Main extends BaseController {
 
     return new Column(sId, {
       id: fieldCatalog?.name,
-      visible: true,
+      visible: fieldCatalog.visible,
       width: fieldCatalog.width,
       label: new Label({
         text: fieldCatalog.label,
@@ -1034,7 +1034,9 @@ export default class Main extends BaseController {
     let idColumn = this.getIdColumnFromState(state, fieldname);
     (this.byId(idColumn) as Column).setHeaderMenu(columnMenu.getId());
 
-    this._bankTreeViewController.applyPersonalization();
+    // El refresco que se hace a la tabla hace que la personalización se pierda. Este método
+    // lo vuelve a dejar como estaba.
+    this._bankTreeViewController.applyPersonalizationUpdateTable();
   }
   /**
    * Recupera el Id interno del treetable a partir del nombre de campo y el state

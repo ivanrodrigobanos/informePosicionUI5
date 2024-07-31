@@ -1,32 +1,20 @@
 import TreeTableController from "./TreeTableController";
 import AppComponent from "../Component";
-import MetadataHelper, { MetadataObject } from "sap/m/p13n/MetadataHelper";
-import Engine from "sap/m/p13n/Engine";
-import SelectionController from "sap/m/p13n/SelectionController";
-import ColumnWidthController from "sap/m/table/ColumnWidthController";
 import View from "sap/ui/core/mvc/View";
 import TreeTable from "sap/ui/table/TreeTable";
 import Button from "sap/m/Button";
 import Popover from "sap/m/Popover";
-import {
-  CUSTOM_DATA,
-  FIELDS_TREE_INTERNAL,
-} from "cfwreport/constants/treeConstants";
+import { FIELDS_TREE_INTERNAL } from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { HierarchyTree } from "cfwreport/types/types";
 import { NodeAndPathControl } from "cfwreport/types/hierarchyTypes";
 
 export default class BankTreeViewController extends TreeTableController {
-  //private treeTable: TreeTable;
-  private _bankTreeMDHInitialWidth: Record<string, string>;
-  private _bankTreeMetadataHelper: MetadataHelper;
   private _btnShowMsgApp: Button;
   private _popOverMessagesApp: Popover;
 
   constructor(oComponent: AppComponent, treeTable: TreeTable, view: View) {
     super(oComponent, treeTable, view);
-
-    this._bankTreeMDHInitialWidth = {};
 
     // this._btnShowMsgApp = this._view.byId("btnShowMsgAppBankTree") as Button;
   }
@@ -41,93 +29,15 @@ export default class BankTreeViewController extends TreeTableController {
    * Proceso que registra los campos que se van a ver en la personalización de la tabla
    */
   public registerFieldsEngineBankTree() {
-    let fieldsMDH: MetadataObject[] = [];
-
-    let fieldCatalog =
-      this.ownerComponent.hierarchyBankState.getFixFieldsFieldCatalog();
-    // Solo se leen los campos que tengan permita la personalizacion
-    fieldCatalog
-      .filter((row) => row.allowPersonalization)
-      .forEach((row) => {
-        fieldsMDH.push({
-          key: row.internalID,
-          label: row.label,
-          path: row.name,
-          visible: true,
-        });
-        this._bankTreeMDHInitialWidth[row.name] = row.width;
-      });
-
-    this._bankTreeMetadataHelper = new MetadataHelper(fieldsMDH);
-
-    Engine.getInstance().register(this.treeTable, {
-      helper: this._bankTreeMetadataHelper,
-      controller: {
-        Columns: new SelectionController({
-          targetAggregation: "columns",
-          control: this.treeTable,
-        }),
-        /*Sorter: new SortController({
-						control: this.treeTable
-					}),
-					Groups: new GroupController({
-						control: this.treeTable
-					}),*/
-        ColumnWidth: new ColumnWidthController({
-          control: this.treeTable,
-        }),
-      },
-    });
-
-    Engine.getInstance().attachStateChange(
-      this.handlerBankTreeMDHStateChange.bind(this)
+    this.registerFieldsEngineTree(
+      this.ownerComponent.hierarchyBankState.getFixFieldsFieldCatalog()
     );
   }
-  /**
-   * Gestiona la modificación de los estados de la personalización de la tabla
-   * de jerarquía de bancos.
-   */
-  public handlerBankTreeMDHStateChange(event: any) {
-    const oState = event.getParameter("state");
 
-    if (!oState) {
-      return;
-    }
-    let tableColumns = this.treeTable.getColumns();
-    let fieldCatalog = this.ownerComponent.hierarchyBankState.getFieldCatalog();
-    tableColumns.forEach((column, columnIndex) => {
-      let columnKey = this.getKey(column);
-
-      // Sacamos el nombre interno en el catalogo de campos, ya que en la columna ese campo
-      // se pierde aunque se pase como id en la columna.
-      let internalField = column
-        .getCustomData()
-        .find((row) => row.getKey() === CUSTOM_DATA.INTERNAL_FIELD)
-        ?.getValue();
-
-      // Buscamos el campo en el catalogo para saber si tiene permitida la personalización.
-      let rowFcat = fieldCatalog.find((row) => row.name === internalField);
-      if (rowFcat && rowFcat.allowPersonalization) {
-        // Si la clave de la columna no esta en el estado es que no la quieren ver, en caso contrario la vuelvo a mostrar, aunque
-        // puede ser que ya este en visible.
-        let stateIndex = oState.Columns.findIndex(
-          (row: any) => row.key === columnKey
-        );
-        if (stateIndex === -1) {
-          column.setVisible(false);
-        } else {
-          column.setVisible(true);
-
-          // Si la columna es visible miro si la posición en la tabla y en la del state son la misma.
-          // Si no lo son se mueve la columna de la tabla a la posición del state. Eso si, a la posición
-          // se le suma el numero de campos fijos para que se posicione en el sitio correcto.
-          if (columnIndex !== stateIndex) {
-            this.treeTable.removeColumn(column);
-            this.treeTable.insertColumn(column, rowFcat.pos);
-          }
-        }
-      }
-    });
+  public applyPersonalizationUpdateTable() {
+    this.applyPersonalization(
+      this.ownerComponent.hierarchyBankState.getFieldCatalog()
+    );
   }
   /**
    * Proceso de construcción de la jerarquía de bancos
@@ -251,10 +161,7 @@ export default class BankTreeViewController extends TreeTableController {
       .getModel()
       .getProperty(path) as HierarchyTree;
   }
-  public applyPersonalization() {
-    //this._bankTreeMetadataHelper
-    debugger;
-  }
+
   /**
    * Pone un path de la jerarquía con el loading
    * @param path
@@ -265,14 +172,5 @@ export default class BankTreeViewController extends TreeTableController {
 
     value[FIELDS_TREE_INTERNAL.LOADING_VALUES] = loading;
     this.ownerComponent.hierarchyBankState.getModel().setProperty(path, value);
-  }
-
-  /**
-   * Devuelve la clave el id interno de un objeto
-   * @param oControl
-   * @returns
-   */
-  private getKey(oControl: any) {
-    return this.view.getLocalId(oControl.getId() as string);
   }
 }

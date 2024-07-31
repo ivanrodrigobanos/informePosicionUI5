@@ -1,37 +1,20 @@
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
-import BaseModel from "./baseModel";
+import TreeFieldCatalogModel, { PropsBuildFcat } from "./treeFieldCatalogModel";
 import {
   FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
   ID_BANK_TREE_TABLE,
 } from "cfwreport/constants/treeConstants";
 import MetadataState from "cfwreport/state/metadataState";
-import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
-import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import { FieldsCatalogTree, HierarchyFlat } from "cfwreport/types/types";
+import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import { HorizontalAlign } from "sap/ui/core/library";
 
-export interface PropsBuildFcat {
-  overdueColumnWithValues?: boolean;
-}
-
-export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTree> {
-  private fieldsCatalog: FieldsCatalogTree;
-  private metadataState: MetadataState;
-  private i18nBundle: ResourceBundle;
-
+export default class BankTreeFieldCatalogModel extends TreeFieldCatalogModel {
   constructor(metadataState: MetadataState, i18nBundle: ResourceBundle) {
-    super();
-    this.i18nBundle = i18nBundle;
-    this.metadataState = metadataState;
-    this.fieldsCatalog = [];
+    super(metadataState, i18nBundle);
   }
-  public getData(): FieldsCatalogTree {
-    return this.fieldsCatalog;
-  }
-  public clearData(): void {
-    this.fieldsCatalog = [];
-  }
+
   public buildFieldCatalog(
     rowHierarchyBankFlat?: HierarchyFlat,
     params?: PropsBuildFcat
@@ -70,6 +53,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         type: ColumnType.Text,
         width: FIELDS_TREE_ACCOUNT.NODE_VALUE_WIDTH,
         hAlign: HorizontalAlign.Begin,
+        visible: true,
       },
     ];
     pos++;
@@ -102,6 +86,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         type: ColumnType.Text,
         width: FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_PARTNER_WIDTH,
         hAlign: HorizontalAlign.Begin,
+        visible: true,
       });
       pos++;
     }
@@ -120,6 +105,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         type: ColumnType.Text,
         width: FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME_WIDTH,
         hAlign: HorizontalAlign.Begin,
+        visible: false,
       });
       pos++;
     }
@@ -135,6 +121,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         type: ColumnType.Text,
         width: FIELDS_TREE_ACCOUNT.HOUSE_BANK_WIDTH,
         hAlign: HorizontalAlign.Begin,
+        visible: false,
       });
       pos++;
     }
@@ -152,6 +139,7 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
         type: ColumnType.Text,
         width: FIELDS_TREE_ACCOUNT.HOUSE_BANK_ACCOUNT_WIDTH,
         hAlign: HorizontalAlign.Begin,
+        visible: false,
       });
       pos++;
     }
@@ -172,46 +160,10 @@ export default class BankTreeFieldCatalogModel extends BaseModel<FieldsCatalogTr
           type: ColumnType.Amount,
           width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,
           hAlign: HorizontalAlign.Begin,
+          visible: true,
         });
         pos++;
       }
-    }
-
-    return fieldsCatalog;
-  }
-  /**
-   * Campos de importe
-   */
-  private amountFields(
-    rowHierarchyBankFlat: HierarchyFlat,
-    pos: number
-  ): FieldsCatalogTree {
-    let fieldsCatalog: FieldsCatalogTree = [];
-    let amountFields = this.metadataState.getAmountFields();
-
-    for (let x = 0; x < amountFields.length; x++) {
-      // Obtenemos el campo de la etiqueta que tendrá el campo de importe
-      let labelField = amountFields[x].replace(
-        ENTITY_FIELDS_DATA.AMOUNT_DATA,
-        ENTITY_FIELDS_DATA.AMOUNT_LABEL
-      );
-
-      let labelValue = rowHierarchyBankFlat[labelField];
-      if (labelValue !== "") {
-        fieldsCatalog.push({
-          name: amountFields[x],
-          label: labelValue as string,
-          quickinfo: labelValue as string,
-          internalID: `${ID_BANK_TREE_TABLE}-${pos}`,
-          allowPersonalization: false,
-          pos: pos,
-          type: ColumnType.Amount,
-          currencyField: FIELDS_TREE_ACCOUNT.CURRENCY,
-          width: FIELDS_TREE_ACCOUNT.AMOUNT_DATA_WIDTH,
-          hAlign: HorizontalAlign.Right,
-        });
-        pos++;
-      } else break; // Se sale del bucle ya no hay campos informados
     }
 
     return fieldsCatalog;
