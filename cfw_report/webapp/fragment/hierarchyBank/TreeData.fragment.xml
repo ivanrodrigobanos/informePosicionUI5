@@ -11,7 +11,7 @@
 >
     <tree:TreeTable
         id="BankTreeTable"
-        rows="{path:'hierarchyBankState>/hierarchyBankAccount/hierarchyTree', parameters: {arrayNames:['accounts']}}"
+        rows="{path:'hierarchyBankState>/hierarchyAccount/hierarchyTree', parameters: {arrayNames:['accounts']}}"
         columns="{
             path:'hierarchyBankState>/treeFieldCatalog/fieldsCatalog',
             factory: '.factoryHierarchyFieldCatalog' }"
@@ -30,7 +30,7 @@
                 design="Transparent">
                 <Title
                     text=" {i18n>bankAccountTree.title}
-                ({= ${hierarchyBankState>/hierarchyBankAccount/hierarchyFlat}.length })" />
+                ({= ${hierarchyBankState>/hierarchyAccount/hierarchyFlat}.length })" />
                 <vm:VariantManagement id="hierarchyBankTreeTable" for="BankTreeTable" />
                 <ToolbarSpacer />
                 <Button

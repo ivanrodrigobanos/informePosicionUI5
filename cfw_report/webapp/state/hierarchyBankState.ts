@@ -2,9 +2,7 @@ import BaseState from "./baseState";
 import AppComponent from "../Component";
 import HierarchyBankService from "cfwreport/service/hierarchyBankService";
 import ODataModel from "sap/ui/model/odata/v2/ODataModel";
-import HierarchyBankModel, {
-  HierarchyBanks,
-} from "cfwreport/model/hierarchyBankModel";
+import HierarchyModel, { Hierarchys } from "cfwreport/model/hierarchyModel";
 import HierarchyBankAccountModel, {
   HierarchyBankTree,
 } from "cfwreport/model/hierarchyBankAccountModel";
@@ -19,13 +17,13 @@ import {
   NodesDetailInfo,
   ParamsReadHierarchy,
 } from "cfwreport/types/hierarchyTypes";
-import HierarchyGeneralModel from "cfwreport/model/hierarchyGeneralModel";
+import HierarchyGeneralInfoModel from "cfwreport/model/hierarchyGeneralInfoModel";
 
 export type HierarchyBankData = {
-  hierarchyBank: HierarchyBankModel;
-  hierarchyBankAccount: HierarchyBankAccountModel;
+  hierarchy: HierarchyModel;
+  hierarchyAccount: HierarchyBankAccountModel;
   treeFieldCatalog: BankTreeFieldCatalogModel;
-  generalInfo: HierarchyGeneralModel;
+  generalInfo: HierarchyGeneralInfoModel;
 };
 
 export default class HierarchyBankState extends BaseState<
@@ -38,9 +36,9 @@ export default class HierarchyBankState extends BaseState<
       new HierarchyBankService(oComponent.getModel() as ODataModel)
     );
     this.data = {
-      generalInfo: new HierarchyGeneralModel(),
-      hierarchyBank: new HierarchyBankModel(),
-      hierarchyBankAccount: new HierarchyBankAccountModel(),
+      generalInfo: new HierarchyGeneralInfoModel(),
+      hierarchy: new HierarchyModel(),
+      hierarchyAccount: new HierarchyBankAccountModel(),
       treeFieldCatalog: new BankTreeFieldCatalogModel(
         this.ownerComponent.metadataState,
         this.ownerComponent.getI18nBundle()
@@ -51,15 +49,15 @@ export default class HierarchyBankState extends BaseState<
    * Devuelve los datos de la jeraquía
    * @returns Datos de la jerarquía
    */
-  public getHierarchyData(): HierarchyBanks {
-    return this.getData().hierarchyBank.getData();
+  public getHierarchyData(): Hierarchys {
+    return this.getData().hierarchy.getData();
   }
   /**
    * Devuelve los datos de la jeraquía en formato plano con los datos de las cuentas
    * @returns Datos de la jerarquía
    */
   public getHierarchyFlatData(): HierarchysFlat {
-    return this.getData().hierarchyBankAccount.getFlatData();
+    return this.getData().hierarchyAccount.getFlatData();
   }
   /**
    * Devuelve los datos de la jeraquía en formato arbol, nodos anidados, que es el formato
@@ -67,7 +65,7 @@ export default class HierarchyBankState extends BaseState<
    * @returns Datos de la jerarquía
    */
   public getHierarchyTreeData(): HierarchyBankTree {
-    return this.getData().hierarchyBankAccount.getData();
+    return this.getData().hierarchyAccount.getData();
   }
   /**
    * Añade el nodo que se ha mostrado información detallada,
@@ -104,7 +102,7 @@ export default class HierarchyBankState extends BaseState<
       this.ownerComponent.accountBankState.getUniqueBankAccount(),
       params
     );
-    this.getData().hierarchyBank = new HierarchyBankModel(values);
+    this.getData().hierarchy = new HierarchyModel(values);
     this.updateModel();
   }
   /**
@@ -119,8 +117,8 @@ export default class HierarchyBankState extends BaseState<
   ): Promise<HierarchyBankTree> {
     await this.readHierarchy(hierarchyName, params);
 
-    this.getData().hierarchyBankAccount = new HierarchyBankAccountModel(
-      this.getData().hierarchyBank.getData(),
+    this.getData().hierarchyAccount = new HierarchyBankAccountModel(
+      this.getData().hierarchy.getData(),
       this.ownerComponent.accountBankState.getAccountData()
     );
     this.getData().treeFieldCatalog.buildFieldCatalog(
@@ -138,14 +136,14 @@ export default class HierarchyBankState extends BaseState<
    * Regenerado la jerarquía para el arbol a partir de los datos de jerarquía planos.
    */
   public rebuildHierarchyTree() {
-    this.getData().hierarchyBankAccount.buildHierarchyTree();
+    this.getData().hierarchyAccount.buildHierarchyTree();
     this.updateModel();
   }
   /**
    * Permite determinar la criticidad en los nodos cuando hay cambios en la jerarquía.
    */
   public redetermineCriticNodesHierFlat() {
-    this.getData().hierarchyBankAccount.determineCriticNodesHierFlat();
+    this.getData().hierarchyAccount.determineCriticNodesHierFlat();
     this.updateModel();
   }
 
@@ -180,7 +178,7 @@ export default class HierarchyBankState extends BaseState<
         ...filterValues,
       });
     if (valuesPlv.length > 0) {
-      this.getData().hierarchyBankAccount.addPlvAccount2HierFlat(
+      this.getData().hierarchyAccount.addPlvAccount2HierFlat(
         account,
         valuesPlv
       );
@@ -193,8 +191,8 @@ export default class HierarchyBankState extends BaseState<
    * Limpieza de los modelos de datos
    */
   public clearModelValue(noFieldCatalog: boolean = false) {
-    this.data.hierarchyBank.clearData();
-    this.data.hierarchyBankAccount.clearData();
+    this.data.hierarchy.clearData();
+    this.data.hierarchyAccount.clearData();
     if (!noFieldCatalog) this.data.treeFieldCatalog.clearData();
     this.updateModel();
   }

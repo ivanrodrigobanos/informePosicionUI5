@@ -1,7 +1,7 @@
 import Object from "sap/ui/base/Object";
 import { NodesDetailInfo } from "cfwreport/types/hierarchyTypes";
 
-export default class HierarchyGeneralModel extends Object {
+export default class HierarchyGeneralInfoModel extends Object {
   protected nodeDetailInfo: NodesDetailInfo;
 
   constructor() {

@@ -6,12 +6,12 @@ import {
   HierarchyNodes,
   ParamsReadHierarchy,
 } from "cfwreport/types/hierarchyTypes";
-import { HierarchyBanks } from "cfwreport/model/hierarchyBankModel";
+import { Hierarchys } from "cfwreport/model/hierarchyModel";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 
 type Cfw_hier_bankSet = {
-  results: HierarchyBanks;
+  results: Hierarchys;
 };
 export default class HierarchyBankService extends BaseService {
   constructor(oDataModel: ODataModel) {
@@ -29,7 +29,7 @@ export default class HierarchyBankService extends BaseService {
     hierarchy_category: HierarchyCategory,
     accounts: HierarchyNodes,
     params?: ParamsReadHierarchy
-  ): Promise<HierarchyBanks> {
+  ): Promise<Hierarchys> {
     let filtersService: Filter[] = [
       new Filter("hierarchy_id", FilterOperator.EQ, hierarchy_id),
       new Filter("hierarchy_category", FilterOperator.EQ, hierarchy_category),

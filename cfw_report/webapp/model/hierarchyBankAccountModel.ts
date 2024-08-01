@@ -1,6 +1,6 @@
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import BaseHierarchy from "./baseHierarchy";
-import { HierarchyBank, HierarchyBanks } from "./hierarchyBankModel";
+import { Hierarchy, Hierarchys } from "./hierarchyModel";
 import {
   FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
@@ -19,10 +19,10 @@ export type HierarchyBankTree = HierarchyTree;
 
 export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBankTree> {
   private hierarchyTree: HierarchyBankTree;
-  private hierarchyBank: HierarchyBanks;
+  private hierarchyBank: Hierarchys;
   private accountData: AccountsData;
 
-  constructor(hierarchyBank?: HierarchyBanks, accountData?: AccountsData) {
+  constructor(hierarchyBank?: Hierarchys, accountData?: AccountsData) {
     super();
     this.hierarchyFlat = [];
     this.hierarchyTree = [];
@@ -337,13 +337,13 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
   private addUpperNodeFlat(parent_node: string | number): number {
     let hierarchyData = this.hierarchyBank.find(
       (rowHier: any) => rowHier[FIELDS_TREE.NODE] === parent_node
-    ) as HierarchyBank;
+    ) as Hierarchy;
 
     if (!hierarchyData) return -1;
 
     let newRow: HierarchyFlat = {};
     Object.keys(hierarchyData).forEach((key) => {
-      newRow[key] = hierarchyData[key as keyof HierarchyBank];
+      newRow[key] = hierarchyData[key as keyof Hierarchy];
     });
     this.hierarchyFlat.push(newRow);
 
@@ -361,7 +361,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
   ): HierarchyFlat | undefined {
     let hierarchyData = this.hierarchyBank.find(
       (rowHier: any) => rowHier[FIELDS_TREE.NODE] === accountData.bank_account
-    ) as HierarchyBank;
+    ) as Hierarchy;
     // La cuenta debería estar en la jerarquía, dentro de un nodo de la jerarquía o en el nodo sin asignar. Pero
     // hay datos de cuenta en el S4D cuyo valor es blanco y provoca problemas en la construcción, y es aquí, donde
     // si llegan cuentas raras no se procesan.
@@ -370,7 +370,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     // Pasamos los datos de la jeraquía
     let newRow: HierarchyFlat = {};
     Object.keys(hierarchyData).forEach((key) => {
-      newRow[key] = hierarchyData[key as keyof HierarchyBank];
+      newRow[key] = hierarchyData[key as keyof Hierarchy];
     });
     // Pasamos los datos de la cuenta
     newRow = this.fillAccountDataInRowHierFlat(accountData, newRow);

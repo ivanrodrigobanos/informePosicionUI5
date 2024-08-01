@@ -72,6 +72,19 @@
                 <Property Name="node_display_order" Type="Edm.Int32" sap:label="Orden visualiz.IU" sap:quickinfo="Ordre de visualización IU de nodo"/>
                 <Property Name="include_noasign" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Incl. No Asignados" sap:quickinfo="Incluir no asignados"/>
             </EntityType>
+            <EntityType Name="cfw_hier_liq_itemType" sap:label="Jerarquía de posiciones de liquidez" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="node"/>
+                </Key>
+                <Property Name="node" Type="Edm.String" Nullable="false" sap:text="node_name" sap:label="Nodo"/>
+                <Property Name="node_level" Type="Edm.String" MaxLength="6" sap:display-format="NonNegative" sap:label="Nivel" sap:quickinfo="Nivel del nodo"/>
+                <Property Name="node_name" Type="Edm.String" MaxLength="128" sap:label="Texto nodo" sap:quickinfo="Texto del nodo"/>
+                <Property Name="parent_node" Type="Edm.String" sap:label="Nodo padre"/>
+                <Property Name="node_type" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Tipo nodo" sap:quickinfo="Tipo de nodo"/>
+                <Property Name="hierarchy_id" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
+                <Property Name="hierarchy_category" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Tipo" sap:quickinfo="Subtipos de jerarquía"/>
+                <Property Name="node_display_order" Type="Edm.Int32" sap:label="Orden visualiz.IU" sap:quickinfo="Ordre de visualización IU de nodo"/>
+            </EntityType>
             <EntityType Name="cfw_queryType" sap:label="Informe de posición" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="bank_account"/>
@@ -314,6 +327,115 @@
                 <Property Name="hbkid_desc" Type="Edm.String" MaxLength="60" sap:label="Instit.financ." sap:quickinfo="Nombre de la institución financiera"/>
                 <Property Name="ort01" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Población" sap:quickinfo="Poblacion"/>
                 <Property Name="name1" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Pers.contacto" sap:quickinfo="Nombre de persona de contacto"/>
+            </EntityType>
+            <EntityType Name="cfw_query_liq_itemType" sap:label="Informe de posición con posiciones de liquidez" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="liquidity_item"/>
+                    <PropertyRef Name="source"/>
+                </Key>
+                <Property Name="liquidity_item" Type="Edm.String" Nullable="false" MaxLength="16" sap:display-format="UpperCase" sap:text="liquidity_item_name" sap:label="Pos.liquidez" sap:quickinfo="Posición de liquidez"/>
+                <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
+                <Property Name="liquidity_item_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Pos. Liquidez" sap:quickinfo="Descripción posición de liquidez"/>
+                <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
+                <Property Name="source_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Fuente" sap:quickinfo="Descripción de la fuente"/>
+                <Property Name="overdue_amount" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Overdue" sap:quickinfo="Importe fechas overdue"/>
+                <Property Name="overdue_critic" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data01" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label01" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic01" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data02" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label02" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic02" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data03" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label03" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic03" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data04" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label04" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic04" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data05" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label05" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic05" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data06" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label06" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic06" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data07" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label07" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic07" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data08" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label08" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic08" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data09" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label09" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic09" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data10" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label10" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic10" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data11" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label11" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic11" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data12" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label12" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic12" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data13" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label13" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic13" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data14" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label14" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic14" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data15" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label15" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic15" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data16" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label16" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic16" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data17" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label17" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic17" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data18" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label18" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic18" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data19" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label19" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic19" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data20" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label20" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic20" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data21" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label21" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic21" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data22" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label22" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic22" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data23" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label23" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic23" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data24" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label24" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic24" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data25" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label25" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic25" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data26" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label26" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic26" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data27" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label27" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic27" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data28" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label28" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic28" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data29" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label29" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic29" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data30" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label30" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic30" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="amount_data31" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
+                <Property Name="amount_label31" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
+                <Property Name="amount_critic31" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="p_keydate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor desde"/>
+                <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
+                <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>
             </EntityType>
             <EntityType Name="xSTRCMxC_SOCIEDAD_VHType" sap:label="Sociedades" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -566,9 +688,11 @@
                 <EntitySet Name="dir_bank_hier" EntityType="cds_xstrcmxui_cash_flow.dir_bank_hierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="dir_liq_hier" EntityType="cds_xstrcmxui_cash_flow.dir_liq_hierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_hier_bank" EntityType="cds_xstrcmxui_cash_flow.cfw_hier_bankType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="cfw_hier_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_hier_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query" EntityType="cds_xstrcmxui_cash_flow.cfw_queryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_BANCO_PRP_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_BANCO_PRP_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="cfw_query_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_SOCIEDAD_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_SOCIEDAD_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="I_CurrencyStdVH" EntityType="cds_xstrcmxui_cash_flow.I_CurrencyStdVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
                 <EntitySet Name="SAP__FormatSet" EntityType="cds_xstrcmxui_cash_flow.SAP__Format" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
@@ -783,6 +907,29 @@
                 </Annotation>
                 <Annotation Term="Common.FilterDefaultValue" String="EUR"/>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType/p_displaycurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueListForValidation" String=""/>
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Moneda visualización"/>
+                        <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
+                        <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="p_displaycurrency"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.FilterDefaultValue" String="EUR"/>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
             </Annotations>
@@ -846,7 +993,67 @@
                     </Record>
                 </Annotation>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/cfw_hier_liq_item" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="node"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="parent_node"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>node</PropertyPath>
+                                <PropertyPath>parent_node</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/cfw_query" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/cfw_query_liq_item" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
                         <PropertyValue Property="Deletable" Bool="false"/>

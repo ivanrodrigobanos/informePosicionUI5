@@ -1,6 +1,6 @@
 import BaseModel from "./baseModel";
 
-export interface HierarchyBank {
+export interface Hierarchy {
   node: string;
   node_level: number;
   node_name: string;
@@ -10,19 +10,19 @@ export interface HierarchyBank {
   hierarchy_category: string;
   node_display_order: number;
 }
-export type HierarchyBanks = HierarchyBank[];
+export type Hierarchys = Hierarchy[];
 
-export default class HierarchyBankModel extends BaseModel<HierarchyBanks> {
-  private _hierarchy: HierarchyBanks;
+export default class HierarchyModel extends BaseModel<Hierarchys> {
+  private _hierarchy: Hierarchys;
 
-  constructor(data?: HierarchyBanks) {
+  constructor(data?: Hierarchys) {
     super();
     if (data) this._hierarchy = this.transformData(data);
   }
-  public getData(): HierarchyBanks {
+  public getData(): Hierarchys {
     return this._hierarchy;
   }
-  public transformData(data: HierarchyBanks): HierarchyBanks {
+  public transformData(data: Hierarchys): Hierarchys {
     return data.map((row) => {
       return {
         ...row,

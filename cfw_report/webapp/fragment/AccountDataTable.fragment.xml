@@ -30,7 +30,7 @@
                     tooltip="{i18n>accountDataTable.btnGoHierarchyBank}"
                     press="handlerGoHierarchyBank"
                     type="Transparent"
-                    visible="{= ${hierarchyBankState>/hierarchyBankAccount/hierarchyFlat}.length > 0 }"
+                    visible="{= ${hierarchyBankState>/hierarchyAccount/hierarchyFlat}.length > 0 }"
                 />
                 <ToolbarSeparator />
                 <Button id="btnShowHierarchy" text="{i18n>accountDataTable.hierarchyBtnSelect}"
