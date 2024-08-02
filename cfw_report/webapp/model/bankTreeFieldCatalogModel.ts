@@ -16,18 +16,18 @@ export default class BankTreeFieldCatalogModel extends TreeFieldCatalogModel {
   }
 
   public buildFieldCatalog(
-    rowHierarchyBankFlat?: HierarchyFlat,
+    rowHierarchyFlat?: HierarchyFlat,
     params?: PropsBuildFcat
   ) {
     this.fieldsCatalog = this.getFixFields(params); // Campos fijos
 
     // Campos de cantidad, siempre que se haya pasado una fila de valores para poderla construir
-    if (rowHierarchyBankFlat) {
+    if (rowHierarchyFlat) {
       // La posición empieza a partir del tamaño del array. Como las posiciones empiezan por la 0(tal como monta el treetable las columnas) se puede hacer,
       // si empezará por 1 habría que sumarle uno más al tamaño
       let pos = this.fieldsCatalog.length;
       this.fieldsCatalog = this.fieldsCatalog.concat(
-        this.amountFields(rowHierarchyBankFlat, pos)
+        this.amountFields(rowHierarchyFlat, pos)
       );
     }
   }

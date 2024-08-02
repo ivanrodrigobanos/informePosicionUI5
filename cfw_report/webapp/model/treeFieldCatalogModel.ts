@@ -35,7 +35,7 @@ export default abstract class TreeFieldCatalogModel extends BaseModel<FieldsCata
    * Campos de importe
    */
   protected amountFields(
-    rowHierarchyBankFlat: HierarchyFlat,
+    rowHierarchyFlat: HierarchyFlat,
     pos: number
   ): FieldsCatalogTree {
     let fieldsCatalog: FieldsCatalogTree = [];
@@ -48,7 +48,7 @@ export default abstract class TreeFieldCatalogModel extends BaseModel<FieldsCata
         ENTITY_FIELDS_DATA.AMOUNT_LABEL
       );
 
-      let labelValue = rowHierarchyBankFlat[labelField];
+      let labelValue = rowHierarchyFlat[labelField];
       if (labelValue !== "") {
         fieldsCatalog.push({
           name: amountFields[x],

@@ -60,6 +60,24 @@
                         </OverflowToolbar>
                     </footer>
                 </Page>
+                <Page id="hierarchyLiqItemQuery" showHeader="false">
+                    <content>
+                        <core:Fragment fragmentName="cfwreport.fragment.hierarchyLiquidity.TreeData"
+                            type="XML" />
+                    </content>
+                    <footer>
+                        <OverflowToolbar>
+                            <Button id="btnShowMsgAppLiqItemTree"
+                                icon="{path:'messageState>/highestSeverityIcon'}"
+                                text="{path:'messageState>/highestSeverityNumber'}"
+                                type="{path:'messageState>/highestSeverityType'}"
+                                visible="{path:'messageState>/showMessage'}"
+                                press="onShowMessageApp" />
+                            <ToolbarSpacer />
+
+                        </OverflowToolbar>
+                    </footer>
+                </Page>
             </NavContainer>
         </f:content>
 

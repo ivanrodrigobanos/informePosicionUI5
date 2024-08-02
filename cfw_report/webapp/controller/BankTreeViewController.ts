@@ -57,13 +57,15 @@ export default class BankTreeViewController extends TreeTableController {
     // Si no se ha mostrado todavía la jerarquía se registran los campos que podrán ser modificados
     // en la personalización del menú
     if (
-      !this.ownerComponent.queryModel.getProperty(QUERY_MODEL.HIERARCHY_SHOWN)
+      !this.ownerComponent.queryModel.getProperty(
+        QUERY_MODEL.HIERARCHY_BANK_SHOWED
+      )
     )
       this.registerFieldsEngineBankTree();
 
     // Se inicial proceso de generacion de la jerarquía de bancos.
     this.ownerComponent.queryModel.setProperty(
-      QUERY_MODEL.LOADING_HIER_PROCESS,
+      QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
       true
     );
     this.ownerComponent.hierarchyBankState
@@ -71,17 +73,17 @@ export default class BankTreeViewController extends TreeTableController {
       .then(() => {
         if (
           !this.ownerComponent.queryModel.getProperty(
-            QUERY_MODEL.HIERARCHY_SHOWN
+            QUERY_MODEL.HIERARCHY_BANK_SHOWED
           )
         )
           this.treeTable.expandToLevel(1);
 
         this.ownerComponent.queryModel.setProperty(
-          QUERY_MODEL.LOADING_HIER_PROCESS,
+          QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
           false
         );
         this.ownerComponent.queryModel.setProperty(
-          QUERY_MODEL.HIERARCHY_SHOWN,
+          QUERY_MODEL.HIERARCHY_BANK_SHOWED,
           true
         );
         // Se mira si hay nodos los cuales se ha mostrado el detalle. Si es así se lanza el proceso
@@ -99,7 +101,11 @@ export default class BankTreeViewController extends TreeTableController {
       })
       .catch(() => {
         this.ownerComponent.queryModel.setProperty(
-          QUERY_MODEL.LOADING_HIER_PROCESS,
+          QUERY_MODEL.HIERARCHY_BANK_SHOWED,
+          true
+        );
+        this.ownerComponent.queryModel.setProperty(
+          QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
           false
         );
         // Si hay error no queremos que se vean los datos previos que pueda tener

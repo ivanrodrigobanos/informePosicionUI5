@@ -10,16 +10,16 @@
     xmlns:vm="sap.ui.fl.variants"
 >
     <tree:TreeTable
-        id="BankTreeTable"
-        rows="{path:'hierarchyBankState>/hierarchyAccount/hierarchyTree', parameters: {arrayNames:['accounts']}}"
+        id="LiqItemTreeTable"
+        rows="{path:'hierarchyLiqItemState>/hierarchyAccount/hierarchyTree', parameters: {arrayNames:['accounts']}}"
         columns="{
-            path:'hierarchyBankState>/treeFieldCatalog/fieldsCatalog',
+            path:'hierarchyLiqItemState>/treeFieldCatalog/fieldsCatalog',
             factory: '.factoryHierarchyFieldCatalog' }"
         selectionMode="MultiToggle"
         enableSelectAll="true"
         ariaLabelledBy="title"
         showNoData="true"
-        busy="{model: 'queryModel', path:'/loadingHierBankProcess'}"
+        busy="{model: 'queryModel', path:'/loadingHierLiqItemProcess'}"
         alternateRowColors="true"
         threshold="40000"
         rowsUpdated="handlerTreeTableRowsUpdated"
@@ -29,9 +29,10 @@
             <OverflowToolbar
                 design="Transparent">
                 <Title
-                    text=" {i18n>bankAccountTree.title}
-                ({= ${hierarchyBankState>/hierarchyAccount/hierarchyFlat}.length })" />
-                <vm:VariantManagement id="hierarchyBankTreeTable" for="BankTreeTable" />
+                    text=" {i18n>liqItemAccountTree.title}
+                    
+                ({= ${hierarchyLiqItemState>/hierarchyAccount/hierarchyFlat}.length })" />
+                <vm:VariantManagement id="hierarchyLiqItemTreeTable" for="LiqItemTreeTable" />
                 <ToolbarSpacer />
                 <Button
                     tooltip="{i18n>accountDataTable.refresh}"

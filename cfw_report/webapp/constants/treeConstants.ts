@@ -1,6 +1,8 @@
 export const STATE_PATH = {
   HIERARCHY_BANK: "hierarchyBankState",
   ACCOUNT_BANK: "accountBankState",
+  ACCOUNT_LIQ_ITEM: "accountLiqItemState",
+  HIERARCHY_LIQ_ITEM: "hierarchyLiqItemState",
 };
 
 export const FIELDS_TREE = {
@@ -67,3 +69,4 @@ export const CRITICALLY = {
   INFORMATION: 5,
   NEUTRAL: 0,
 };
+export const NODE_NOASIGN = "NOASIGN";

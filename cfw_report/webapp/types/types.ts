@@ -48,3 +48,5 @@ export interface FieldCatalogTree {
   visible: boolean;
 }
 export type FieldsCatalogTree = FieldCatalogTree[];
+
+export type AccountAmount = Record<string, number | string>;

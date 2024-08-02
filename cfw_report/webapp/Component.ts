@@ -1,6 +1,6 @@
 import BaseComponent from "sap/ui/core/UIComponent";
 import { createDeviceModel } from "./model/models";
-import { QUERY_MODEL, MESSAGE_MODEL } from "./constants/models";
+import { QUERY_MODEL } from "./constants/models";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import {
   FiltersQuery,
@@ -14,10 +14,11 @@ import AccountBankState from "./state/accountBankState";
 import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import MetadataState from "./state/metadataState";
-import Messaging from "sap/ui/core/Messaging";
 import { FILTER_DAYS } from "./constants/smartConstants";
 import TableVisualizationState from "./state/tableVisualizationState";
 import MessageState from "./state/messageState";
+import AccountLiqItemState from "./state/accountLiqItemState";
+import HierarchyLiqItemState from "./state/hierarchyLiqItemState";
 
 /**
  * @namespace cfwreport
@@ -29,6 +30,8 @@ export default class Component extends BaseComponent {
   public hierarchyBankState: HierarchyBankState;
   public accountBankState: AccountBankState;
   public metadataState: MetadataState;
+  public accountLiqItemState: AccountLiqItemState;
+  public hierarchyLiqItemState: HierarchyLiqItemState;
   public queryModel: JSONModel;
   public messageModel: JSONModel;
   public tableVisualizationState: TableVisualizationState;
@@ -62,6 +65,10 @@ export default class Component extends BaseComponent {
     this.accountBankState = new AccountBankState(this);
     // Clase encargada de gestionar visualizaciones en las tablas
     this.tableVisualizationState = new TableVisualizationState(this);
+    // Clase encargada de gestionar los datos de las cuentas de posición de liquidez
+    this.accountLiqItemState = new AccountLiqItemState(this);
+    // Clase encarga de gestionar la jerarquía de posiciones de liquidez
+    this.hierarchyLiqItemState = new HierarchyLiqItemState(this);
     // Clase encarga de gestionar los mensajes
     this.messageState = new MessageState(this);
   }
@@ -135,7 +142,8 @@ export default class Component extends BaseComponent {
       hierViewModel
     );
 
-    this.queryModel.setProperty(QUERY_MODEL.LOADING_HIER_PROCESS, false);
-    this.queryModel.setProperty(QUERY_MODEL.HIERARCHY_SHOWN, false);
+    this.queryModel.setProperty(QUERY_MODEL.LOADING_HIER_BANK_PROCESS, false);
+    this.queryModel.setProperty(QUERY_MODEL.HIERARCHY_BANK_SHOWED, false);
+    this.queryModel.setProperty(QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED, false);
   }
 }

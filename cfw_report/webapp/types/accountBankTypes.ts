@@ -1,4 +1,5 @@
-export type AccountAmount = Record<string, number | string>;
+import { AccountAmount } from "./types";
+
 export interface AccountData extends AccountAmount {
   bank_account: string;
   bank_account_partner: string;

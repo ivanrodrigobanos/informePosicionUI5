@@ -1,4 +1,3 @@
-import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import BaseHierarchy from "./baseHierarchy";
 import { Hierarchy, Hierarchys } from "./hierarchyModel";
 import {
@@ -19,7 +18,7 @@ export type HierarchyBankTree = HierarchyTree;
 
 export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBankTree> {
   private hierarchyTree: HierarchyBankTree;
-  private hierarchyBank: Hierarchys;
+
   private accountData: AccountsData;
 
   constructor(hierarchyBank?: Hierarchys, accountData?: AccountsData) {
@@ -28,7 +27,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     this.hierarchyTree = [];
 
     if (hierarchyBank && accountData) {
-      this.hierarchyBank = hierarchyBank;
+      this.hierarchy = hierarchyBank;
       this.accountData = accountData;
       this.buildHierarchyFlat();
       // La criticidad en nodos superiores se determina una vez se ha montado toda la jerarquía y los totales
@@ -231,6 +230,9 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
     rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
   }
+  /**
+   * Construye la jerarquía en formato plano
+   */
   private buildHierarchyFlat() {
     this.hierarchyFlat = [];
 
@@ -255,101 +257,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     // su orden de visualización
     this.hierarchyFlat = this._sortHierarchyFlat(this.hierarchyFlat);
   }
-  /**
-   * Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
-   * su orden de visualización
-   * @param hierarchy
-   * @returns
-   */
-  private _sortHierarchyFlat(hierarchy: HierarchysFlat): HierarchysFlat {
-    return hierarchy.sort((a, b) => {
-      if (
-        (a[FIELDS_TREE.NODE_LEVEL] as number) <
-        (b[FIELDS_TREE.NODE_LEVEL] as number)
-      ) {
-        return -1;
-      } else if (
-        (a[FIELDS_TREE.NODE_LEVEL] as number) ===
-        (b[FIELDS_TREE.NODE_LEVEL] as number)
-      ) {
-        if (
-          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) >
-          (b[FIELDS_TREE.NODE_DISPLAY_ORDER] as number)
-        )
-          return -1;
-        else if (
-          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) <
-          (b[FIELDS_TREE.NODE_DISPLAY_ORDER] as number)
-        )
-          return 1;
-        else return 0;
-      } else {
-        return 1;
-      }
-    });
-  }
-  /**
-   * Añade y sumariza los registros de los nodos superiores
-   * @param hierarchyFlatRow Registro de la jerarquía plana
-   * @param hierarchyFlat Array de la jerarquía plana
-   */
-  private addSumUpperNodesFlat(hierarchyFlatRow: HierarchyFlat) {
-    let hierarchyFlatUpperIndex = this.hierarchyFlat.findIndex(
-      (row) =>
-        row[FIELDS_TREE.NODE] === hierarchyFlatRow[FIELDS_TREE.PARENT_NODE]
-    );
-    if (hierarchyFlatUpperIndex === -1)
-      hierarchyFlatUpperIndex = this.addUpperNodeFlat(
-        hierarchyFlatRow[FIELDS_TREE.PARENT_NODE]
-      );
 
-    if (hierarchyFlatUpperIndex !== -1) {
-      this.hierarchyFlat[hierarchyFlatUpperIndex][
-        FIELDS_TREE_ACCOUNT.CURRENCY
-      ] = hierarchyFlatRow[FIELDS_TREE_ACCOUNT.CURRENCY];
-
-      this.getAmountFields(hierarchyFlatRow)
-        .filter(
-          (rowKey) =>
-            rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA) ||
-            rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL) ||
-            rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_CRITICITY)
-        )
-        .forEach((key) => {
-          if (key.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
-            if (this.hierarchyFlat[hierarchyFlatUpperIndex][key])
-              this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
-                (this.hierarchyFlat[hierarchyFlatUpperIndex][key] as number) +
-                (hierarchyFlatRow[key] as number);
-            else
-              this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
-                hierarchyFlatRow[key];
-          else
-            this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
-              hierarchyFlatRow[key];
-        });
-
-      // Se vuelve a llamar al método para que sumarize el nodo padre
-      this.addSumUpperNodesFlat(this.hierarchyFlat[hierarchyFlatUpperIndex]);
-    }
-  }
-  /**Añade el nodo superior a la jerarquía plana */
-  private addUpperNodeFlat(parent_node: string | number): number {
-    let hierarchyData = this.hierarchyBank.find(
-      (rowHier: any) => rowHier[FIELDS_TREE.NODE] === parent_node
-    ) as Hierarchy;
-
-    if (!hierarchyData) return -1;
-
-    let newRow: HierarchyFlat = {};
-    Object.keys(hierarchyData).forEach((key) => {
-      newRow[key] = hierarchyData[key as keyof Hierarchy];
-    });
-    this.hierarchyFlat.push(newRow);
-
-    // se devuelve el indice del registro insertado
-    return this.hierarchyFlat.findIndex((row) => row.node === parent_node);
-  }
   /**
    * Añade el registro de la cuenta y nivel de jerarquía
    * @param accountData
@@ -359,7 +267,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     accountData: AccountData,
     hierarchyFlat: HierarchysFlat
   ): HierarchyFlat | undefined {
-    let hierarchyData = this.hierarchyBank.find(
+    let hierarchyData = this.hierarchy.find(
       (rowHier: any) => rowHier[FIELDS_TREE.NODE] === accountData.bank_account
     ) as Hierarchy;
     // La cuenta debería estar en la jerarquía, dentro de un nodo de la jerarquía o en el nodo sin asignar. Pero

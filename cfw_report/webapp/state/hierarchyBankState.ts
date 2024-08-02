@@ -122,7 +122,9 @@ export default class HierarchyBankState extends BaseState<
       this.ownerComponent.accountBankState.getAccountData()
     );
     this.getData().treeFieldCatalog.buildFieldCatalog(
-      this.getHierarchyFlatData()[0],
+      this.getHierarchyFlatData().length > 0
+        ? this.getHierarchyFlatData()[0]
+        : undefined,
       {
         overdueColumnWithValues:
           this.ownerComponent.accountBankState.checkOverdueColumnWithValues(),

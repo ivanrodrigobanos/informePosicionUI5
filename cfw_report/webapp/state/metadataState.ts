@@ -80,14 +80,17 @@ export default class MetadataState extends BaseStateSimple {
    * @param fieldname Nombre del campo
    * @returns Devuelve la información del campo
    */
-  public getFieldInfo(fieldname: string): FieldEntity {
+  public getFieldInfo(
+    fieldname: string,
+    entitySet: string = MAIN_ENTITY_SET
+  ): FieldEntity {
     let fieldEntity: FieldEntity = {
       name: fieldname,
       label: "",
       quickinfo: "",
     };
 
-    let rowMetadata = this.getFieldsEntitySet().find(
+    let rowMetadata = this.getFieldsEntitySet(entitySet).find(
       (row) => row.name == fieldname
     );
     if (rowMetadata) {
