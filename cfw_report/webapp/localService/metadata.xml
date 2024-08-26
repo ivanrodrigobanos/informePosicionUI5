@@ -745,7 +745,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Sociedad"/>
+                        <PropertyValue Property="Label" String="Company Code"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_SOCIEDAD_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -767,7 +767,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Banco propio"/>
+                        <PropertyValue Property="Label" String="House bank"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_BANCO_PRP_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -805,7 +805,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Moneda visualización"/>
+                        <PropertyValue Property="Label" String=""/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
                         <PropertyValue Property="SearchSupported" Bool="true"/>
@@ -828,7 +828,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Sociedad"/>
+                        <PropertyValue Property="Label" String="Company Code"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_SOCIEDAD_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -850,7 +850,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Banco propio"/>
+                        <PropertyValue Property="Label" String="House bank"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_BANCO_PRP_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -888,7 +888,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Moneda visualización"/>
+                        <PropertyValue Property="Label" String=""/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
                         <PropertyValue Property="SearchSupported" Bool="true"/>
@@ -911,7 +911,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Moneda visualización"/>
+                        <PropertyValue Property="Label" String=""/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
                         <PropertyValue Property="SearchSupported" Bool="true"/>

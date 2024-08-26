@@ -10,7 +10,6 @@ import {
   FIELDS_TREE,
   NODE_NOASIGN,
   NODE_TYPES,
-  SOURCE_TYPES,
 } from "cfwreport/constants/treeConstants";
 
 export type HierarchyLiqItemTree = HierarchyTree;
@@ -69,6 +68,9 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
         if (hierarchyFlatRow) this.addSumUpperNodesFlat(hierarchyFlatRow);
       });
 
+    // Se añaden las posiciones de liquidez que no tienen nodo
+    if (this.LiqItemWOHier.length > 0) this.addLiqItemWONode();
+
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización
     this.hierarchyFlat = this._sortHierarchyFlat(this.hierarchyFlat);
@@ -79,7 +81,16 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
    * @returns Jerarquía en formato arbol
    */
   private _buildHierarchyTree(): HierarchyLiqItemTree {
-    return [];
+    let hierarchyTree: HierarchyLiqItemTree = {};
+
+    if (this.hierarchyFlat.length === 0) return hierarchyTree;
+
+    // El primer nivel es el registro 0 de la jerarquía plana
+    let rowTree: HierarchyLiqItemTree = {};
+    rowTree = this.fillTreeAmountData(rowTree, this.hierarchyFlat[0]); // Campos de importe y etiquetas
+    this.fillTreeNodeField(rowTree, this.hierarchyFlat[0]); // Nombre del nodo
+
+    return hierarchyTree;
   }
   /**
    * Añade el registro de la cuenta y nivel de jerarquía
@@ -96,7 +107,7 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     // Si no existe la guardo en una array de posiciones sin nodo para luego añadirlas en un nodo de no asignados
     if (!hierarchyData) {
       this.LiqItemWOHier.push(LiqItemData);
-      return undefined; // Devuelve indefinido para que la cuenta sea procesada posteriorment
+      return undefined; // Devuelve indefinido para que la cuenta sea procesada posteriormente
     }
 
     // Pasamos los datos de la jeraquía
@@ -133,16 +144,29 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
    * Aañade las posiciones que no tienen nodo
    */
   private addLiqItemWONode() {
+    // Se toma el nodo root como base para construir el no asignados.
     let rootNode = structuredClone(
-      this.hierarchy.find((row) => row.node_type == NODE_TYPES.ROOT)
+      this.hierarchy.find((row) => row.node_type === NODE_TYPES.ROOT)
     );
     if (!rootNode) return;
-    let rootTemplate = structuredClone(rootNode);
-    rootTemplate.node = NODE_NOASIGN;
-    rootTemplate.parent_node = rootNode.node;
-    rootTemplate.node_level = rootNode.node_level + 1;
-    rootTemplate.node_display_order = Number(
-      `${rootTemplate.node_level}.999999`
-    );
+    let nodeNoAsign: HierarchyFlat = { ...rootNode };
+    nodeNoAsign.node = NODE_NOASIGN;
+    nodeNoAsign.node_name = "NO ASIGN";
+    nodeNoAsign.parent_node = rootNode.node;
+    nodeNoAsign.node_level = rootNode.node_level + 1;
+    nodeNoAsign.node_display_order = Number(`${nodeNoAsign.node_level}.999999`);
+    this.hierarchyFlat.push(nodeNoAsign);
+  }
+  /**
+   * Rellena el campo del valor del nodo
+   * @param rowTree Registro del tree table
+   * @param rowHierarchyFlat registro de la jerarquía plana
+   */
+  private fillTreeNodeField(
+    rowTree: HierarchyLiqItemTree,
+    rowHierarchyFlat: HierarchyFlat
+  ) {
+    rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE.NODE];
+    rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
   }
 }

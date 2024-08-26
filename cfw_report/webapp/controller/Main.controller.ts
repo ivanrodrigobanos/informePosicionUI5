@@ -302,15 +302,17 @@ export default class Main extends BaseController {
           ) as string;
         } else {
           hierViewModel.inputIDBankPrevious = hierViewModel.inputIDBank; // Guardo el previo
+
+          // Activamos el loader de la tabla de jerarquía
+          this.getOwnerComponent().queryModel.setProperty(
+            QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
+            true
+          );
+
           // Si los filtros se han modificado y se navega hacia una jerarquía se realiza la misma acción que al refrescar. Es decir,
           // leer los datos de la tabla principal para poder construir la jerarquía. Si no se han modificado se hace la lectura directa
           // de los datos de jerarquía
           if (this._filterBarValuesChanged) {
-            // Activamos el loader de la tabla de jerarquía
-            this.getOwnerComponent().queryModel.setProperty(
-              QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
-              true
-            );
             // Navegamos a la tabla de jerarquía de bancos
             this.navigateToHierarchyTree(NAVIGATION_ID.HIERARCHY_BANK);
 
@@ -343,15 +345,16 @@ export default class Main extends BaseController {
           hierViewModel.inputIDLiquidityPrevious =
             hierViewModel.inputIDLiquidity; // Guardo el previo
 
+          // Activamos el loader de la tabla de jerarquía
+          this.getOwnerComponent().queryModel.setProperty(
+            QUERY_MODEL.LOADING_HIER_LIQITEM_PROCESS,
+            true
+          );
+
           // Si los filtros se han modificado y se navega hacia una jerarquía se realiza la misma acción que al refrescar. Es decir,
           // leer los datos de la tabla principal para poder construir la jerarquía. Si no se han modificado se hace la lectura directa
           // de los datos de jerarquía
           if (this._filterBarValuesChanged) {
-            // Activamos el loader de la tabla de jerarquía
-            this.getOwnerComponent().queryModel.setProperty(
-              QUERY_MODEL.LOADING_HIER_LIQITEM_PROCESS,
-              true
-            );
             // Navegamos a la tabla de jerarquía de bancos
             this.navigateToHierarchyTree(NAVIGATION_ID.HIERARCHY_LIQ_ITEM);
 
@@ -437,7 +440,8 @@ export default class Main extends BaseController {
       }
     );
 
-    if (navigate) this.navigateToHierarchyTree(NAVIGATION_ID.HIERARCHY_BANK);
+    if (navigate)
+      this.navigateToHierarchyTree(NAVIGATION_ID.HIERARCHY_LIQ_ITEM);
   }
   /**
    * Cierra un dialogo
@@ -641,6 +645,10 @@ export default class Main extends BaseController {
    * Botón "Ir" de la smartfilterbar y botón refrescar en la toolbar de las dos tablas
    */
   private preAccountProcessLoadData() {
+    let hierViewModel = this.getOwnerComponent().queryModel.getProperty(
+      QUERY_MODEL.HIER_SELECT_VIEW_MODEL
+    ) as HierarchySelectViewModel;
+
     // Actualizo los filtros internos(sociedad o moneda) en el modelo de filtros.
     this.updateInternalFilterModel();
     // Solo si los filtros cambian se limpia el modelo, de esta manera no hay refrescos innecesarios en la tabla
@@ -652,6 +660,11 @@ export default class Main extends BaseController {
 
     // Pone los loader de los treeTable
     this.setLoadingStateHierTree(true);
+
+    // Nota: La obtención de datos para la posición de liquidez se hace aquí porque la búsqueda de datos para construir la jerarquía
+    // no depende de la smartable. Y de esta manera se hacen procesos en paralelo ganando en velocidad.
+    if (hierViewModel.inputIDLiquidityEnabled)
+      this.processBuildLiqItemHier(hierViewModel.inputIDLiquidity, false);
   }
   /**
    * Post proceso después de la carga de datos de cuentas
@@ -674,8 +687,8 @@ export default class Main extends BaseController {
       if (hierViewModel.inputIDBankEnabled)
         this.processBuildBankHier(hierViewModel.inputIDBank, false);
 
-      if (hierViewModel.inputIDLiquidityEnabled)
-        this.processBuildLiqItemHier(hierViewModel.inputIDLiquidity, false);
+      // Nota2: La obtención de datos para la posición de liquidez se hace en el método "preAccountProcess..." el motivo es que las búsquedas
+      // de datos son distintas a la de la smartable, y no tiene sentido esperarse a que termine la búsqueda para comenzar esta.
     } else {
       this.setLoadingStateHierTree(false);
 

@@ -5,7 +5,7 @@ import HierarchyGeneralInfoModel from "cfwreport/model/hierarchyGeneralInfoModel
 import HierarchyModel from "cfwreport/model/hierarchyModel";
 import HierarchyLiqItemService from "cfwreport/service/hierarchyLiqItemService";
 import HierarchyLiqItemAccountModel from "cfwreport/model/hierarchyLiqItemAccountModel";
-import LiqItemTreeFieldCatalogModel from "cfwreport/model/LiqItemTreeFieldCatalogModel";
+import LiqItemTreeFieldCatalogModel from "cfwreport/model/liqItemTreeFieldCatalogModel";
 import { FieldsCatalogTree, HierarchysFlat } from "cfwreport/types/types";
 
 export type HierarchyLiqItemData = {
