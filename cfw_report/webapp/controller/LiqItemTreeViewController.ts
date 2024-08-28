@@ -9,11 +9,11 @@ export default class LiqItemTreeViewController extends TreeTableController {
     super(oComponent, treeTable, view);
   }
   /**
-   * Proceso de construcción de la jerarquía de bancos
+   * Proceso de construcción de la jerarquía de posiciones de liquidez
    * @param IDHierarchy Id de jerarquía
    * @param navigate Navega a la vista de jerarquía
    */
-  public processBuildHier(
+  public processBuildHierarchy(
     IDHierarchy: string,
     filterBarValuesChanged: boolean,
     handlerOnSuccess?: () => void,
@@ -51,6 +51,13 @@ export default class LiqItemTreeViewController extends TreeTableController {
       .then(() => {
         this.ownerComponent.hierarchyLiqItemState.processBuildHierarchy();
 
+        if (
+          !this.ownerComponent.queryModel.getProperty(
+            QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED
+          )
+        )
+          this.treeTable.expandToLevel(1);
+
         this.ownerComponent.queryModel.setProperty(
           QUERY_MODEL.LOADING_HIER_LIQITEM_PROCESS,
           false
@@ -59,6 +66,8 @@ export default class LiqItemTreeViewController extends TreeTableController {
           QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED,
           true
         );
+
+        
       })
       .catch(() => {
         this.ownerComponent.queryModel.setProperty(

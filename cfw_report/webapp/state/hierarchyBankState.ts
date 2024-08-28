@@ -3,11 +3,9 @@ import AppComponent from "../Component";
 import HierarchyBankService from "cfwreport/service/hierarchyBankService";
 import ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import HierarchyModel, { Hierarchys } from "cfwreport/model/hierarchyModel";
-import HierarchyBankAccountModel, {
-  HierarchyBankTree,
-} from "cfwreport/model/hierarchyBankAccountModel";
+import HierarchyBankAccountModel from "cfwreport/model/hierarchyBankAccountModel";
 import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel";
-import { FieldsCatalogTree, HierarchysFlat } from "cfwreport/types/types";
+import { FieldsCatalogTree, HierarchysFlat,  HierarchyTree } from "cfwreport/types/types";
 import {
   FIELDS_TREE,
   ID_BANK_TREE_TABLE,
@@ -64,7 +62,7 @@ export default class HierarchyBankState extends BaseState<
    * que requiere el Tree Table de UI5 para datos locales
    * @returns Datos de la jerarquía
    */
-  public getHierarchyTreeData(): HierarchyBankTree {
+  public getHierarchyTreeData(): HierarchyTree {
     return this.getData().hierarchyAccount.getData();
   }
   /**
@@ -114,7 +112,7 @@ export default class HierarchyBankState extends BaseState<
   public async processHierarchyWithAccountData(
     hierarchyName: string,
     params?: ParamsReadHierarchy
-  ): Promise<HierarchyBankTree> {
+  ): Promise<HierarchyTree> {
     await this.readHierarchy(hierarchyName, params);
 
     this.getData().hierarchyAccount = new HierarchyBankAccountModel(
@@ -159,7 +157,7 @@ export default class HierarchyBankState extends BaseState<
   ): Promise<NodeAndPathControl> {
     let hierarchyValue = this.getModel().getProperty(
       hierPath
-    ) as HierarchyBankTree;
+    ) as HierarchyTree;
 
     await this.addPlvHierarchyFromAccount(
       hierarchyValue[FIELDS_TREE.NODE] as string

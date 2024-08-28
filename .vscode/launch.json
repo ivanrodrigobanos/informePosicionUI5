@@ -9,8 +9,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwreport-display"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwreport-display"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -29,7 +35,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -53,7 +62,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -69,5 +81,6 @@
       }
     }
   ],
-  "compounds": []
+  "compounds": [],
+  "version": "0.2.0"
 }

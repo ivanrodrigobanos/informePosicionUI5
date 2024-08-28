@@ -159,7 +159,7 @@ export default class BankTreeFieldCatalogModel extends TreeFieldCatalogModel {
           pos: pos++,
           type: ColumnType.Amount,
           width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,
-          hAlign: HorizontalAlign.Begin,
+          hAlign: HorizontalAlign.Right,
           visible: true,
         });
         pos++;

@@ -2,7 +2,7 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import TreeFieldCatalogModel, { PropsBuildFcat } from "./treeFieldCatalogModel";
 import {
   FIELDS_TREE,
-  FIELDS_TREE_ACCOUNT,
+  FIELDS_TREE_LIQITEM,
   ID_BANK_TREE_TABLE,
 } from "cfwreport/constants/treeConstants";
 import MetadataState from "cfwreport/state/metadataState";
@@ -52,7 +52,7 @@ export default class LiqItemTreeFieldCatalogModel extends TreeFieldCatalogModel 
         allowPersonalization: false,
         pos: pos,
         type: ColumnType.Text,
-        width: FIELDS_TREE_ACCOUNT.NODE_VALUE_WIDTH,
+        width: FIELDS_TREE_LIQITEM.NODE_VALUE_WIDTH,
         hAlign: HorizontalAlign.Begin,
         visible: true,
       },
@@ -62,7 +62,7 @@ export default class LiqItemTreeFieldCatalogModel extends TreeFieldCatalogModel 
     // La columna de importe overdue se muestra si se indica por parámetro
     if (params && params.overdueColumnWithValues) {
       let fieldInfo = this.metadataState.getFieldInfo(
-        FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT,
+        FIELDS_TREE_LIQITEM.OVERDUE_AMOUNT,
         LIQITEM_ENTITY_SET
       );
       if (fieldInfo) {
@@ -74,8 +74,8 @@ export default class LiqItemTreeFieldCatalogModel extends TreeFieldCatalogModel 
           allowPersonalization: false,
           pos: pos++,
           type: ColumnType.Amount,
-          width: FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT_WIDTH,
-          hAlign: HorizontalAlign.Begin,
+          width: FIELDS_TREE_LIQITEM.OVERDUE_AMOUNT_WIDTH,
+          hAlign: HorizontalAlign.Right,
           visible: true,
         });
         pos++;

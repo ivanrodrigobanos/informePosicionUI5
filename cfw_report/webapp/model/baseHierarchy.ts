@@ -1,21 +1,23 @@
 import Object from "sap/ui/base/Object";
-import { HierarchyBankTree } from "./hierarchyBankAccountModel";
-import { HierarchyFlat, HierarchysFlat } from "cfwreport/types/types";
+import { HierarchyFlat, HierarchyTree, HierarchysFlat } from "cfwreport/types/types";
 import Polyfill from "cfwreport/utils/polyfill";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import {
   CRITICALLY,
   FIELDS_TREE,
   FIELDS_TREE_ACCOUNT,
+  FIELDS_TREE_INTERNAL,
   NODE_TYPES,
 } from "cfwreport/constants/treeConstants";
 import { AccountData } from "cfwreport/types/accountBankTypes";
 import { Hierarchy, Hierarchys } from "./hierarchyModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
 
 export default abstract class BaseHierarchy<T> extends Object {
   private busy: boolean;
   protected hierarchyFlat: HierarchysFlat;
   protected hierarchy: Hierarchys;
+  protected i18nBundle: ResourceBundle;
 
   constructor() {
     super();
@@ -65,9 +67,9 @@ export default abstract class BaseHierarchy<T> extends Object {
    * @param rowHierarchyFlat registro de la jerarquía plana
    */
   protected fillTreeAmountData(
-    rowTree: HierarchyBankTree,
+    rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
-  ): HierarchyBankTree {
+  ): HierarchyTree {
     this.getAmountFields(rowHierarchyFlat).forEach((key) => {
       rowTree[key] = rowHierarchyFlat[key];
     });
@@ -100,8 +102,8 @@ export default abstract class BaseHierarchy<T> extends Object {
    * @param parentNode Id del nodo padre
    */
   protected updateAmountParentNodes(
-    accountOldValue: HierarchyBankTree,
-    accountNewValue: HierarchyBankTree,
+    accountOldValue: HierarchyTree,
+    accountNewValue: HierarchyTree,
     parentNode: string
   ) {
     let hierarchyFlatUpperIndex = this.hierarchyFlat.findIndex(
@@ -240,4 +242,31 @@ export default abstract class BaseHierarchy<T> extends Object {
       }
     });
   }
+    /**
+   * Rellena el campo del valor del nodo
+   * @param rowTree Registro del tree table
+   * @param rowHierarchyFlat registro de la jerarquía plana
+   */
+    protected fillTreeNodeField(
+      rowTree: HierarchyTree,
+      rowHierarchyFlat: HierarchyFlat
+    ) {
+      rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE.NODE];
+      rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
+  
+      // Aprovecho para añadir dos campos especificos que se usarán en path de componentes para inicializalos.
+      // Alguno de ellos cuando se esta en el nodo de cuenta se cambiará su valor en caso necesario
+      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
+      rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
+    }
+    /**
+     * Informa el objeto que permite sacar los textos i18n
+     * @param i18nBundle 
+     */
+    protected setI18nBundle(i18nBundle: ResourceBundle){
+      this.i18nBundle=i18nBundle
+    }
+    protected getI18nBundle():ResourceBundle{
+      return this.i18nBundle
+    }
 }

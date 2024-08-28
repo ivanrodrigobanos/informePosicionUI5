@@ -1,4 +1,5 @@
 import BaseHierarchy from "./baseHierarchy";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import {
   HierarchyFlat,
   HierarchysFlat,
@@ -8,21 +9,23 @@ import { Hierarchy, Hierarchys } from "./hierarchyModel";
 import { AccountData, AccountsData } from "cfwreport/types/liquidityItemTypes";
 import {
   FIELDS_TREE,
+  FIELDS_TREE_LIQITEM,
   NODE_NOASIGN,
   NODE_TYPES,
+  FIELDS_TREE_INTERNAL
 } from "cfwreport/constants/treeConstants";
 
-export type HierarchyLiqItemTree = HierarchyTree;
 
-export default class HierarchyLiqItemAccountModel extends BaseHierarchy<HierarchyLiqItemTree> {
-  private hierarchyTree: HierarchyLiqItemTree;
+export default class HierarchyLiqItemAccountModel extends BaseHierarchy<HierarchyTree> {
+  private hierarchyTree: HierarchyTree;
   private accountData: AccountsData;
   private LiqItemWOHier: AccountsData;
 
-  constructor(hierarchyBank?: Hierarchys, accountData?: AccountsData) {
+  constructor(i18nBundle: ResourceBundle, hierarchyBank?: Hierarchys, accountData?: AccountsData) {
     super();
     this.hierarchyFlat = [];
     this.hierarchyTree = [];
+    this.setI18nBundle(i18nBundle)
 
     if (hierarchyBank && accountData) {
       this.hierarchy = hierarchyBank;
@@ -37,7 +40,7 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
   public getFlatData(): HierarchysFlat {
     return this.hierarchyFlat;
   }
-  public getData(): HierarchyLiqItemTree {
+  public getData(): HierarchyTree {
     return this.hierarchyTree;
   }
   public clearData(): void {
@@ -81,15 +84,20 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
    * la jerarquía plana.
    * @returns Jerarquía en formato arbol
    */
-  private _buildHierarchyTree(): HierarchyLiqItemTree {
-    let hierarchyTree: HierarchyLiqItemTree = {};
+  private _buildHierarchyTree(): HierarchyTree {
+    let hierarchyTree: HierarchyTree = {};
 
     if (this.hierarchyFlat.length === 0) return hierarchyTree;
 
     // El primer nivel es el registro 0 de la jerarquía plana
-    let rowTree: HierarchyLiqItemTree = {};
+    let rowTree: HierarchyTree = {};
     rowTree = this.fillTreeAmountData(rowTree, this.hierarchyFlat[0]); // Campos de importe y etiquetas
     this.fillTreeNodeField(rowTree, this.hierarchyFlat[0]); // Nombre del nodo
+
+    // Rellena los nodos inferiores
+    this.fillTreeSubnodes(rowTree, this.hierarchyFlat[0].node);
+
+    hierarchyTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = [rowTree];
 
     return hierarchyTree;
   }
@@ -152,7 +160,9 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     if (!rootNode) return;
     let nodeNoAsign: HierarchyFlat = { ...rootNode };
     nodeNoAsign[FIELDS_TREE.NODE] = NODE_NOASIGN;
-    nodeNoAsign[FIELDS_TREE.NODE_NAME] = "NO ASIGN";
+    nodeNoAsign[FIELDS_TREE.NODE_NAME] = this.getI18nBundle().getText(
+      "liqItemAccountTree.nodeNoAsign"
+    ) as string;
     nodeNoAsign[FIELDS_TREE.PARENT_NODE] = rootNode.node;
     nodeNoAsign[FIELDS_TREE.NODE_LEVEL] = rootNode.node_level + 1;
     nodeNoAsign[FIELDS_TREE.NODE_LEVEL] = NODE_TYPES.LEAF;
@@ -161,11 +171,11 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     );
     this.hierarchyFlat.push(nodeNoAsign);
 
-    this.LiqItemWOHier.forEach((LiqItemData: AccountData, index) => {
+    this.LiqItemWOHier.forEach((liqItemData: AccountData, index) => {
       // Pasamos los datos de la jeraquía
       let newRow: HierarchyFlat = {};
-      newRow[FIELDS_TREE.NODE] = NODE_NOASIGN;
-      newRow[FIELDS_TREE.NODE_NAME] = "NO ASIGN";
+      newRow[FIELDS_TREE.NODE] = liqItemData[FIELDS_TREE_LIQITEM.LIQUIDITY_ITEM];
+      newRow[FIELDS_TREE.NODE_NAME] = liqItemData[FIELDS_TREE_LIQITEM.LIQUIDITY_ITEM_NAME];
       newRow[FIELDS_TREE.PARENT_NODE] = nodeNoAsign[FIELDS_TREE.NODE];
       newRow[FIELDS_TREE.NODE_LEVEL] =
         (nodeNoAsign[FIELDS_TREE.NODE_LEVEL] as number) + 1;
@@ -175,23 +185,63 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
       );
 
       // Pasamos los datos de la cuenta
-      newRow = this.fillAccountDataInRowHierFlat(LiqItemData, newRow);
+      newRow = this.fillAccountDataInRowHierFlat(liqItemData, newRow);
 
       hierarchyFlat.push(newRow);
 
       this.addSumUpperNodesFlat(newRow); // Sumariza los nodos superiores
     });
   }
+
   /**
-   * Rellena el campo del valor del nodo
-   * @param rowTree Registro del tree table
-   * @param rowHierarchyFlat registro de la jerarquía plana
-   */
-  private fillTreeNodeField(
-    rowTree: HierarchyLiqItemTree,
+  * Rellena los nodos inferiores de la jerarquía
+  * @param parentRowTree fila del nodo superior
+  * @param parentNode Nodo superior
+  */
+  private fillTreeSubnodes(
+    parentRowTree: HierarchyTree,
+    parentNode: string | number
+  ) {
+    let rowTreeArray: Array<HierarchyTree> = [];
+    // Si el nodo padre no tiene nodo inferior ni continuamos.
+    if (
+      this.hierarchyFlat.findIndex(
+        (rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode
+      ) !== -1
+    ) {
+      this.hierarchyFlat
+        .filter((rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode)
+        .forEach((rowFlat) => {
+          let rowTree: HierarchyTree = {};
+
+          this.fillTreeNodeField(rowTree, rowFlat); // Nombre del nodo
+          this.fillTreeAmountData(rowTree, rowFlat); // Campos de importe y etiquetas
+
+          // El tipo nodo L es el nodo de cuenta y puede tener niveles de tesoreria. El tipo de nodo de cuenta
+          // se trata de una manera distinta, y dentro de ella si hay niveles de tesoreria se volverá a llamar al mismo método.
+          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
+            this.fillTreeAccountData(rowTree, rowFlat);
+          else this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE]);
+
+          rowTreeArray.push(rowTree);
+        });
+
+      parentRowTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = rowTreeArray;
+    }
+  }
+  /**
+  * Informa los campos de la cuenta bancaria al registro del nodo
+  * @param rowTree Registro del tree table
+  * @param rowHierarchyFlat registro de la jerarquía plana
+  */
+  private fillTreeAccountData(
+    rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
   ) {
-    rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE.NODE];
-    rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
+    // Hago esta ñapa para pasar solo los campos que son de la cuenta.
+    Object.keys(this.accountData[0]).forEach((key) => {
+      rowTree[key] = rowHierarchyFlat[key as keyof AccountData];
+    });
+
   }
 }

@@ -14,10 +14,8 @@ import {
 } from "cfwreport/types/types";
 import { AccountData, AccountsData } from "cfwreport/types/accountBankTypes";
 
-export type HierarchyBankTree = HierarchyTree;
-
-export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBankTree> {
-  private hierarchyTree: HierarchyBankTree;
+export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTree> {
+  private hierarchyTree: HierarchyTree;
 
   private accountData: AccountsData;
 
@@ -40,7 +38,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
   public getFlatData(): HierarchysFlat {
     return this.hierarchyFlat;
   }
-  public getData(): HierarchyBankTree {
+  public getData(): HierarchyTree {
     return this.hierarchyTree;
   }
 
@@ -109,14 +107,14 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * la jerarquía plana.
    * @returns Jerarquía en formato arbol
    */
-  private _buildHierarchyTree(): HierarchyBankTree {
+  private _buildHierarchyTree(): HierarchyTree {
     // tiene que haber un primer campo donde contenga el resto de arrays
-    let hierarchyTree: HierarchyBankTree = {};
+    let hierarchyTree: HierarchyTree = {};
 
     if (this.hierarchyFlat.length === 0) return hierarchyTree;
 
     // El primer nivel es el registro 0 de la jerarquía plana
-    let rowTree: HierarchyBankTree = {};
+    let rowTree: HierarchyTree = {};
     rowTree = this.fillTreeAmountData(rowTree, this.hierarchyFlat[0]); // Campos de importe y etiquetas
     this.fillTreeNodeField(rowTree, this.hierarchyFlat[0]); // Nombre del nodo
 
@@ -133,10 +131,10 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param parentNode Nodo superior
    */
   private fillTreeSubnodes(
-    parentRowTree: HierarchyBankTree,
+    parentRowTree: HierarchyTree,
     parentNode: string | number
   ) {
-    let rowTreeArray: Array<HierarchyBankTree> = [];
+    let rowTreeArray: Array<HierarchyTree> = [];
     // Si el nodo padre no tiene nodo inferior ni continuamos.
     if (
       this.hierarchyFlat.findIndex(
@@ -146,7 +144,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
       this.hierarchyFlat
         .filter((rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode)
         .forEach((rowFlat) => {
-          let rowTree: HierarchyBankTree = {};
+          let rowTree: HierarchyTree = {};
 
           this.fillTreeNodeField(rowTree, rowFlat); // Nombre del nodo
           this.fillTreeAmountData(rowTree, rowFlat); // Campos de importe y etiquetas
@@ -171,7 +169,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param rowHierarchyFlat registro de la jerarquía plana
    */
   private fillTreeAccountData(
-    rowTree: HierarchyBankTree,
+    rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
   ) {
     // Hago esta ñapa para pasar solo los campos que son de la cuenta.
@@ -194,7 +192,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
    * @param rowHierarchyFlat
    */
   private fillTreePlvData(
-    rowTree: HierarchyBankTree,
+    rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
   ) {
     // Hago esta ñapa para pasar solo los campos que son de la cuenta.
@@ -213,23 +211,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyBa
     this.hierarchyTree = [];
   }
 
-  /**
-   * Rellena el campo del valor del nodo
-   * @param rowTree Registro del tree table
-   * @param rowHierarchyFlat registro de la jerarquía plana
-   */
-  private fillTreeNodeField(
-    rowTree: HierarchyBankTree,
-    rowHierarchyFlat: HierarchyFlat
-  ) {
-    rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE.NODE];
-    rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
 
-    // Aprovecho para añadir dos campos especificos que se usarán en path de componentes para inicializalos.
-    // Alguno de ellos cuando se esta en el nodo de cuenta se cambiará su valor en caso necesario
-    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
-    rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
-  }
   /**
    * Construye la jerarquía en formato plano
    */

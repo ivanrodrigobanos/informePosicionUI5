@@ -39,6 +39,7 @@ import {
   FIELDS_TREE,
   FIELDS_TREE_INTERNAL,
   ID_BANK_TREE_TABLE,
+  ID_LIQITEM_TREE_TABLE,
   PREFIX_TEXT_DISP_OPTION,
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
@@ -431,7 +432,7 @@ export default class Main extends BaseController {
   public processBuildLiqItemHier(IDHierarchy: string, navigate: boolean) {
     this.getOwnerComponent().messageState.clearMessage();
 
-    this._liqItemTreeViewController.processBuildHier(
+    this._liqItemTreeViewController.processBuildHierarchy(
       IDHierarchy,
       this._filterBarValuesChanged,
       () => {},
@@ -538,6 +539,13 @@ export default class Main extends BaseController {
         .getProperty(oContext.sPath as string) as FieldCatalogTree;
 
       statePath = STATE_PATH.HIERARCHY_BANK;
+    }
+    else if(sId.includes(ID_LIQITEM_TREE_TABLE)){
+      fieldCatalog = this.getOwnerComponent()
+      .hierarchyLiqItemState.getModel()
+      .getProperty(oContext.sPath as string) as FieldCatalogTree;
+
+    statePath = STATE_PATH.HIERARCHY_LIQ_ITEM;
     }
 
     return new Column(sId, {
