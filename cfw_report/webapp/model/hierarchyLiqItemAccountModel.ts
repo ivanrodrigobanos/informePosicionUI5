@@ -69,7 +69,8 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
       });
 
     // Se añaden las posiciones de liquidez que no tienen nodo
-    if (this.LiqItemWOHier.length > 0) this.addLiqItemWONode();
+    if (this.LiqItemWOHier.length > 0)
+      this.addLiqItemWONode(this.hierarchyFlat);
 
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización
@@ -143,19 +144,43 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
   /**
    * Aañade las posiciones que no tienen nodo
    */
-  private addLiqItemWONode() {
+  private addLiqItemWONode(hierarchyFlat: HierarchysFlat) {
     // Se toma el nodo root como base para construir el no asignados.
     let rootNode = structuredClone(
       this.hierarchy.find((row) => row.node_type === NODE_TYPES.ROOT)
     );
     if (!rootNode) return;
     let nodeNoAsign: HierarchyFlat = { ...rootNode };
-    nodeNoAsign.node = NODE_NOASIGN;
-    nodeNoAsign.node_name = "NO ASIGN";
-    nodeNoAsign.parent_node = rootNode.node;
-    nodeNoAsign.node_level = rootNode.node_level + 1;
-    nodeNoAsign.node_display_order = Number(`${nodeNoAsign.node_level}.999999`);
+    nodeNoAsign[FIELDS_TREE.NODE] = NODE_NOASIGN;
+    nodeNoAsign[FIELDS_TREE.NODE_NAME] = "NO ASIGN";
+    nodeNoAsign[FIELDS_TREE.PARENT_NODE] = rootNode.node;
+    nodeNoAsign[FIELDS_TREE.NODE_LEVEL] = rootNode.node_level + 1;
+    nodeNoAsign[FIELDS_TREE.NODE_LEVEL] = NODE_TYPES.LEAF;
+    nodeNoAsign[FIELDS_TREE.NODE_DISPLAY_ORDER] = Number(
+      `${nodeNoAsign.node_level}.1`
+    );
     this.hierarchyFlat.push(nodeNoAsign);
+
+    this.LiqItemWOHier.forEach((LiqItemData: AccountData, index) => {
+      // Pasamos los datos de la jeraquía
+      let newRow: HierarchyFlat = {};
+      newRow[FIELDS_TREE.NODE] = NODE_NOASIGN;
+      newRow[FIELDS_TREE.NODE_NAME] = "NO ASIGN";
+      newRow[FIELDS_TREE.PARENT_NODE] = nodeNoAsign[FIELDS_TREE.NODE];
+      newRow[FIELDS_TREE.NODE_LEVEL] =
+        (nodeNoAsign[FIELDS_TREE.NODE_LEVEL] as number) + 1;
+      newRow[FIELDS_TREE.NODE_TYPE] = NODE_TYPES.LEAF;
+      newRow[FIELDS_TREE.NODE_DISPLAY_ORDER] = Number(
+        `${nodeNoAsign.node_level}.1${index}`
+      );
+
+      // Pasamos los datos de la cuenta
+      newRow = this.fillAccountDataInRowHierFlat(LiqItemData, newRow);
+
+      hierarchyFlat.push(newRow);
+
+      this.addSumUpperNodesFlat(newRow); // Sumariza los nodos superiores
+    });
   }
   /**
    * Rellena el campo del valor del nodo
