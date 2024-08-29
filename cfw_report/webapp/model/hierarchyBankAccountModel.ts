@@ -151,17 +151,36 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
 
           // El tipo nodo L es el nodo de cuenta y puede tener niveles de tesoreria. El tipo de nodo de cuenta
           // se trata de una manera distinta, y dentro de ella si hay niveles de tesoreria se volverá a llamar al mismo método.
-          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
-            this.fillTreeAccountData(rowTree, rowFlat);
-          else if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL)
-            this.fillTreePlvData(rowTree, rowFlat);
-          else this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE]);
+          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF) { this.fillTreeAccountData(rowTree, rowFlat); }
+          else if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL) { this.fillTreePlvData(rowTree, rowFlat); }
+          else {
+
+            this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE]);
+          }
 
           rowTreeArray.push(rowTree);
         });
 
       parentRowTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = rowTreeArray;
     }
+  }
+  /**
+   * Rellena el campo del valor del nodo
+   * @param rowTree Registro del tree table
+   * @param rowHierarchyFlat registro de la jerarquía plana
+   */
+  protected fillTreeNodeField(
+    rowTree: HierarchyTree,
+    rowHierarchyFlat: HierarchyFlat
+  ) {
+    super.fillTreeNodeField(rowTree, rowHierarchyFlat)
+
+    /*if (this.existNodeWithAccount(
+      rowHierarchyFlat[FIELDS_TREE.NODE] as string,
+      this.hierarchyFlat
+    )) {
+      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = true;
+    }*/
   }
   /**
    * Informa los campos de la cuenta bancaria al registro del nodo
@@ -302,6 +321,26 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
         (row) =>
           row[FIELDS_TREE.PARENT_NODE] == accountNode &&
           row[FIELDS_TREE.NODE_TYPE] == NODE_TYPES.PLANNING_LEVEL
+      ) === -1
+    )
+      return false;
+    else return true;
+  }
+  /**
+   * Devuelve si un nodo tiene subnodo de cuentas
+   * @param node
+   * @param hierarchyFlat
+   * @returns
+   */
+  private existNodeWithAccount(
+    node: string,
+    hierarchyFlat: HierarchysFlat
+  ): boolean {
+    if (
+      hierarchyFlat.findIndex(
+        (row) =>
+          row[FIELDS_TREE.PARENT_NODE] == node &&
+          row[FIELDS_TREE.NODE_TYPE] == NODE_TYPES.LEAF
       ) === -1
     )
       return false;

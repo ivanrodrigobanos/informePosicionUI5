@@ -16,6 +16,8 @@ builder:
         target:
           url: https://c8b17cfb-1029-4317-b575-e75b998efae5.abap.eu20.hana.ondemand.com
           scp: true
+          authenticationType: OAuth2UserTokenExchange
+          destination: abap-cloud-default_abap-productos-des-scsvnw05-pyxisabap
         app:
           name: /STRCM/CFW_REPORT
           description: Informe de provisión y previsión
