@@ -3,7 +3,7 @@
     xmlns:core="sap.ui.core"
 >
     <Popover
-        id="popOverChangeBankHier"
+        id="popOverChangeLiqItemHier"
         title="{i18n>hierarchySelect.title}"
         class="sapUiContentPadding"
         placement="Bottom"
@@ -13,12 +13,12 @@
                 <ToolbarSpacer />
                 <Button
                     text="{i18n>hierarchySelect.btnGo}"
-                    press="handlerHierBankSelected"
+                    press="handlerHierLiqItemSelected"
                 />
             </Toolbar>
         </footer>
         <core:Fragment
-            fragmentName="cfwreport.fragment.hierarchyBank.ComboBankHierarchy"
+            fragmentName="cfwreport.fragment.hierarchyLiquidity.ComboLiquidityHierarchy"
             type="XML"
         />
     </Popover>

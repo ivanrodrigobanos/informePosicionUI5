@@ -7,6 +7,7 @@ import HierarchyLiqItemService from "cfwreport/service/hierarchyLiqItemService";
 import HierarchyLiqItemAccountModel from "cfwreport/model/hierarchyLiqItemAccountModel";
 import LiqItemTreeFieldCatalogModel from "cfwreport/model/liqItemTreeFieldCatalogModel";
 import { FieldsCatalogTree, HierarchysFlat } from "cfwreport/types/types";
+import { ID_LIQITEM_TREE_TABLE } from "cfwreport/constants/treeConstants";
 
 export type HierarchyLiqItemData = {
   hierarchy: HierarchyModel;
@@ -90,5 +91,24 @@ export default class HierarchyLiqItemState extends BaseState<
    */
   public getFixFieldsFieldCatalog(): FieldsCatalogTree {
     return this.data.treeFieldCatalog.getFixFields();
+  }
+  /**
+   * Devuelve el catalogo de campos
+   * @returns
+   */
+  public getFieldCatalog(): FieldsCatalogTree {
+    return this.data.treeFieldCatalog.getData();
+  }
+  /**
+   * Devuelve el ID de la columna de la tree table en base al nombre de la columna
+   * @param columnName
+   * @returns
+   */
+  public getColumnIdTreeTable(columnName: string): string {
+    let index = this.getData()
+      .treeFieldCatalog.getData()
+      .findIndex((column) => column.name === columnName);
+    if (index !== -1) return `${ID_LIQITEM_TREE_TABLE}-${index}`;
+    return "";
   }
 }

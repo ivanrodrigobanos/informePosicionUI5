@@ -16,7 +16,7 @@
             showSecondaryValues="true"
             filterSecondaryValues="true"
             selectedKey="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBank'}"
-            enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankEnabled'}"
+            enabled="{model: 'queryModel', path:'/hierSelectViewModel/radiobuttonHierBank',formatter:'.formatter.enabledInputBankItem'}"
             items="{
 						path: '/dir_bank_hier',
                         suspended: true,

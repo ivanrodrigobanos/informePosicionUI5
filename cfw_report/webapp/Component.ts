@@ -126,12 +126,12 @@ export default class Component extends BaseComponent {
 
     // Modelo para la vista de selección de la jerarquía
     let hierViewModel: HierarchySelectViewModel = {
-      inputIDBankEnabled: false,
+      radiobuttonHierBank: false,
       inputIDBank: "",
       inputIDBankValueState: ValueState.None,
       inputIDBankValueStateText: "",
       inputIDBankPrevious: "",
-      inputIDLiquidityEnabled: false,
+      radiobuttonHierLiqItem: false,
       inputIDLiquidity: "",
       inputIDLiquidityValueState: ValueState.None,
       inputIDLiquidityValueStateText: "",

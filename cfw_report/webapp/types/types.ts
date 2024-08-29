@@ -22,12 +22,12 @@ export type AccountDataQueryViewModel = {
 };
 
 export type HierarchySelectViewModel = {
-  inputIDBankEnabled: boolean;
+  radiobuttonHierBank: boolean;
   inputIDBank: string;
   inputIDBankPrevious: string;
   inputIDBankValueState: ValueState;
   inputIDBankValueStateText: string;
-  inputIDLiquidityEnabled: boolean;
+  radiobuttonHierLiqItem: boolean;
   inputIDLiquidity: string;
   inputIDLiquidityPrevious: string;
   inputIDLiquidityValueState: ValueState;

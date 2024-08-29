@@ -22,54 +22,74 @@
         busy="{model: 'queryModel', path:'/loadingHierBankProcess'}"
         alternateRowColors="true"
         threshold="40000"
-        rowsUpdated="handlerTreeTableRowsUpdated"
+        rowsUpdated="handlerTreeBankAccountRowsUpdated"
         sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
     >
         <tree:extension>
-            <OverflowToolbar
-                design="Transparent">
+            <OverflowToolbar design="Transparent">
                 <Title
                     text=" {i18n>bankAccountTree.title}
-                ({= ${hierarchyBankState>/hierarchyAccount/hierarchyFlat}.length })" />
-                <vm:VariantManagement id="hierarchyBankTreeTable" for="BankTreeTable" />
+                ({= ${hierarchyBankState>/hierarchyAccount/hierarchyFlat}.length })"
+                />
+                <vm:VariantManagement
+                    id="hierarchyBankTreeTable"
+                    for="BankTreeTable"
+                />
                 <ToolbarSpacer />
                 <Button
                     tooltip="{i18n>accountDataTable.refresh}"
                     icon="sap-icon://synchronize"
-                    press="handlerRefreshData" />
+                    press="handlerRefreshData"
+                />
                 <ToolbarSeparator />
                 <Button
                     tooltip="{i18n>treeTable.btnNavAccountQuery}"
                     text="{i18n>treeTable.btnNavAccountQuery}"
-                    press="navigationAccountQuery" />
+                    press="handlerGoAccountQuery"
+                />
+                <Button
+                    text="{i18n>accountDataTable.btnGoHierarchyLiqItem}"
+                    tooltip="{i18n>accountDataTable.btnGoHierarchyLiqItem}"
+                    press="handlerGoHierarchyLiqItem"
+                    type="Transparent"
+                    visible="{= ${hierarchyLiqItemState>/hierarchyAccount/hierarchyFlat}.length > 0 }"
+                />
+
                 <Button
                     tooltip="{i18n>treeTable.btnChangeHierarchy}"
                     text="{i18n>treeTable.btnChangeHierarchy}"
-                    press="handlerChangeBankHier" />
+                    press="handlerChangeBankHier"
+                />
                 <ToolbarSeparator />
                 <Button
                     tooltip="{i18n>treeTable.btnExpandFirstLevel}"
                     icon="sap-icon://navigation-down-arrow"
-                    press="handlerTreeExpandFirstLevel" />
+                    press="handlerTreeExpandFirstLevel"
+                />
                 <Button
                     tooltip="{i18n>treeTable.btnExpandSelection}"
                     icon="sap-icon://expand-group"
-                    press="handlerTreeExpandSelection" />
-                <Button icon="sap-icon://collapse-all"
+                    press="handlerTreeExpandSelection"
+                />
+                <Button
+                    icon="sap-icon://collapse-all"
                     ariaLabelledBy="{i18n>treeTable.btnCollapseAll}"
-                    press="handlerTreeCollapseAll" />
+                    press="handlerTreeCollapseAll"
+                />
                 <ToolbarSeparator />
                 <Button
                     tooltip="{i18n>treeTable.btnCollapseSelection}"
                     icon="sap-icon://collapse-group"
-                    press="handlerTreeCollapseSelection" />
-                <Button icon="sap-icon://action-settings" press="handlerTablePersonalization" />
+                    press="handlerTreeCollapseSelection"
+                />
+                <Button
+                    icon="sap-icon://action-settings"
+                    press="handlerTablePersonalization"
+                />
             </OverflowToolbar>
         </tree:extension>
         <tree:layoutData>
             <FlexItemData growFactor="1" />
         </tree:layoutData>
-
     </tree:TreeTable>
-
 </core:FragmentDefinition>

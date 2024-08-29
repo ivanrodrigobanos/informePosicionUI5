@@ -6,7 +6,7 @@
                         id="idBankHierarchy"
                         type="Text"
                         value="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBank'}"
-                        enabled="{model: 'queryModel', path:'/hierSelectViewModel/inputIDBankEnabled'}"
+                        enabled="{model: 'queryModel', path:'/hierSelectViewModel/radiobuttonHierBank'}"
                         showValueHelp="true"
                         valueHelpRequest="showValueHelpBankHier"
                         showSuggestion="true"
