@@ -11,8 +11,10 @@ export enum TextDisplayOption {
 export interface NodeAndPathControl {
   path: string;
   node: string;
+  nodeType: string;
 }
-export interface NodeDetailInfo extends NodeAndPathControl {}
+export type NodesAndPathControl = NodeAndPathControl[]
+export interface NodeDetailInfo extends NodeAndPathControl { }
 export type NodesDetailInfo = NodeDetailInfo[];
 
 export interface ParamsReadHierarchy {

@@ -21,14 +21,14 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
   private accountData: AccountsData;
   private LiqItemWOHier: AccountsData;
 
-  constructor(i18nBundle: ResourceBundle, hierarchyBank?: Hierarchys, accountData?: AccountsData) {
+  constructor(i18nBundle: ResourceBundle, hierarchyLiqItem?: Hierarchys, accountData?: AccountsData) {
     super();
     this.hierarchyFlat = [];
     this.hierarchyTree = [];
     this.setI18nBundle(i18nBundle)
 
-    if (hierarchyBank && accountData) {
-      this.hierarchy = hierarchyBank;
+    if (hierarchyLiqItem && accountData) {
+      this.hierarchy = hierarchyLiqItem;
       this.accountData = accountData;
       this.buildHierarchyFlat();
       // La criticidad en nodos superiores se determina una vez se ha montado toda la jerarquía y los totales
@@ -53,6 +53,7 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
   private buildHierarchyFlat() {
     this.hierarchyFlat = [];
     this.LiqItemWOHier = [];
+    this.nodesToSumUpper = []
 
     this.accountData
       // .filter((row) => row.source === SOURCE_TYPES.SALDO_FIN)
@@ -68,7 +69,7 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
             this.hierarchyFlat
           );
 
-        if (hierarchyFlatRow) this.addSumUpperNodesFlat(hierarchyFlatRow);
+        if (hierarchyFlatRow) this.addUpperNodesFlat(hierarchyFlatRow);
       });
 
     // Se añaden las posiciones de liquidez que no tienen nodo
@@ -78,6 +79,9 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización
     this.hierarchyFlat = this._sortHierarchyFlat(this.hierarchyFlat);
+
+    // Sumariza los nodos de abajo arriba
+    this.sumNodesDownUpperHierFlat();
   }
   /**
    * Construye la jerarquía en formato arbol, nodos anidados, a partir de
@@ -189,7 +193,7 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
 
       hierarchyFlat.push(newRow);
 
-      this.addSumUpperNodesFlat(newRow); // Sumariza los nodos superiores
+      this.addUpperNodesFlat(newRow); // Sumariza los nodos superiores
     });
   }
 

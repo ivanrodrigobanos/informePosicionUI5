@@ -37,10 +37,11 @@ export const FIELDS_TREE_ACCOUNT = {
   AMOUNT_DATA_WIDTH: "9rem",
   OVERDUE_AMOUNT: "overdue_amount",
   OVERDUE_AMOUNT_WIDTH: "7rem",
+  OVERDUE_CRITIC: "overdue_critic"
 };
 export const FIELDS_TREE_LIQITEM = {
-  NODE_VALUE_WIDTH: "30rem",  
-  CURRENCY: "currency",  
+  NODE_VALUE_WIDTH: "30rem",
+  CURRENCY: "currency",
   LIQUIDITY_ITEM: "liquidity_item",
   LIQUIDITY_ITEM_WIDTH: "7rem",
   LIQUIDITY_ITEM_NAME: "liquidity_item_name",
@@ -56,7 +57,7 @@ export const CUSTOM_DATA = {
 export const NUMBER_FIX_FIELDS = 1;
 
 export const ID_BANK_TREE_TABLE = "BankTreeTable";
-export const ID_LIQITEM_TREE_TABLE="LiqItemTreeTable"
+export const ID_LIQITEM_TREE_TABLE = "LiqItemTreeTable"
 
 export const NODE_TYPES = {
   ROOT: "R",

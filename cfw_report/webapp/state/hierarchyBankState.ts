@@ -5,13 +5,15 @@ import ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import HierarchyModel, { Hierarchys } from "cfwreport/model/hierarchyModel";
 import HierarchyBankAccountModel from "cfwreport/model/hierarchyBankAccountModel";
 import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel";
-import { FieldsCatalogTree, HierarchysFlat,  HierarchyTree } from "cfwreport/types/types";
+import { FieldsCatalogTree, HierarchyFlat, HierarchysFlat, HierarchyTree } from "cfwreport/types/types";
 import {
   FIELDS_TREE,
   ID_BANK_TREE_TABLE,
+  NODE_TYPES,
 } from "cfwreport/constants/treeConstants";
 import {
   NodeAndPathControl,
+  NodesAndPathControl,
   NodesDetailInfo,
   ParamsReadHierarchy,
 } from "cfwreport/types/hierarchyTypes";
@@ -70,9 +72,10 @@ export default class HierarchyBankState extends BaseState<
    * actualmente es el de la cuenta.
    * @param node Id del nodo
    * @param treePath path del arbol donde se ha hecho el detalle
+   * @param nodeType Tipo de nodo:cuenta, nodo de cuentas, etc.
    */
-  public addNodeDetailInfo = (node: string, treePath: string) => {
-    this.getData().generalInfo.addNodeDetailInfo(node, treePath);
+  public addNodeDetailInfo = (node: string, treePath: string, nodeType: string) => {
+    this.getData().generalInfo.addNodeDetailInfo(node, treePath, nodeType);
   };
   /**
    * Devuelve los nodos expandidos con su detalle
@@ -159,11 +162,18 @@ export default class HierarchyBankState extends BaseState<
       hierPath
     ) as HierarchyTree;
 
-    await this.addPlvHierarchyFromAccount(
-      hierarchyValue[FIELDS_TREE.NODE] as string
-    );
+    let rowHierarchyFlat = this.getHierarchyFlatData().find((row: any) => row[FIELDS_TREE.NODE] === hierarchyValue[FIELDS_TREE.NODE]) as HierarchyFlat
 
-    return { node: hierarchyValue[FIELDS_TREE.NODE] as string, path: hierPath };
+    if (rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
+      await this.addPlvHierarchyFromAccount(
+        hierarchyValue[FIELDS_TREE.NODE] as string
+      )
+    else if (rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE || rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT)
+      await this.addPlvHierarchyFromNode(
+        hierarchyValue[FIELDS_TREE.NODE] as string
+      )
+
+    return { node: hierarchyValue[FIELDS_TREE.NODE] as string, path: hierPath, nodeType: rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] as string };
   }
   /**
    * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía.
@@ -185,6 +195,27 @@ export default class HierarchyBankState extends BaseState<
     }
 
     return account;
+  }
+  /**
+   * Proceso que añade los datos del nivel de tesoreria de un nodo de la jerarquía. Este
+   * proceso leera las cuentas que hay por debajo y llamará al mismo proceso que ya existe
+   * cuando se selecciona una cuenta
+   * @param hierPath Path del nivel de jerarquía donde esta la cuenta.
+   */
+  public async addPlvHierarchyFromNode(node: string): Promise<string> {
+    let promises: Promise<any>[] = [];
+
+    // Recuperamos las cuentas asociadas al nodo y lanzamos el proceso de búsqueda de datos
+    let accounts = this.getData().hierarchyAccount.getAccountsFromNode(node)
+
+    for (let x = 0; x < accounts.length; x++) {
+      await this.addPlvHierarchyFromAccount(accounts[x])
+    }
+    // Se añaden los planning level al nodo obtenido
+    this.getData().hierarchyAccount.addPlvNode2HierFlat(node)
+
+
+    return node;
   }
 
   /**

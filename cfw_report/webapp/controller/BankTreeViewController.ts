@@ -132,17 +132,20 @@ export default class BankTreeViewController extends TreeTableController {
     });
     Promise.all(promises)
       .then((response) => {
-        // Una vez finalizado las distintas búsquedas se:recalcula la criticidad en los nodos superior y se regenera el arbol para la TreeTable
-        this.ownerComponent.hierarchyBankState.redetermineCriticNodesHierFlat();
-        this.ownerComponent.hierarchyBankState.rebuildHierarchyTree();
-
         // Por cada registro procesado se expande su nivel y se guarda que ese nodo se ha expandido
         response.forEach((rowResponse: NodeAndPathControl) => {
           this.ownerComponent.hierarchyBankState.addNodeDetailInfo(
             rowResponse.node,
-            rowResponse.path
+            rowResponse.path,
+            rowResponse.nodeType
           );
           this.expandNodeFromPath(rowResponse.path);
+
+          // Una vez finalizado las distintas búsquedas se recalcula la criticidad en los nodos superior y se regenera el arbol para la TreeTable
+          this.ownerComponent.hierarchyBankState.redetermineCriticNodesHierFlat();
+          this.ownerComponent.hierarchyBankState.rebuildHierarchyTree();
+
+
         });
       })
       .catch(() => {
@@ -174,9 +177,9 @@ export default class BankTreeViewController extends TreeTableController {
    * @param loading
    */
   private setLoadingPath(path: string, loading: boolean) {
-    let value = this.getValuesFromPath(path);
+    let values = this.getValuesFromPath(path);
 
-    value[FIELDS_TREE_INTERNAL.LOADING_VALUES] = loading;
-    this.ownerComponent.hierarchyBankState.getModel().setProperty(path, value);
+    values[FIELDS_TREE_INTERNAL.LOADING_VALUES] = loading;
+    this.ownerComponent.hierarchyBankState.getModel().setProperty(path, values);
   }
 }
