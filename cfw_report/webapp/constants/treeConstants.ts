@@ -15,7 +15,7 @@ export const FIELDS_TREE = {
 };
 
 export const FIELDS_TREE_INTERNAL = {
-  SHOW_BTN_DETAIL: "showBtnDetail",
+  SHOW_BTN_PLV: "showBtnDetail",
   LOADING_VALUES: "loadingValues",
   CHILD_NODE: "accounts",
 };
@@ -37,7 +37,8 @@ export const FIELDS_TREE_ACCOUNT = {
   AMOUNT_DATA_WIDTH: "9rem",
   OVERDUE_AMOUNT: "overdue_amount",
   OVERDUE_AMOUNT_WIDTH: "7rem",
-  OVERDUE_CRITIC: "overdue_critic"
+  OVERDUE_CRITIC: "overdue_critic",
+  BANK_ACCOUNT: "bank_account",
 };
 export const FIELDS_TREE_LIQITEM = {
   NODE_VALUE_WIDTH: "30rem",
@@ -57,7 +58,7 @@ export const CUSTOM_DATA = {
 export const NUMBER_FIX_FIELDS = 1;
 
 export const ID_BANK_TREE_TABLE = "BankTreeTable";
-export const ID_LIQITEM_TREE_TABLE = "LiqItemTreeTable"
+export const ID_LIQITEM_TREE_TABLE = "LiqItemTreeTable";
 
 export const NODE_TYPES = {
   ROOT: "R",
@@ -82,3 +83,5 @@ export const CRITICALLY = {
   NEUTRAL: 0,
 };
 export const NODE_NOASIGN = "NOASIGN";
+
+export const PACKAGE_ACCOUNT_PLV = 100;

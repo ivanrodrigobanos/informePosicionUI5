@@ -114,7 +114,9 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
    */
   public addPlvNode2HierFlat(node: string) {
     // Vamos añadir los planning level desde el nodo más bajo e ir subiendo. Para que en el superior pueda ir teniendo los acumulados
-    this.hierarchyFlat
+    // Se quita que regenere los nodos inferiores porque el proceso de búsqueda de datos no lo esta haciendo y no tiene sentido en hacer
+    // este sin tener datos, pero dejo comentado el codigo por si en un futuro se necesita.
+    /*this.hierarchyFlat
       .filter(
         (row) =>
           row[FIELDS_TREE.PARENT_NODE] === node &&
@@ -122,7 +124,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
       )
       .forEach((row) => {
         this.addPlvNode2HierFlat(row[FIELDS_TREE.NODE] as string);
-      });
+      });*/
     // Borramos los niveles previos que pueda tener
     this.deletePlvDataFromNode(node);
 
@@ -165,7 +167,8 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
       let rowNode = this.hierarchyFlat.find(
         (row) =>
           row[FIELDS_TREE.NODE] === node &&
-          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE
+          (row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE ||
+            row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT)
       ) as HierarchyFlat;
       let rowTree: HierarchyFlat = {};
 
@@ -177,8 +180,10 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
       rowTree[FIELDS_TREE.NODE_TYPE] = NODE_TYPES.PLANNING_LEVEL;
       rowTree[FIELDS_TREE.NODE_LEVEL] =
         (rowNode[FIELDS_TREE.NODE_LEVEL] as number) + 1;
-      rowTree[FIELDS_TREE.NODE_DISPLAY_ORDER] =
-        rowNode[FIELDS_TREE.NODE_DISPLAY_ORDER];
+      rowTree[FIELDS_TREE.NODE_DISPLAY_ORDER] = 1; // Para que salga al principio del nodo
+
+      rowTree[FIELDS_TREE_ACCOUNT.CURRENCY] =
+        rowNode[FIELDS_TREE_ACCOUNT.CURRENCY];
 
       this.hierarchyFlat.push(rowTree);
       // Volvemos a obtener el indice
@@ -205,8 +210,11 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
           if (this.hierarchyFlat[rowNodePlvIndex][key])
             this.hierarchyFlat[rowNodePlvIndex][key] =
               (this.hierarchyFlat[rowNodePlvIndex][key] as number) +
-              (rowHierarchyFlat[key] as number);
-          else this.hierarchyFlat[rowNodePlvIndex][key] = rowHierarchyFlat[key];
+              Number(rowHierarchyFlat[key]);
+          else
+            this.hierarchyFlat[rowNodePlvIndex][key] = Number(
+              rowHierarchyFlat[key]
+            );
 
           let criticField = this.getCriticFieldFromAmount(key);
           this.hierarchyFlat[rowNodePlvIndex][criticField] =
@@ -214,9 +222,30 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
               Number(this.hierarchyFlat[rowNodePlvIndex][key])
             );
         } else {
-          this.hierarchyFlat[rowNodePlvIndex][key] = rowHierarchyFlat[key];
+          this.hierarchyFlat[rowNodePlvIndex][key] = rowHierarchyFlat[
+            key
+          ] as number;
         }
       });
+    // Campos overdue
+    if (this.hierarchyFlat[rowNodePlvIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT])
+      this.hierarchyFlat[rowNodePlvIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] =
+        (this.hierarchyFlat[rowNodePlvIndex][
+          FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+        ] as number) +
+        Number(rowHierarchyFlat[FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT]);
+    else
+      this.hierarchyFlat[rowNodePlvIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] =
+        Number(rowHierarchyFlat[FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT]);
+
+    this.hierarchyFlat[rowNodePlvIndex][FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC] =
+      this.getCriticallyFromAmount(
+        Number(
+          this.hierarchyFlat[rowNodePlvIndex][
+            FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+          ]
+        )
+      );
   }
 
   /**
@@ -246,6 +275,12 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     return accounts;
   }
   /**
+   * Ordena la jerarquía en formato plano
+   */
+  public sortHierarchyFlat() {
+    this.hierarchyFlat = this._sortHierarchyFlat(this.hierarchyFlat);
+  }
+  /**
    * Construye la jerarquía en formato arbol, nodos anidados, a partir de
    * la jerarquía plana.
    * @returns Jerarquía en formato arbol
@@ -262,7 +297,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     this.fillTreeNodeField(rowTree, this.hierarchyFlat[0]); // Nombre del nodo
 
     // Rellena los nodos inferiores
-    this.fillTreeSubnodes(rowTree, this.hierarchyFlat[0].node);
+    this.fillTreeSubnodes(rowTree, this.hierarchyFlat[0].node as string);
 
     hierarchyTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = [rowTree];
 
@@ -273,10 +308,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
    * @param parentRowTree fila del nodo superior
    * @param parentNode Nodo superior
    */
-  private fillTreeSubnodes(
-    parentRowTree: HierarchyTree,
-    parentNode: string | number
-  ) {
+  private fillTreeSubnodes(parentRowTree: HierarchyTree, parentNode: string) {
     let rowTreeArray: Array<HierarchyTree> = [];
     // Si el nodo padre no tiene nodo inferior ni continuamos.
     if (
@@ -284,28 +316,37 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
         (rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode
       ) !== -1
     ) {
-      this.hierarchyFlat
-        .filter((rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode)
-        .forEach((rowFlat) => {
-          let rowTree: HierarchyTree = {};
+      let rowParentNode = this.hierarchyFlat.find(
+        (row) => row[FIELDS_TREE.NODE] === parentNode
+      ) as HierarchyFlat;
+      let rowsNode = this.hierarchyFlat.filter(
+        (rowFlat) => rowFlat[FIELDS_TREE.PARENT_NODE] === parentNode
+      );
 
-          this.fillTreeNodeField(rowTree, rowFlat); // Nombre del nodo
-          this.fillTreeAmountData(rowTree, rowFlat); // Campos de importe y etiquetas
+      rowsNode.forEach((rowFlat) => {
+        let rowTree: HierarchyTree = {};
 
-          // El tipo nodo L es el nodo de cuenta y puede tener niveles de tesoreria. El tipo de nodo de cuenta
-          // se trata de una manera distinta, y dentro de ella si hay niveles de tesoreria se volverá a llamar al mismo método.
-          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF) {
-            this.fillTreeAccountData(rowTree, rowFlat);
-          } else if (
-            rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
-          ) {
-            this.fillTreePlvData(rowTree, rowFlat);
-          } else {
-            this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE]);
-          }
+        this.fillTreeNodeField(rowTree, rowFlat); // Nombre del nodo
+        this.fillTreeAmountData(rowTree, rowFlat); // Campos de importe y etiquetas
 
-          rowTreeArray.push(rowTree);
-        });
+        // El tipo nodo L es el nodo de cuenta y puede tener niveles de tesoreria. El tipo de nodo de cuenta
+        // se trata de una manera distinta, y dentro de ella si hay niveles de tesoreria se volverá a llamar al mismo método.
+        if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF) {
+          this.fillTreeAccountData(rowTree, rowFlat);
+        }
+        // El relleno de datos de tesoreria solo es cuando viene de un nodo de cuenta, ya que se rellena información adicional
+        // que no aplica si el nivel es a nivel de nodo
+        else if (
+          rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL &&
+          rowParentNode[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF
+        ) {
+          this.fillTreePlvData(rowTree, rowFlat);
+        } else {
+          this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE] as string);
+        }
+
+        rowTreeArray.push(rowTree);
+      });
 
       parentRowTree[FIELDS_TREE_INTERNAL.CHILD_NODE] = rowTreeArray;
     }
@@ -321,12 +362,19 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
   ) {
     super.fillTreeNodeField(rowTree, rowHierarchyFlat);
 
-    /*if (this.existNodeWithAccount(
-      rowHierarchyFlat[FIELDS_TREE.NODE] as string,
-      this.hierarchyFlat
-    )) {
-      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = true;
-    }*/
+    // Si el nodo tiene cuentas se muestra el botón de mostrar el planning level
+    if (
+      this.existNodeWithAccount(
+        rowHierarchyFlat[FIELDS_TREE.NODE] as string,
+        this.hierarchyFlat
+      ) &&
+      !this.existNodeWithPlv(
+        rowHierarchyFlat[FIELDS_TREE.NODE] as string,
+        this.hierarchyFlat
+      )
+    ) {
+      rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_PLV] = true;
+    }
   }
   /**
    * Informa los campos de la cuenta bancaria al registro del nodo
@@ -341,15 +389,18 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     Object.keys(this.accountData[0]).forEach((key) => {
       rowTree[key] = rowHierarchyFlat[key as keyof AccountData];
     });
-    let existPlvNode = this.existAccountWithPlv(
+    let existPlvNode = this.existNodeWithPlv(
       rowHierarchyFlat[FIELDS_TREE.NODE] as string,
       this.hierarchyFlat
     );
     rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
-    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = !existPlvNode;
+    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_PLV] = !existPlvNode;
 
     if (existPlvNode)
-      this.fillTreeSubnodes(rowTree, rowHierarchyFlat[FIELDS_TREE.NODE]);
+      this.fillTreeSubnodes(
+        rowTree,
+        rowHierarchyFlat[FIELDS_TREE.NODE] as string
+      );
   }
   /**
    * Rellena los datos de los planning level
@@ -456,12 +507,12 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     return newRow;
   }
   /**
-   * Devuelve si una cuenta tiene subnodo de nivel de tesoreria
+   * Devuelve si una cuenta/nodo tiene subnodo de nivel de tesoreria
    * @param accountNode
    * @param hierarchyFlat
    * @returns
    */
-  private existAccountWithPlv(
+  private existNodeWithPlv(
     accountNode: string,
     hierarchyFlat: HierarchysFlat
   ): boolean {

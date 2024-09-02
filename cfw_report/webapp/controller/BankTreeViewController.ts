@@ -125,11 +125,15 @@ export default class BankTreeViewController extends TreeTableController {
     paths.forEach((path) => {
       // Se informa el loader en el botón pulsado
       this.setLoadingPath(path, true);
+
       // Se añade la promesa encargada de buscar los datos y añadirlos a la jerarquía plana.
       promises.push(
-        this.ownerComponent.hierarchyBankState.addPlvHierarchyFromPath(path)
+        Promise.resolve(
+          this.ownerComponent.hierarchyBankState.addPlvHierarchyFromPath(path)
+        )
       );
     });
+
     Promise.all(promises)
       .then((response) => {
         // Por cada registro procesado se expande su nivel y se guarda que ese nodo se ha expandido
@@ -140,13 +144,10 @@ export default class BankTreeViewController extends TreeTableController {
             rowResponse.nodeType
           );
           this.expandNodeFromPath(rowResponse.path);
-
-          // Una vez finalizado las distintas búsquedas se recalcula la criticidad en los nodos superior y se regenera el arbol para la TreeTable
-          this.ownerComponent.hierarchyBankState.redetermineCriticNodesHierFlat();
-          this.ownerComponent.hierarchyBankState.rebuildHierarchyTree();
-
-
         });
+        // Una vez finalizado las distintas búsquedas se recalcula la criticidad en los nodos superior y se regenera el arbol para la TreeTable
+        this.ownerComponent.hierarchyBankState.redetermineCriticNodesHierFlat();
+        this.ownerComponent.hierarchyBankState.rebuildHierarchyTree();
       })
       .catch(() => {
         paths.forEach((path) => {

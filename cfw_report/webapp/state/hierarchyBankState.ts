@@ -5,19 +5,26 @@ import ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import HierarchyModel, { Hierarchys } from "cfwreport/model/hierarchyModel";
 import HierarchyBankAccountModel from "cfwreport/model/hierarchyBankAccountModel";
 import BankTreeFieldCatalogModel from "cfwreport/model/bankTreeFieldCatalogModel";
-import { FieldsCatalogTree, HierarchyFlat, HierarchysFlat, HierarchyTree } from "cfwreport/types/types";
+import {
+  FieldsCatalogTree,
+  HierarchyFlat,
+  HierarchysFlat,
+  HierarchyTree,
+} from "cfwreport/types/types";
 import {
   FIELDS_TREE,
+  FIELDS_TREE_ACCOUNT,
   ID_BANK_TREE_TABLE,
   NODE_TYPES,
+  PACKAGE_ACCOUNT_PLV,
 } from "cfwreport/constants/treeConstants";
 import {
   NodeAndPathControl,
-  NodesAndPathControl,
   NodesDetailInfo,
   ParamsReadHierarchy,
 } from "cfwreport/types/hierarchyTypes";
 import HierarchyGeneralInfoModel from "cfwreport/model/hierarchyGeneralInfoModel";
+import { AccountsData } from "cfwreport/types/accountBankTypes";
 
 export type HierarchyBankData = {
   hierarchy: HierarchyModel;
@@ -74,7 +81,11 @@ export default class HierarchyBankState extends BaseState<
    * @param treePath path del arbol donde se ha hecho el detalle
    * @param nodeType Tipo de nodo:cuenta, nodo de cuentas, etc.
    */
-  public addNodeDetailInfo = (node: string, treePath: string, nodeType: string) => {
+  public addNodeDetailInfo = (
+    node: string,
+    treePath: string,
+    nodeType: string
+  ) => {
     this.getData().generalInfo.addNodeDetailInfo(node, treePath, nodeType);
   };
   /**
@@ -139,6 +150,7 @@ export default class HierarchyBankState extends BaseState<
    * Regenerado la jerarquía para el arbol a partir de los datos de jerarquía planos.
    */
   public rebuildHierarchyTree() {
+    this.getData().hierarchyAccount.sortHierarchyFlat();
     this.getData().hierarchyAccount.buildHierarchyTree();
     this.updateModel();
   }
@@ -158,22 +170,29 @@ export default class HierarchyBankState extends BaseState<
   public async addPlvHierarchyFromPath(
     hierPath: string
   ): Promise<NodeAndPathControl> {
-    let hierarchyValue = this.getModel().getProperty(
-      hierPath
-    ) as HierarchyTree;
+    let hierarchyValue = this.getModel().getProperty(hierPath) as HierarchyTree;
 
-    let rowHierarchyFlat = this.getHierarchyFlatData().find((row: any) => row[FIELDS_TREE.NODE] === hierarchyValue[FIELDS_TREE.NODE]) as HierarchyFlat
+    let rowHierarchyFlat = this.getHierarchyFlatData().find(
+      (row: any) => row[FIELDS_TREE.NODE] === hierarchyValue[FIELDS_TREE.NODE]
+    ) as HierarchyFlat;
 
     if (rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
       await this.addPlvHierarchyFromAccount(
         hierarchyValue[FIELDS_TREE.NODE] as string
-      )
-    else if (rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE || rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT)
+      );
+    else if (
+      rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE ||
+      rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT
+    )
       await this.addPlvHierarchyFromNode(
         hierarchyValue[FIELDS_TREE.NODE] as string
-      )
+      );
 
-    return { node: hierarchyValue[FIELDS_TREE.NODE] as string, path: hierPath, nodeType: rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] as string };
+    return {
+      node: hierarchyValue[FIELDS_TREE.NODE] as string,
+      path: hierPath,
+      nodeType: rowHierarchyFlat[FIELDS_TREE.NODE_TYPE] as string,
+    };
   }
   /**
    * Proceso que añade los datos del nivel de tesoreria de una cuenta de banco en la jerarquía.
@@ -182,16 +201,13 @@ export default class HierarchyBankState extends BaseState<
   public async addPlvHierarchyFromAccount(account: string): Promise<string> {
     let filterValues = this.ownerComponent.getFiltersValues();
 
-    let valuesPlv =
-      await this.ownerComponent.accountBankState.readAccountDataPlv({
-        bank_account: [account],
-        ...filterValues,
-      });
-    if (valuesPlv.length > 0) {
-      this.getData().hierarchyAccount.addPlvAccount2HierFlat(
-        account,
-        valuesPlv
-      );
+    let values = await this.ownerComponent.accountBankState.readAccountDataPlv({
+      bank_account: [account],
+      ...filterValues,
+    });
+
+    if (values.length > 0) {
+      this.getData().hierarchyAccount.addPlvAccount2HierFlat(account, values);
     }
 
     return account;
@@ -203,17 +219,65 @@ export default class HierarchyBankState extends BaseState<
    * @param hierPath Path del nivel de jerarquía donde esta la cuenta.
    */
   public async addPlvHierarchyFromNode(node: string): Promise<string> {
+    // Recuperamos las cuentas asociadas al nodo y lanzamos el proceso de búsqueda de datos
+    let accounts = this.getData().hierarchyAccount.getAccountsFromNode(node);
     let promises: Promise<any>[] = [];
 
-    // Recuperamos las cuentas asociadas al nodo y lanzamos el proceso de búsqueda de datos
-    let accounts = this.getData().hierarchyAccount.getAccountsFromNode(node)
+    let filterValues = this.ownerComponent.getFiltersValues();
+
+    // Hay que hacer paquetes de llamadas porque aunque en UI5 solo se hace una llamada, a SAP llegan tantas llamadas como cuentas. Esto puede
+    // afectar al rendimiento si tenemos con muuuchas cuentas.
+    let pckCount = 0;
+    let pckAccounts: string[] = [];
+
+    accounts.forEach((account) => {
+      pckAccounts.push(account);
+      pckCount++;
+
+      if (pckCount === PACKAGE_ACCOUNT_PLV) {
+        promises.push(
+          this.ownerComponent.accountBankState.readAccountDataPlv({
+            bank_account: pckAccounts,
+            ...filterValues,
+          })
+        );
+        pckCount = 0;
+        pckAccounts = [];
+      }
+    });
+    if (pckAccounts.length > 0)
+      promises.push(
+        this.ownerComponent.accountBankState.readAccountDataPlv({
+          bank_account: pckAccounts,
+          ...filterValues,
+        })
+      );
+    await Promise.all(promises).then((response) => {
+      response.forEach((values: AccountsData) => {
+        if (values.length > 0) {
+          let accountsUnique = [
+            ...new Set(
+              values.map((item) => item[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT])
+            ),
+          ];
+          accountsUnique.forEach((account) => {
+            this.getData().hierarchyAccount.addPlvAccount2HierFlat(
+              account as string,
+              values.filter(
+                (row) => row[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT] === account
+              )
+            );
+          });
+        }
+      });
+
+      // Se añaden los planning level al nodo obtenido
+      this.getData().hierarchyAccount.addPlvNode2HierFlat(node);
+    });
 
     for (let x = 0; x < accounts.length; x++) {
-      await this.addPlvHierarchyFromAccount(accounts[x])
+      //  await this.addPlvHierarchyFromAccount(accounts[0]);
     }
-    // Se añaden los planning level al nodo obtenido
-    this.getData().hierarchyAccount.addPlvNode2HierFlat(node)
-
 
     return node;
   }

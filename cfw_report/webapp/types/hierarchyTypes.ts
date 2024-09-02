@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export type HierarchyID = string;
 export type HierarchyCategory = string;
 export type HierarchyNode = string;
@@ -13,8 +14,8 @@ export interface NodeAndPathControl {
   node: string;
   nodeType: string;
 }
-export type NodesAndPathControl = NodeAndPathControl[]
-export interface NodeDetailInfo extends NodeAndPathControl { }
+export type NodesAndPathControl = NodeAndPathControl[];
+export interface NodeDetailInfo extends NodeAndPathControl {}
 export type NodesDetailInfo = NodeDetailInfo[];
 
 export interface ParamsReadHierarchy {

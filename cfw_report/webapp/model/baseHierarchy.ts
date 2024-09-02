@@ -276,12 +276,12 @@ export default abstract class BaseHierarchy<T> extends Object {
         (b[FIELDS_TREE.NODE_LEVEL] as number)
       ) {
         if (
-          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) >
+          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) <
           (b[FIELDS_TREE.NODE_DISPLAY_ORDER] as number)
         )
           return -1;
         else if (
-          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) <
+          (a[FIELDS_TREE.NODE_DISPLAY_ORDER] as number) >
           (b[FIELDS_TREE.NODE_DISPLAY_ORDER] as number)
         )
           return 1;
@@ -305,7 +305,7 @@ export default abstract class BaseHierarchy<T> extends Object {
 
     // Aprovecho para añadir dos campos especificos que se usarán en path de componentes para inicializalos.
     // Alguno de ellos cuando se esta en el nodo de cuenta se cambiará su valor en caso necesario
-    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_DETAIL] = false;
+    rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_PLV] = false;
     rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
   }
   /**
