@@ -326,14 +326,18 @@ export default abstract class BaseHierarchy<T> extends Object {
       this.sumUpperNodesHierFlat(rowRoot[FIELDS_TREE.NODE] as string)
     }
 
-    //let indexParentNode=this.hierarchyFlat.findIndex((row)=>row[FIELDS_TREE.NODE]===parentNode && row[FIELDS_TREE.NODE_TYPE]===)
+    //
   }
   private sumUpperNodesHierFlat(node: string) {
-    // Vamos a sumarizar de arriba hacia abajo.
+    // Vamos a sumarizar de abajo hacia arriba.
     this.hierarchyFlat.filter((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE).forEach((row) => {
       this.sumUpperNodesHierFlat(row[FIELDS_TREE.NODE] as string)
     })
+    let indexNode = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE)
+    if (indexNode === -1) return
+    let indexParentNode = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.NODE] === this.hierarchyFlat[indexNode][FIELDS_TREE.PARENT_NODE] && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE)
+    if (indexParentNode === -1) return
 
-    console.log(node)
+    console.log(`Nodo: ${this.hierarchyFlat[indexNode][FIELDS_TREE.NODE]} - nodo padre: ${this.hierarchyFlat[indexParentNode][FIELDS_TREE.NODE]}`)
   }
 }
