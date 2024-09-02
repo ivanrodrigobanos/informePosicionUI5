@@ -291,7 +291,6 @@ export default class Main extends BaseController {
 
     let closePopoverBank = false;
     let closePopoverLiqItem = false;
-    let msgToastText = "";
 
     if (hierViewModel.radiobuttonHierBank)
       closePopoverBank = this.handlerHierBankSelected();
@@ -703,7 +702,7 @@ export default class Main extends BaseController {
    * Gestiona el evento de columnas actualizas en el tree table de bancos
    * @param event
    */
-  public handlerTreeBankAccountRowsUpdated(event: any) {
+  public handlerTreeBankAccountRowsUpdated() {
     // Asociar el menu contextual a un campo de la tree table se tiene que hacer cuando se actualice las columnas ya que es una
     // tabla dinámica y las columnas se crean a través de una factory. Pero hay que tener en cuenta que este método se llama varias
     // veces y por eso hay que tener en cuenta para que solo se asocie una vez para evitar problemas de rendimiento.
@@ -719,7 +718,7 @@ export default class Main extends BaseController {
    * Gestiona el evento de columnas actualizas en el tree table de posiciones de liquidez
    * @param event
    */
-  public handlerTreeLiqItemRowsUpdated(event: any) {
+  public handlerTreeLiqItemRowsUpdated() {
     // Asociar el menu contextual a un campo de la tree table se tiene que hacer cuando se actualice las columnas ya que es una
     // tabla dinámica y las columnas se crean a través de una factory. Pero hay que tener en cuenta que este método se llama varias
     // veces y por eso hay que tener en cuenta para que solo se asocie una vez para evitar problemas de rendimiento.
