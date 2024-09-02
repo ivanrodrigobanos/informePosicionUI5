@@ -1,5 +1,9 @@
 import Object from "sap/ui/base/Object";
-import { HierarchyFlat, HierarchyTree, HierarchysFlat } from "cfwreport/types/types";
+import {
+  HierarchyFlat,
+  HierarchyTree,
+  HierarchysFlat,
+} from "cfwreport/types/types";
 import Polyfill from "cfwreport/utils/polyfill";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import {
@@ -19,7 +23,7 @@ export default abstract class BaseHierarchy<T> extends Object {
   protected hierarchyFlat: HierarchysFlat;
   protected hierarchy: Hierarchys;
   protected i18nBundle: ResourceBundle;
-  protected nodesToSumUpper: HierarchyNodes = []
+  protected nodesToSumUpper: HierarchyNodes = [];
 
   constructor() {
     super();
@@ -50,15 +54,20 @@ export default abstract class BaseHierarchy<T> extends Object {
         this.getAmountFields(rowHier)
           .filter((rowKey) => rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
           .forEach((rowKey) => {
-
-            let criticField = this.getCriticFieldFromAmount(rowKey)
+            let criticField = this.getCriticFieldFromAmount(rowKey);
             this.hierarchyFlat[hierIndex][criticField] =
-              this.getCriticallyFromAmount(Number(this.hierarchyFlat[hierIndex][rowKey]))
+              this.getCriticallyFromAmount(
+                Number(this.hierarchyFlat[hierIndex][rowKey])
+              );
           });
 
-        // Campo overdue                
-        this.hierarchyFlat[hierIndex][FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC] = this.getCriticallyFromAmount(Number(this.hierarchyFlat[hierIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT]))
-
+        // Campo overdue
+        this.hierarchyFlat[hierIndex][FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC] =
+          this.getCriticallyFromAmount(
+            Number(
+              this.hierarchyFlat[hierIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT]
+            )
+          );
       });
   }
 
@@ -136,7 +145,7 @@ export default abstract class BaseHierarchy<T> extends Object {
         accountOldValue,
         accountNewValue,
         this.hierarchyFlat[hierarchyFlatUpperIndex][
-        FIELDS_TREE.PARENT_NODE
+          FIELDS_TREE.PARENT_NODE
         ] as string
       );
     }
@@ -188,29 +197,45 @@ export default abstract class BaseHierarchy<T> extends Object {
 
             // Si el registro de donde viene es una cuenta/posicion/lo que sea sumarizo el nodo porque lo va hacer correctamente.
             if (hierarchyFlatRow[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
-              this.hierarchyFlat[hierarchyFlatUpperIndex][key] = (this.hierarchyFlat[hierarchyFlatUpperIndex][key] as number) + (hierarchyFlatRow[key] as number)
-          }
-          else {
+              this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
+                (this.hierarchyFlat[hierarchyFlatUpperIndex][key] as number) +
+                (hierarchyFlatRow[key] as number);
+          } else {
             this.hierarchyFlat[hierarchyFlatUpperIndex][key] =
               hierarchyFlatRow[key];
           }
-
         });
 
       // Campos overdue
       // Importe
-      if (!this.hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT])
-        this.hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] = 0;
+      if (
+        !this.hierarchyFlat[hierarchyFlatUpperIndex][
+          FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+        ]
+      )
+        this.hierarchyFlat[hierarchyFlatUpperIndex][
+          FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+        ] = 0;
 
       // Si el registro de donde viene es una cuenta/posicion/lo que sea sumarizo el nodo porque lo va hacer correctamente
       if (hierarchyFlatRow[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
-        this.hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] = (this.hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] as number) + (hierarchyFlatRow[FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] as number)
+        this.hierarchyFlat[hierarchyFlatUpperIndex][
+          FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+        ] =
+          (this.hierarchyFlat[hierarchyFlatUpperIndex][
+            FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+          ] as number) +
+          (hierarchyFlatRow[FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] as number);
 
       // Criticidad. Pongo el valor si no existe, porque luego se recalcula
-      if (!this.hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC])
-        this.hierarchyFlat[hierarchyFlatUpperIndex][FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC] =
-          hierarchyFlatRow[FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC];
-
+      if (
+        !this.hierarchyFlat[hierarchyFlatUpperIndex][
+          FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC
+        ]
+      )
+        this.hierarchyFlat[hierarchyFlatUpperIndex][
+          FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC
+        ] = hierarchyFlatRow[FIELDS_TREE_ACCOUNT.OVERDUE_CRITIC];
 
       // Se vuelve a llamar al método para que sumarize el nodo padre
       this.addUpperNodesFlat(this.hierarchyFlat[hierarchyFlatUpperIndex]);
@@ -267,10 +292,10 @@ export default abstract class BaseHierarchy<T> extends Object {
     });
   }
   /**
- * Rellena el campo del valor del nodo
- * @param rowTree Registro del tree table
- * @param rowHierarchyFlat registro de la jerarquía plana
- */
+   * Rellena el campo del valor del nodo
+   * @param rowTree Registro del tree table
+   * @param rowHierarchyFlat registro de la jerarquía plana
+   */
   protected fillTreeNodeField(
     rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
@@ -285,31 +310,30 @@ export default abstract class BaseHierarchy<T> extends Object {
   }
   /**
    * Informa el objeto que permite sacar los textos i18n
-   * @param i18nBundle 
+   * @param i18nBundle
    */
   protected setI18nBundle(i18nBundle: ResourceBundle) {
-    this.i18nBundle = i18nBundle
+    this.i18nBundle = i18nBundle;
   }
   /**
    * Devuelve el objeto que permite sacar los textos i18n
-   * @returns 
+   * @returns
    */
   protected getI18nBundle(): ResourceBundle {
-    return this.i18nBundle
+    return this.i18nBundle;
   }
   /**
    * Devuelve la criticidad para un importe
-   * @param amount 
-   * @returns 
+   * @param amount
+   * @returns
    */
   protected getCriticallyFromAmount(amount: number): number {
     return amount < 0 ? CRITICALLY.ERROR : CRITICALLY.NEUTRAL;
-
   }
   /**
    * Devuelve el campo de criticidad a partir del campo de importe
-   * @param amountField 
-   * @returns 
+   * @param amountField
+   * @returns
    */
   protected getCriticFieldFromAmount(amountField: string): string {
     return amountField.replace(
@@ -321,23 +345,57 @@ export default abstract class BaseHierarchy<T> extends Object {
    * Sumariza los nodos de abajo arriba empezando por el nodo raiz.
    */
   protected sumNodesDownUpperHierFlat() {
-    let rowRoot = this.hierarchyFlat.find((row) => row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT)
+    let rowRoot = this.hierarchyFlat.find(
+      (row) => row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT
+    );
     if (rowRoot) {
-      this.sumUpperNodesHierFlat(rowRoot[FIELDS_TREE.NODE] as string)
+      this.sumUpperNodesHierFlat(rowRoot[FIELDS_TREE.NODE] as string);
     }
 
     //
   }
   private sumUpperNodesHierFlat(node: string) {
     // Vamos a sumarizar de abajo hacia arriba.
-    this.hierarchyFlat.filter((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE).forEach((row) => {
-      this.sumUpperNodesHierFlat(row[FIELDS_TREE.NODE] as string)
-    })
-    let indexNode = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE)
-    if (indexNode === -1) return
-    let indexParentNode = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.NODE] === this.hierarchyFlat[indexNode][FIELDS_TREE.PARENT_NODE] && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE)
-    if (indexParentNode === -1) return
+    this.hierarchyFlat
+      .filter(
+        (row) =>
+          row[FIELDS_TREE.PARENT_NODE] === node &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE
+      )
+      .forEach((row) => {
+        this.sumUpperNodesHierFlat(row[FIELDS_TREE.NODE] as string);
+      });
+    let indexNode = this.hierarchyFlat.findIndex(
+      (row) =>
+        row[FIELDS_TREE.NODE] === node &&
+        row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE
+    );
+    if (indexNode === -1) return;
+    let indexParentNode = this.hierarchyFlat.findIndex(
+      (row) =>
+        row[FIELDS_TREE.NODE] ===
+          this.hierarchyFlat[indexNode][FIELDS_TREE.PARENT_NODE] &&
+        (row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE ||
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.ROOT)
+    );
+    if (indexParentNode === -1) return;
 
-    console.log(`Nodo: ${this.hierarchyFlat[indexNode][FIELDS_TREE.NODE]} - nodo padre: ${this.hierarchyFlat[indexParentNode][FIELDS_TREE.NODE]}`)
+    // Campos normales
+    this.getAmountFields(this.hierarchyFlat[indexNode])
+      .filter((rowKey) => rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA))
+      .forEach((key) => {
+        this.hierarchyFlat[indexParentNode][key] =
+          (this.hierarchyFlat[indexParentNode][key] as number) +
+          (this.hierarchyFlat[indexNode][key] as number);
+      });
+
+    // Campo overdue
+    this.hierarchyFlat[indexParentNode][FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT] =
+      (this.hierarchyFlat[indexParentNode][
+        FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+      ] as number) +
+      (this.hierarchyFlat[indexNode][
+        FIELDS_TREE_ACCOUNT.OVERDUE_AMOUNT
+      ] as number);
   }
 }

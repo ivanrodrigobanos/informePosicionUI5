@@ -11,7 +11,8 @@
     "valid-jsdoc": "off",
     "no-shadow": "off",
     "no-console": "off",
-    "@typescript-eslint/no-this-alias": "off"
+    "@typescript-eslint/no-this-alias": "off",
+    "comma-dangle": "off"
   },
   "root": true
 }

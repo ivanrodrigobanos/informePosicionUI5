@@ -12,20 +12,23 @@ import {
   FIELDS_TREE_LIQITEM,
   NODE_NOASIGN,
   NODE_TYPES,
-  FIELDS_TREE_INTERNAL
+  FIELDS_TREE_INTERNAL,
 } from "cfwreport/constants/treeConstants";
-
 
 export default class HierarchyLiqItemAccountModel extends BaseHierarchy<HierarchyTree> {
   private hierarchyTree: HierarchyTree;
   private accountData: AccountsData;
   private LiqItemWOHier: AccountsData;
 
-  constructor(i18nBundle: ResourceBundle, hierarchyLiqItem?: Hierarchys, accountData?: AccountsData) {
+  constructor(
+    i18nBundle: ResourceBundle,
+    hierarchyLiqItem?: Hierarchys,
+    accountData?: AccountsData
+  ) {
     super();
     this.hierarchyFlat = [];
     this.hierarchyTree = [];
-    this.setI18nBundle(i18nBundle)
+    this.setI18nBundle(i18nBundle);
 
     if (hierarchyLiqItem && accountData) {
       this.hierarchy = hierarchyLiqItem;
@@ -53,7 +56,7 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
   private buildHierarchyFlat() {
     this.hierarchyFlat = [];
     this.LiqItemWOHier = [];
-    this.nodesToSumUpper = []
+    this.nodesToSumUpper = [];
 
     this.accountData
       // .filter((row) => row.source === SOURCE_TYPES.SALDO_FIN)
@@ -178,8 +181,10 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     this.LiqItemWOHier.forEach((liqItemData: AccountData, index) => {
       // Pasamos los datos de la jeraquía
       let newRow: HierarchyFlat = {};
-      newRow[FIELDS_TREE.NODE] = liqItemData[FIELDS_TREE_LIQITEM.LIQUIDITY_ITEM];
-      newRow[FIELDS_TREE.NODE_NAME] = liqItemData[FIELDS_TREE_LIQITEM.LIQUIDITY_ITEM_NAME];
+      newRow[FIELDS_TREE.NODE] =
+        liqItemData[FIELDS_TREE_LIQITEM.LIQUIDITY_ITEM];
+      newRow[FIELDS_TREE.NODE_NAME] =
+        liqItemData[FIELDS_TREE_LIQITEM.LIQUIDITY_ITEM_NAME];
       newRow[FIELDS_TREE.PARENT_NODE] = nodeNoAsign[FIELDS_TREE.NODE];
       newRow[FIELDS_TREE.NODE_LEVEL] =
         (nodeNoAsign[FIELDS_TREE.NODE_LEVEL] as number) + 1;
@@ -198,10 +203,10 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
   }
 
   /**
-  * Rellena los nodos inferiores de la jerarquía
-  * @param parentRowTree fila del nodo superior
-  * @param parentNode Nodo superior
-  */
+   * Rellena los nodos inferiores de la jerarquía
+   * @param parentRowTree fila del nodo superior
+   * @param parentNode Nodo superior
+   */
   private fillTreeSubnodes(
     parentRowTree: HierarchyTree,
     parentNode: string | number
@@ -234,10 +239,10 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     }
   }
   /**
-  * Informa los campos de la cuenta bancaria al registro del nodo
-  * @param rowTree Registro del tree table
-  * @param rowHierarchyFlat registro de la jerarquía plana
-  */
+   * Informa los campos de la cuenta bancaria al registro del nodo
+   * @param rowTree Registro del tree table
+   * @param rowHierarchyFlat registro de la jerarquía plana
+   */
   private fillTreeAccountData(
     rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
@@ -246,6 +251,5 @@ export default class HierarchyLiqItemAccountModel extends BaseHierarchy<Hierarch
     Object.keys(this.accountData[0]).forEach((key) => {
       rowTree[key] = rowHierarchyFlat[key as keyof AccountData];
     });
-
   }
 }

@@ -16,7 +16,6 @@ import { AccountData, AccountsData } from "cfwreport/types/accountBankTypes";
 import { HierarchyNodes } from "cfwreport/types/hierarchyTypes";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 
-
 export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTree> {
   private hierarchyTree: HierarchyTree;
 
@@ -66,7 +65,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     // Si leemos los datos de cuenta a nivel individual y luego hacemos a nivel de nodo, va a ocurrir
     // que se añadan los mismos datos provocando duplicados. Por ello, hay que borrar los registros de planning
     // level que pueda tener de búsquedas anteriores
-    this.deletePlvDataFromNode(node)
+    this.deletePlvDataFromNode(node);
 
     // Se añaden los registros que no sean saldo final
     values
@@ -110,102 +109,141 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     }
   }
   /**
-   * 
-   * @param node    
+   *
+   * @param node
    */
   public addPlvNode2HierFlat(node: string) {
-
     // Vamos añadir los planning level desde el nodo más bajo e ir subiendo. Para que en el superior pueda ir teniendo los acumulados
-    this.hierarchyFlat.filter((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE).forEach((row) => {
-      this.addPlvNode2HierFlat(row[FIELDS_TREE.NODE] as string)
-    })
+    this.hierarchyFlat
+      .filter(
+        (row) =>
+          row[FIELDS_TREE.PARENT_NODE] === node &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE
+      )
+      .forEach((row) => {
+        this.addPlvNode2HierFlat(row[FIELDS_TREE.NODE] as string);
+      });
     // Borramos los niveles previos que pueda tener
-    this.deletePlvDataFromNode(node)
+    this.deletePlvDataFromNode(node);
 
     // Añadimos los niveles de las cuentas que pueda tener por debajo el nodo
-    this.hierarchyFlat.filter((rowNode) => rowNode[FIELDS_TREE.PARENT_NODE] === node && rowNode[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF).forEach((rowAccount) => {
-      // Por cada cuenta sacamos sus planning level
-      this.hierarchyFlat.filter((rowPlv) => rowPlv[FIELDS_TREE.PARENT_NODE] === rowAccount[FIELDS_TREE.NODE] && rowPlv[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL).forEach((row) => {
-        this.addSumPlvDataToNode(node, row)
-      })
-    })
+    this.hierarchyFlat
+      .filter(
+        (rowNode) =>
+          rowNode[FIELDS_TREE.PARENT_NODE] === node &&
+          rowNode[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF
+      )
+      .forEach((rowAccount) => {
+        // Por cada cuenta sacamos sus planning level
+        this.hierarchyFlat
+          .filter(
+            (rowPlv) =>
+              rowPlv[FIELDS_TREE.PARENT_NODE] ===
+                rowAccount[FIELDS_TREE.NODE] &&
+              rowPlv[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
+          )
+          .forEach((row) => {
+            this.addSumPlvDataToNode(node, row);
+          });
+      });
   }
 
   /**
    * Añade y/o suma el valor de una fila de planning level en un nodo
-   * @param node 
-   * @param rowHierarchyFlat 
+   * @param node
+   * @param rowHierarchyFlat
    */
   private addSumPlvDataToNode(node: string, rowHierarchyFlat: HierarchyFlat) {
-    let rowNodePlvIndex = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE] === rowHierarchyFlat[FIELDS_TREE.NODE] && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL)
+    let rowNodePlvIndex = this.hierarchyFlat.findIndex(
+      (row) =>
+        row[FIELDS_TREE.PARENT_NODE] === node &&
+        row[FIELDS_TREE.NODE] === rowHierarchyFlat[FIELDS_TREE.NODE] &&
+        row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
+    );
 
     if (rowNodePlvIndex === -1) {
-      let rowNode = this.hierarchyFlat.find((row) => row[FIELDS_TREE.NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE) as HierarchyFlat
+      let rowNode = this.hierarchyFlat.find(
+        (row) =>
+          row[FIELDS_TREE.NODE] === node &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE
+      ) as HierarchyFlat;
       let rowTree: HierarchyFlat = {};
 
-      rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL];
+      rowTree[FIELDS_TREE.NODE] =
+        rowHierarchyFlat[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL];
       rowTree[FIELDS_TREE.NODE_NAME] =
         rowHierarchyFlat[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL_NAME];
       rowTree[FIELDS_TREE.PARENT_NODE] = node;
       rowTree[FIELDS_TREE.NODE_TYPE] = NODE_TYPES.PLANNING_LEVEL;
-      rowTree[FIELDS_TREE.NODE_LEVEL] = (rowNode[FIELDS_TREE.NODE_LEVEL] as number) + 1;
-      rowTree[FIELDS_TREE.NODE_DISPLAY_ORDER] = rowNode[FIELDS_TREE.NODE_DISPLAY_ORDER];
+      rowTree[FIELDS_TREE.NODE_LEVEL] =
+        (rowNode[FIELDS_TREE.NODE_LEVEL] as number) + 1;
+      rowTree[FIELDS_TREE.NODE_DISPLAY_ORDER] =
+        rowNode[FIELDS_TREE.NODE_DISPLAY_ORDER];
 
       this.hierarchyFlat.push(rowTree);
       // Volvemos a obtener el indice
-      rowNodePlvIndex = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE] === rowHierarchyFlat[FIELDS_TREE.NODE] && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL)
+      rowNodePlvIndex = this.hierarchyFlat.findIndex(
+        (row) =>
+          row[FIELDS_TREE.PARENT_NODE] === node &&
+          row[FIELDS_TREE.NODE] === rowHierarchyFlat[FIELDS_TREE.NODE] &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
+      );
     }
 
     // Inicializamos o sumarizamos el resto de importe
-    let amountFields = this.getAmountFields(rowHierarchyFlat)
+    let amountFields = this.getAmountFields(rowHierarchyFlat);
 
     // Informamos fecha e importe
-    amountFields.filter(
-      (rowKey) =>
-        rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA) ||
-        rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL)
-    )
+    amountFields
+      .filter(
+        (rowKey) =>
+          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA) ||
+          rowKey.includes(ENTITY_FIELDS_DATA.AMOUNT_LABEL)
+      )
       .forEach((key) => {
         if (key.includes(ENTITY_FIELDS_DATA.AMOUNT_DATA)) {
           if (this.hierarchyFlat[rowNodePlvIndex][key])
             this.hierarchyFlat[rowNodePlvIndex][key] =
               (this.hierarchyFlat[rowNodePlvIndex][key] as number) +
               (rowHierarchyFlat[key] as number);
-          else
-            this.hierarchyFlat[rowNodePlvIndex][key] =
-              rowHierarchyFlat[key];
+          else this.hierarchyFlat[rowNodePlvIndex][key] = rowHierarchyFlat[key];
 
-          let criticField = this.getCriticFieldFromAmount(key)
+          let criticField = this.getCriticFieldFromAmount(key);
           this.hierarchyFlat[rowNodePlvIndex][criticField] =
-            this.getCriticallyFromAmount(Number(this.hierarchyFlat[rowNodePlvIndex][key]))
-        }
-        else {
-          this.hierarchyFlat[rowNodePlvIndex][key] =
-            rowHierarchyFlat[key];
+            this.getCriticallyFromAmount(
+              Number(this.hierarchyFlat[rowNodePlvIndex][key])
+            );
+        } else {
+          this.hierarchyFlat[rowNodePlvIndex][key] = rowHierarchyFlat[key];
         }
       });
-
-
   }
 
   /**
-   * Devuelve las cuentas que hay por debajo de un nodo. 
+   * Devuelve las cuentas que hay por debajo de un nodo.
    * Habilito un parametro para permitir busquedas recursivas para devolver las cuentas de los subnodos
    * @param node Nombre del nodo
    * @param recursive Busqueda recursiva para buscar las cuentas de los subnodos
-   * @returns 
+   * @returns
    */
-  public getAccountsFromNode(node: string, recursive: boolean = false): HierarchyNodes {
-    let accounts: HierarchyNodes = []
+  public getAccountsFromNode(
+    node: string,
+    recursive: boolean = false
+  ): HierarchyNodes {
+    let accounts: HierarchyNodes = [];
 
-    this.hierarchyFlat.filter((row: HierarchyFlat) => row[FIELDS_TREE.PARENT_NODE] === node).forEach((row: HierarchyFlat) => {
-      if (row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
-        accounts.push(row[FIELDS_TREE.NODE] as string)
-      else if (row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE && recursive)
-        accounts = accounts.concat(this.getAccountsFromNode(row[FIELDS_TREE.NODE] as string))
-    })
+    this.hierarchyFlat
+      .filter((row: HierarchyFlat) => row[FIELDS_TREE.PARENT_NODE] === node)
+      .forEach((row: HierarchyFlat) => {
+        if (row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF)
+          accounts.push(row[FIELDS_TREE.NODE] as string);
+        else if (row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.NODE && recursive)
+          accounts = accounts.concat(
+            this.getAccountsFromNode(row[FIELDS_TREE.NODE] as string)
+          );
+      });
 
-    return accounts
+    return accounts;
   }
   /**
    * Construye la jerarquía en formato arbol, nodos anidados, a partir de
@@ -256,10 +294,13 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
 
           // El tipo nodo L es el nodo de cuenta y puede tener niveles de tesoreria. El tipo de nodo de cuenta
           // se trata de una manera distinta, y dentro de ella si hay niveles de tesoreria se volverá a llamar al mismo método.
-          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF) { this.fillTreeAccountData(rowTree, rowFlat); }
-          else if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL) { this.fillTreePlvData(rowTree, rowFlat); }
-          else {
-
+          if (rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF) {
+            this.fillTreeAccountData(rowTree, rowFlat);
+          } else if (
+            rowFlat[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
+          ) {
+            this.fillTreePlvData(rowTree, rowFlat);
+          } else {
             this.fillTreeSubnodes(rowTree, rowFlat[FIELDS_TREE.NODE]);
           }
 
@@ -278,7 +319,7 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     rowTree: HierarchyTree,
     rowHierarchyFlat: HierarchyFlat
   ) {
-    super.fillTreeNodeField(rowTree, rowHierarchyFlat)
+    super.fillTreeNodeField(rowTree, rowHierarchyFlat);
 
     /*if (this.existNodeWithAccount(
       rowHierarchyFlat[FIELDS_TREE.NODE] as string,
@@ -335,13 +376,12 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     this.hierarchyTree = [];
   }
 
-
   /**
    * Construye la jerarquía en formato plano
    */
   private buildHierarchyFlat() {
     this.hierarchyFlat = [];
-    this.nodesToSumUpper = []
+    this.nodesToSumUpper = [];
 
     this.accountData
       .filter((row) => row.source === SOURCE_TYPES.SALDO_FIN)
@@ -363,6 +403,9 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     // Ordenacion para que quede los niveles de arriba abajo. Y dentro del mismo nivel que se vean de mayor a menor segun
     // su orden de visualización
     this.hierarchyFlat = this._sortHierarchyFlat(this.hierarchyFlat);
+
+    // Sumariza los nodos de abajo arriba
+    this.sumNodesDownUpperHierFlat();
   }
 
   /**
@@ -425,8 +468,8 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     if (
       hierarchyFlat.findIndex(
         (row) =>
-          row[FIELDS_TREE.PARENT_NODE] == accountNode &&
-          row[FIELDS_TREE.NODE_TYPE] == NODE_TYPES.PLANNING_LEVEL
+          row[FIELDS_TREE.PARENT_NODE] === accountNode &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
       ) === -1
     )
       return false;
@@ -445,8 +488,8 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     if (
       hierarchyFlat.findIndex(
         (row) =>
-          row[FIELDS_TREE.PARENT_NODE] == node &&
-          row[FIELDS_TREE.NODE_TYPE] == NODE_TYPES.LEAF
+          row[FIELDS_TREE.PARENT_NODE] === node &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.LEAF
       ) === -1
     )
       return false;
@@ -454,13 +497,23 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
   }
   /**
    * Borro los datos del planning level de un nodo
-   * @param node 
+   * @param node
    */
   private deletePlvDataFromNode(node: string) {
-    this.hierarchyFlat.filter((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL).forEach((rowPlv) => {
-      let rowIndex = this.hierarchyFlat.findIndex((row) => row[FIELDS_TREE.PARENT_NODE] === node && row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL && row[FIELDS_TREE.NODE] === rowPlv[FIELDS_TREE.NODE])
-      this.hierarchyFlat.splice(rowIndex, rowIndex >= 0 ? 1 : 0);
-    })
-
+    this.hierarchyFlat
+      .filter(
+        (row) =>
+          row[FIELDS_TREE.PARENT_NODE] === node &&
+          row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
+      )
+      .forEach((rowPlv) => {
+        let rowIndex = this.hierarchyFlat.findIndex(
+          (row) =>
+            row[FIELDS_TREE.PARENT_NODE] === node &&
+            row[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL &&
+            row[FIELDS_TREE.NODE] === rowPlv[FIELDS_TREE.NODE]
+        );
+        this.hierarchyFlat.splice(rowIndex, rowIndex >= 0 ? 1 : 0);
+      });
   }
 }
