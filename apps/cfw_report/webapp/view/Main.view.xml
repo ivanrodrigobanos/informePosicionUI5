@@ -6,7 +6,7 @@
     xmlns:sfb="sap.ui.comp.smartfilterbar"
     xmlns:sft="sap.ui.comp.smarttable"
     xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-    <f:DynamicPage fitContent="true" id="dynamicPageId">
+    <f:DynamicPage fitContent="true" id="dynamicPageId" class="sapUiContentPadding">
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>

@@ -1,0 +1,32 @@
+<core:FragmentDefinition
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:sfb="sap.ui.comp.smartfilterbar"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <sfb:SmartFilterBar entitySet="cfw_det_bnk_query" id="DetSFBQuery"
+        persistencyKey="CfwDetReportSFBApp">
+        <sfb:controlConfiguration>
+            <sfb:ControlConfiguration
+                key="p_keydate"
+                visibleInAdvancedArea="true"
+                filterType="single"
+                index="1" />
+            <sfb:ControlConfiguration
+                key="bank_account"
+                visibleInAdvancedArea="true"
+                filterType="multiple"
+                index="2" />
+            <sfb:ControlConfiguration
+                key="p_displaycurrency"
+                visibleInAdvancedArea="true"
+                filterType="single"
+                index="3" />
+        </sfb:controlConfiguration>
+        <!-- layout data used to make the table growing but the filter bar fixed -->
+        <sfb:layoutData>
+            <FlexItemData shrinkFactor="0" />
+        </sfb:layoutData>
+    </sfb:SmartFilterBar>
+</core:FragmentDefinition>
