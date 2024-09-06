@@ -10,7 +10,7 @@
         id="DetSFTQuery"
         entitySet="cfw_det_bnk_query"
         smartFilterId="DetSFBQuery"
-        tableType="AnalyticalTable"
+        tableType="Table"
         enableAutoColumnWidth="true"
         useTablePersonalisation="true"
         header="{i18n>detailTable.title}"
