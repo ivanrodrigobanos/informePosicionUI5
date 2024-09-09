@@ -58,20 +58,6 @@ export default class BankTreeFieldCatalogModel extends TreeFieldCatalogModel {
     ];
     pos++;
 
-    /*{
-        name: FIELDS_TREE_ACCOUNT.NODE_NAME,
-        label: this.i18nBundle.getText(
-          "bankAccountTree.labelColumnNodeName"
-        ) as string,
-        quickinfo: this.i18nBundle.getText(
-          "bankAccountTree.tooltipColumnNodeName"
-        ) as string,
-        pos: pos++,
-        type: ColumnType.Text,
-        width: FIELDS_TREE_ACCOUNT.NODE_NAME_WIDTH,
-        hAlign: HorizontalAlign.Begin,
-      },*/
-
     let fieldInfo = this.metadataState.getFieldInfo(
       FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_PARTNER
     );

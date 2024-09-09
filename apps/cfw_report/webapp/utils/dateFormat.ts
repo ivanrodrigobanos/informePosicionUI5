@@ -16,4 +16,49 @@ export default class DateFormat {
 
     return newDate;
   }
+  /**
+   * Convierte la fecha de SAP a fecha de JS
+   * @param sapDate
+   * @returns
+   */
+  static convertSAPDate2Date(sapDate: string): Date {
+    let dateChar = `${sapDate.substr(0, 4)}-${sapDate.substr(
+      4,
+      2
+    )}-${sapDate.substr(6, 2)}`;
+    return new Date(dateChar);
+  }
+  /**
+   * Convierte una fecha al formato local del navegador
+   * @param date
+   * @returns
+   */
+  static convertDate2Locale(date: Date): string {
+    let options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    return date.toLocaleDateString(navigator.language, options);
+  }
+  /**
+   * Convierte una fecha SAP al formato local del navegador
+   * @param sapDate
+   * @returns
+   */
+  static convertSAPDate2Locale(sapDate: string): string {
+    let date = this.convertSAPDate2Date(sapDate);
+    let dateLocale = this.convertDate2Locale(date);
+    return dateLocale;
+  }
+  /**
+   * Convierte una fecha al formato ISO teniendo el cuenta la zona horaria
+   * @param date
+   * @returns
+   */
+  static convertDate2ISO(date: Date): string {
+    const offset = date.getTimezoneOffset();
+    let dateOffset = new Date(date.getTime() - offset * 60 * 1000);
+    return dateOffset.toISOString().split("T")[0];
+  }
 }

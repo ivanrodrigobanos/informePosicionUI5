@@ -50,3 +50,18 @@ export interface FieldCatalogTree {
 export type FieldsCatalogTree = FieldCatalogTree[];
 
 export type AccountAmount = Record<string, number | string>;
+
+export type NavigationInfo = {
+  title: string;
+  node: string;
+  node_name: string;
+  node_type: string;
+  company_code: string;
+  company_code_name: string;
+  bank_account: string;
+  bank_account_name: NamedCurve;
+  date_formatted: string;
+  date?: Date;
+  url_nav_detail?: string;
+  show_planning_level: boolean;
+};

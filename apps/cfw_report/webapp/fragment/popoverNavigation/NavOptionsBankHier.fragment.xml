@@ -1,0 +1,73 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+>
+    <Popover
+        id="popoverNavOptionsBankHier"
+        title="{path:'navigationHierBank>/info/title'}"
+        class="sapUiNoContentPadding"
+        placement="Auto"
+    >
+        <FlexBox
+            alignContent="Start"
+            direction="Column"
+            class="sapUiSmallMargin"
+        >
+            <f:Form editable="false">
+
+                <f:layout>
+                    <f:ResponsiveGridLayout
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="3"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="4"
+                        emptySpanL="4"
+                        emptySpanM="4"
+                        emptySpanS="0"
+                        columnsXL="1"
+                        columnsL="1"
+                        columnsM="1"
+                        singleContainerFullSize="false" />
+                </f:layout>
+                <f:formContainers>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement
+                                label="{i18n>bankAccountTree.popoverNavigationLblBankAccount}">
+                                <f:fields>
+                                    <Text
+                                        text="{path:'navigationHierBank>/info/bank_account'} - {path:'navigationHierBank>/info/bank_account_name'}" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="{i18n>bankAccountTree.popoverNavigationLblPlanningLevel}"
+                                visible="{path:'navigationHierBank>/info/show_planning_level'}">
+                                <f:fields>
+                                    <Text
+                                        text="{path:'navigationHierBank>/info/node'} - {path:'navigationHierBank>/info/node_name'}" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="{i18n>bankAccountTree.popoverNavigationLblCompanyCode}">
+                                <f:fields>
+                                    <Text
+                                        text="{path:'navigationHierBank>/info/company_code'} - {path:'navigationHierBank>/info/company_code_name'}" />
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+            </f:Form>
+            <FlexBox direction="Column" class="sapUiSmallMargin">
+                <Link
+                    text="{i18n>bankAccountTree.popoverNavigationLinkDetail}"
+                    target="_blank"
+                    href="{path:'navigationHierBank>/info/url_nav_detail'}" />
+            </FlexBox>
+        </FlexBox>
+    </Popover>
+</core:FragmentDefinition>

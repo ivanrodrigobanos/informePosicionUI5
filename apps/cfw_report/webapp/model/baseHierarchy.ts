@@ -302,6 +302,7 @@ export default abstract class BaseHierarchy<T> extends Object {
   ) {
     rowTree[FIELDS_TREE.NODE] = rowHierarchyFlat[FIELDS_TREE.NODE];
     rowTree[FIELDS_TREE.NODE_NAME] = rowHierarchyFlat[FIELDS_TREE.NODE_NAME];
+    rowTree[FIELDS_TREE.NODE_TYPE] = rowHierarchyFlat[FIELDS_TREE.NODE_TYPE];
 
     // Aprovecho para añadir dos campos especificos que se usarán en path de componentes para inicializalos.
     // Alguno de ellos cuando se esta en el nodo de cuenta se cambiará su valor en caso necesario

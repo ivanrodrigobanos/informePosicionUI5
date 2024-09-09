@@ -4,21 +4,69 @@ import View from "sap/ui/core/mvc/View";
 import TreeTable from "sap/ui/table/TreeTable";
 import Button from "sap/m/Button";
 import Popover from "sap/m/Popover";
-import { FIELDS_TREE_INTERNAL } from "cfwreport/constants/treeConstants";
+import {
+  CUSTOM_DATA,
+  FIELDS_TREE,
+  FIELDS_TREE_ACCOUNT,
+  FIELDS_TREE_INTERNAL,
+  NODE_TYPES,
+  SAP_CLIENT,
+  SAP_HOST,
+  SAP_PATH,
+} from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
-import { HierarchyTree } from "cfwreport/types/types";
+import { HierarchyTree, NavigationInfo } from "cfwreport/types/types";
 import { NodeAndPathControl } from "cfwreport/types/hierarchyTypes";
+import Controller from "sap/ui/core/mvc/Controller";
+import Control from "sap/ui/core/Control";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import CustomData from "sap/ui/core/CustomData";
+import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
+import DateFormat from "cfwreport/utils/dateFormat";
+
+type NavigationData = {
+  info: NavigationInfo;
+};
 
 export default class BankTreeViewController extends TreeTableController {
   private _btnShowMsgApp: Button;
   private _popOverMessagesApp: Popover;
+  private popOverBankNavOptions: Popover;
+  private controller: Controller;
+  private navigationModel: JSONModel;
+  private navigationData: NavigationData;
 
-  constructor(oComponent: AppComponent, treeTable: TreeTable, view: View) {
+  constructor(
+    oComponent: AppComponent,
+    treeTable: TreeTable,
+    view: View,
+    controller: Controller
+  ) {
     super(oComponent, treeTable, view);
+    this.controller = controller;
+    this.navigationData = {
+      info: {
+        company_code: "",
+        company_code_name: "",
+        node: "",
+        node_name: "",
+        node_type: "",
+        title: "",
+        bank_account: "",
+        bank_account_name: "",
+        date_formatted: "",
+        show_planning_level: false,
+      },
+    };
 
     // this._btnShowMsgApp = this._view.byId("btnShowMsgAppBankTree") as Button;
   }
-
+  public getNavigationModel(): JSONModel {
+    if (!this.navigationModel) {
+      this.navigationModel = new JSONModel(this.navigationData);
+    }
+    return this.navigationModel;
+  }
   public setPopOverMessageApp(popover: Popover) {
     this._popOverMessagesApp = popover;
   }
@@ -171,7 +219,63 @@ export default class BankTreeViewController extends TreeTableController {
       .getModel()
       .getProperty(path) as HierarchyTree;
   }
+  /**
+   * Gestiona el cambio de jerarquía de banco
+   */
+  public async handlerPopOverNavBankHier(statePath: string, event: any) {
+    let oRow = event.getSource().getParent();
+    let values = oRow.getBindingContext(statePath).getObject();
 
+    this.navigationData.info.node = values[FIELDS_TREE.NODE];
+    this.navigationData.info.node_name = values[FIELDS_TREE.NODE_NAME];
+    this.navigationData.info.node_type = values[FIELDS_TREE.NODE_TYPE];
+    this.navigationData.info.company_code =
+      values[FIELDS_TREE_ACCOUNT.COMPANY_CODE];
+    this.navigationData.info.company_code_name =
+      values[FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME];
+    this.navigationData.info.bank_account =
+      values[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT];
+    this.navigationData.info.bank_account_name =
+      values[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_NAME];
+    if (values[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL)
+      this.navigationData.info.show_planning_level = true;
+
+    let amountField = event
+      .getSource()
+      .getCustomData()
+      .find((row: CustomData) => row.getKey() === CUSTOM_DATA.INTERNAL_FIELD)
+      ?.getValue();
+    let labelField = amountField.replace(
+      ENTITY_FIELDS_DATA.AMOUNT_DATA,
+      ENTITY_FIELDS_DATA.AMOUNT_LABEL
+    );
+    this.navigationData.info.date = DateFormat.convertSAPDate2Date(
+      values[labelField] as string
+    );
+    this.navigationData.info.date_formatted = DateFormat.convertDate2Locale(
+      this.navigationData.info.date
+    );
+    this.navigationData.info.url_nav_detail = this.buildURLNavigate2Detail(
+      this.navigationData.info
+    );
+
+    this.navigationData.info.title = this.ownerComponent
+      .getI18nBundle()
+      .getText("bankAccountTree.popoverNavigationTitle", [
+        this.navigationData.info.node,
+        this.navigationData.info.date_formatted,
+      ]) as string;
+    this.navigationModel.refresh();
+
+    this.popOverBankNavOptions ??= await (<Promise<Popover>>(
+      this.controller.loadFragment({
+        id: this.view?.getId(),
+        name: "cfwreport.fragment.popoverNavigation.NavOptionsBankHier",
+      })
+    ));
+
+    this.popOverBankNavOptions.openBy(event.getSource() as Control);
+  }
   /**
    * Pone un path de la jerarquía con el loading
    * @param path
@@ -182,5 +286,19 @@ export default class BankTreeViewController extends TreeTableController {
 
     values[FIELDS_TREE_INTERNAL.LOADING_VALUES] = loading;
     this.ownerComponent.hierarchyBankState.getModel().setProperty(path, values);
+  }
+  /**
+   * Construye la URL para navegar al detalle de las posiciones
+   * @param info
+   * @returns
+   */
+  private buildURLNavigate2Detail(info: NavigationInfo): string {
+    let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
+    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-analyzePaymentDetails?`;
+    if (info.node_type === NODE_TYPES.LEAF)
+      url += `BankAccountInternalID=${info.node}`;
+    else url += `PlanningLevel=${info.node}`;
+    url += `&TransactionDate=${fechaIso}`;
+    return url;
   }
 }

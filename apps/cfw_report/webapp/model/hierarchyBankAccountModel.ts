@@ -396,6 +396,9 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     rowTree[FIELDS_TREE_INTERNAL.LOADING_VALUES] = false;
     rowTree[FIELDS_TREE_INTERNAL.SHOW_BTN_PLV] = !existPlvNode;
 
+    // Opción de mostrar popover de opciones de navegación
+    rowTree[FIELDS_TREE_INTERNAL.SHOW_POPOVER_NAV] = true;
+
     if (existPlvNode)
       this.fillTreeSubnodes(
         rowTree,
@@ -421,6 +424,9 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
       rowHierarchyFlat[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL];
     rowTree[FIELDS_TREE.NODE_NAME] =
       rowHierarchyFlat[FIELDS_TREE_ACCOUNT.PLANNING_LEVEL_NAME];
+
+    // Opción de mostrar popover de opciones de navegación
+    rowTree[FIELDS_TREE_INTERNAL.SHOW_POPOVER_NAV] = true;
   }
   public clearData(): void {
     this.hierarchyFlat = [];

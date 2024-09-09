@@ -9,6 +9,7 @@ import {
 } from "cfwreport/constants/treeConstants";
 import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 import { HorizontalAlign } from "sap/ui/core/library";
+import DateFormat from "cfwreport/utils/dateFormat";
 
 export interface PropsBuildFcat {
   overdueColumnWithValues?: boolean;
@@ -52,7 +53,7 @@ export default abstract class TreeFieldCatalogModel extends BaseModel<FieldsCata
       if (labelValue !== "") {
         fieldsCatalog.push({
           name: amountFields[x],
-          label: labelValue as string,
+          label: DateFormat.convertSAPDate2Locale(labelValue as string),
           quickinfo: labelValue as string,
           internalID: `${ID_BANK_TREE_TABLE}-${pos}`,
           allowPersonalization: false,

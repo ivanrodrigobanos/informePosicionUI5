@@ -7,7 +7,6 @@ import Table from "sap/ui/table/Table";
 import Menu from "sap/m/table/columnmenu/Menu";
 import ActionItem from "sap/m/table/columnmenu/ActionItem";
 import { ValueState } from "sap/ui/core/library";
-import FlexBox from "sap/m/FlexBox";
 import { MESSAGE_MODEL, QUERY_MODEL } from "cfwreport/constants/models";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import { FiltersQuery, HierarchySelectViewModel } from "cfwreport/types/types";
@@ -25,34 +24,28 @@ import MessageToast from "sap/m/MessageToast";
 import ItemBase from "sap/m/table/columnmenu/ItemBase";
 import Engine from "sap/m/p13n/Engine";
 import CustomData from "sap/ui/core/CustomData";
-import ObjectStatus from "sap/m/ObjectStatus";
 import TreeTable from "sap/ui/table/TreeTable";
-import Text from "sap/m/Text";
 import { AccountsData } from "cfwreport/types/accountBankTypes";
 import { FieldCatalogTree } from "cfwreport/types/types";
 import Label from "sap/m/Label";
 import Column from "sap/ui/table/Column";
-import { ColumnType } from "cfwreport/types/fieldCatalogTypes";
 
 import {
   CUSTOM_DATA,
   FIELDS_TREE,
-  FIELDS_TREE_INTERNAL,
   ID_BANK_TREE_TABLE,
   ID_LIQITEM_TREE_TABLE,
+  PATH_NAVIGATION_MODEL,
   PREFIX_TEXT_DISP_OPTION,
   STATE_PATH,
 } from "cfwreport/constants/treeConstants";
-import { FIELDS_TREE_ACCOUNT } from "cfwreport/constants/treeConstants";
-import Conversion from "cfwreport/utils/conversion";
-import Formatters from "cfwreport/utils/formatters";
 import HierarchyBankState from "cfwreport/state/hierarchyBankState";
 import { TextDisplayOption } from "cfwreport/types/hierarchyTypes";
 import BankTreeViewController from "./BankTreeViewController";
 import LiqItemTreeViewController from "./LiqItemTreeViewController";
 import HierarchyLiqItemState from "cfwreport/state/hierarchyLiqItemState";
-
 import formatter from "../model/formatter";
+import FieldsFactoryController from "./FieldsFactoryController";
 
 /**
  * @namespace cfwreport.controller
@@ -76,6 +69,7 @@ export default class Main extends BaseController {
   private _filterBarValuesChanged: boolean;
   private _bankTreeNodeValueColumnMenu: Menu;
   private _liqItemTreeNodeValueColumnMenu: Menu;
+  private fieldsFactory: FieldsFactoryController;
   public formatter = formatter;
 
   public async onInit(): Promise<void> {
@@ -121,19 +115,30 @@ export default class Main extends BaseController {
     this._bankTreeViewController = new BankTreeViewController(
       this.getOwnerComponent(),
       this.byId("BankTreeTable") as TreeTable,
-      this.getView() as View
+      this.getView() as View,
+      this
     );
     this._bankTreeViewController.initPropsTreeTable();
     this._bankTreeViewController.setPopOverMessageApp(this._popOverMessagesApp);
     this._bankTreeViewController.setBtnShowMessageApp(
       this._btnShowMsgAppBankTree
     );
+    this.setModel(
+      this._bankTreeViewController.getNavigationModel(),
+      PATH_NAVIGATION_MODEL.HIERARCHY_BANK
+    );
+
     this._liqItemTreeViewController = new LiqItemTreeViewController(
       this.getOwnerComponent(),
       this.byId("LiqItemTreeTable") as TreeTable,
       this.getView() as View
     );
     this._liqItemTreeViewController.initPropsTreeTable();
+    this.fieldsFactory = new FieldsFactoryController(
+      this.getOwnerComponent(),
+      this.getView() as View,
+      this._bankTreeViewController
+    );
   }
 
   /**
@@ -631,7 +636,7 @@ export default class Main extends BaseController {
         text: fieldCatalog.label,
       }),
       hAlign: fieldCatalog.hAlign,
-      template: this.getTemplateObjectforTableColumn(
+      template: this.fieldsFactory.getTemplateObjectforTableColumn(
         fieldCatalog as FieldCatalogTree,
         statePath
       ),
@@ -844,137 +849,7 @@ export default class Main extends BaseController {
         loading
       );
   }
-  /**
-   * Devuevle el control donde se pinta el valor en las tablas dinámicas
-   * en base a la configuración del campo
-   * @param fieldCatalog Datos del catalogo de campo
-   * @param statePath Path de acceso al modelo de datos
-   * @returns
-   */
-  private getTemplateObjectforTableColumn(
-    fieldCatalog: FieldCatalogTree,
-    statePath: string
-  ): Control {
-    if (fieldCatalog.name === FIELDS_TREE_ACCOUNT.COMPANY_CODE)
-      return this.templateObjectCompany(fieldCatalog.name, statePath);
 
-    if (fieldCatalog.name === FIELDS_TREE.NODE)
-      return this.templateObjectNodeValue(fieldCatalog.name, statePath);
-
-    if (fieldCatalog.type === ColumnType.Amount) {
-      return this.templateObjectAmount(fieldCatalog.name, statePath);
-    }
-
-    return new Text({
-      text: { path: `${statePath}>${fieldCatalog.name}` },
-    });
-  }
-  /**
-   * Template del control para la columna del nodo
-   * @param name
-   * @param statePath
-   * @returns
-   */
-  private templateObjectNodeValue(name: string, statePath: string): Control {
-    var that = this;
-    return new FlexBox({
-      direction: "Row",
-      alignItems: "Center",
-      items: [
-        new Button({
-          icon: "sap-icon://expand-all",
-          busy: {
-            path: `${statePath}>${FIELDS_TREE_INTERNAL.LOADING_VALUES}`,
-          },
-          busyIndicatorSize: "Medium",
-          tooltip: this.getOwnerComponent()
-            .getI18nBundle()
-            .getText("bankAccountTree.btnDetailPlv"),
-          visible: {
-            path: `${statePath}>${FIELDS_TREE_INTERNAL.SHOW_BTN_PLV}`,
-          },
-          press(oEvent: any) {
-            let oRow = oEvent.getSource().getParent();
-
-            if (statePath === STATE_PATH.HIERARCHY_BANK) {
-              that._bankTreeViewController.processAddPlanningLevelData([
-                oRow.getBindingContext(statePath).getPath() as string,
-              ]);
-            }
-          },
-        }).addStyleClass("sapUiTinyMarginEnd"),
-        new Text({
-          text: {
-            parts: [
-              { path: `${statePath}>${name}` },
-              { path: `${statePath}>${FIELDS_TREE.NODE_NAME}` },
-            ],
-            formatter: function (key: string, text: string) {
-              return Formatters.fieldKeyText(
-                key,
-                text,
-                that
-                  .getOwnerComponent()
-                  .tableVisualizationState.getDisplayTypeFieldText(name)
-              );
-            },
-          },
-        }),
-      ],
-    });
-  }
-  /**
-   * Template del control para la columna de importe
-   * @param name
-   * @param statePath
-   * @returns
-   */
-  private templateObjectAmount(name: string, statePath: string): Control {
-    let criticField = name.replace(
-      ENTITY_FIELDS_DATA.AMOUNT_DATA,
-      ENTITY_FIELDS_DATA.AMOUNT_CRITICITY
-    );
-    return new ObjectStatus({
-      text: {
-        parts: [
-          { path: `${statePath}>${name}` },
-          { path: `${statePath}>${FIELDS_TREE_ACCOUNT.CURRENCY}` },
-        ],
-        formatter: function (amount: number, currency: string) {
-          return Formatters.amount2String(amount, currency);
-        },
-      },
-      state: {
-        path: `${statePath}>${criticField}`,
-        formatter: function (value: any) {
-          return Conversion.criticallyToValueState(Number(value));
-        },
-      },
-    });
-  }
-  /**
-   * Template del control para la columna de sociedad
-   * @param name
-   * @param statePath
-   * @returns
-   */
-  private templateObjectCompany(name: string, statePath: string): Control {
-    return new Text({
-      text: {
-        parts: [
-          { path: `${statePath}>${name}` },
-          {
-            path: `${statePath}>${FIELDS_TREE_ACCOUNT.COMPANY_CODE_NAME}`,
-          },
-        ],
-        formatter: function (companyCode: string, companyCodeName: string) {
-          if (companyCode && companyCodeName)
-            return `${companyCodeName} (${companyCode})`;
-          else return "";
-        },
-      },
-    });
-  }
   /**
    * Construye los campos que se pasarán a la consulta del servicio. Son los campos que se pasan en
    * el parámetro de la URL "select"
@@ -1027,14 +902,16 @@ export default class Main extends BaseController {
           let tableColumn = tableColumns.find(
             (column) => column.getId().indexOf(amountField) !== -1
           );
-
           if (tableColumn) {
-            let labelValue = initialRowQuery[labelField];
+            let labelValue = initialRowQuery[labelField] as string;
+
             if (labelValue === "") {
               tableColumn.setVisible(false);
             } else {
               tableColumn.setVisible(true);
-              tableColumn.setLabel(labelValue as string);
+              tableColumn.setLabel(
+                DateFormat.convertSAPDate2Locale(labelValue)
+              );
             }
           }
         });

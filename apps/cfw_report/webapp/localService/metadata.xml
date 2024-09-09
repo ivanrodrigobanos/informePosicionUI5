@@ -42,6 +42,19 @@
     </edmx:Reference>
     <edmx:DataServices m:DataServiceVersion="2.0">
         <Schema Namespace="cds_xstrcmxui_cash_flow" xml:lang="es" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="xSTRCMxC_BANCO_PRP_VHType" sap:label="Banco propio" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="hbkid"/>
+                    <PropertyRef Name="bukrs"/>
+                </Key>
+                <Property Name="hbkid" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio"/>
+                <Property Name="bukrs" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Sociedad"/>
+                <Property Name="banks" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="País/Reg.banco" sap:quickinfo="Clave de país/región del banco"/>
+                <Property Name="bankl" Type="Edm.String" MaxLength="15" sap:display-format="UpperCase" sap:label="Clave de banco"/>
+                <Property Name="hbkid_desc" Type="Edm.String" MaxLength="60" sap:label="Instit.financ." sap:quickinfo="Nombre de la institución financiera"/>
+                <Property Name="ort01" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Población" sap:quickinfo="Poblacion"/>
+                <Property Name="name1" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Pers.contacto" sap:quickinfo="Nombre de persona de contacto"/>
+            </EntityType>
             <EntityType Name="dir_bank_hierType" sap:label="Directorios de jerarquías de banco" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="hierarchy"/>
@@ -199,22 +212,15 @@
                 <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
                 <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>
             </EntityType>
-            <EntityType Name="cfw_query_plvType" sap:label="Informe de posición con nivel de tesoreria" sap:content-version="1">
+            <EntityType Name="cfw_query_liq_itemType" sap:label="Informe de posición con posiciones de liquidez" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="bank_account"/>
+                    <PropertyRef Name="liquidity_item"/>
                     <PropertyRef Name="source"/>
                 </Key>
-                <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="bank_account_name" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
+                <Property Name="liquidity_item" Type="Edm.String" Nullable="false" MaxLength="16" sap:display-format="UpperCase" sap:text="liquidity_item_name" sap:label="Pos.liquidez" sap:quickinfo="Posición de liquidez"/>
                 <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
-                <Property Name="bank_account_name" Type="Edm.String" MaxLength="60" sap:label="Descripción" sap:quickinfo="Descripción de cuenta"/>
-                <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
-                <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
-                <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
+                <Property Name="liquidity_item_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Pos. Liquidez" sap:quickinfo="Descripción posición de liquidez"/>
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
-                <Property Name="house_bank" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio" sap:value-list="standard"/>
-                <Property Name="house_bank_account" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta"/>
-                <Property Name="planning_level" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:text="planning_level_name" sap:label="Nivel Tesorería"/>
-                <Property Name="planning_level_name" Type="Edm.String" MaxLength="30" sap:label="Desc. Nivel Tesor." sap:quickinfo="Descripción nivel de tesoreria"/>
                 <Property Name="source_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Fuente" sap:quickinfo="Descripción de la fuente"/>
                 <Property Name="overdue_amount" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Overdue" sap:quickinfo="Importe fechas overdue"/>
                 <Property Name="overdue_critic" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
@@ -315,28 +321,22 @@
                 <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
                 <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>
             </EntityType>
-            <EntityType Name="xSTRCMxC_BANCO_PRP_VHType" sap:label="Banco propio" sap:value-list="true" sap:content-version="1">
+            <EntityType Name="cfw_query_plvType" sap:label="Informe de posición con nivel de tesoreria" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="hbkid"/>
-                    <PropertyRef Name="bukrs"/>
-                </Key>
-                <Property Name="hbkid" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio"/>
-                <Property Name="bukrs" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Sociedad"/>
-                <Property Name="banks" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="País/Reg.banco" sap:quickinfo="Clave de país/región del banco"/>
-                <Property Name="bankl" Type="Edm.String" MaxLength="15" sap:display-format="UpperCase" sap:label="Clave de banco"/>
-                <Property Name="hbkid_desc" Type="Edm.String" MaxLength="60" sap:label="Instit.financ." sap:quickinfo="Nombre de la institución financiera"/>
-                <Property Name="ort01" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Población" sap:quickinfo="Poblacion"/>
-                <Property Name="name1" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Pers.contacto" sap:quickinfo="Nombre de persona de contacto"/>
-            </EntityType>
-            <EntityType Name="cfw_query_liq_itemType" sap:label="Informe de posición con posiciones de liquidez" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="liquidity_item"/>
+                    <PropertyRef Name="bank_account"/>
                     <PropertyRef Name="source"/>
                 </Key>
-                <Property Name="liquidity_item" Type="Edm.String" Nullable="false" MaxLength="16" sap:display-format="UpperCase" sap:text="liquidity_item_name" sap:label="Pos.liquidez" sap:quickinfo="Posición de liquidez"/>
+                <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="bank_account_name" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
-                <Property Name="liquidity_item_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Pos. Liquidez" sap:quickinfo="Descripción posición de liquidez"/>
+                <Property Name="bank_account_name" Type="Edm.String" MaxLength="60" sap:label="Descripción" sap:quickinfo="Descripción de cuenta"/>
+                <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
+                <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
+                <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
+                <Property Name="house_bank" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio" sap:value-list="standard"/>
+                <Property Name="house_bank_account" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta"/>
+                <Property Name="planning_level" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:text="planning_level_name" sap:label="Nivel Tesorería"/>
+                <Property Name="planning_level_name" Type="Edm.String" MaxLength="30" sap:label="Desc. Nivel Tesor." sap:quickinfo="Descripción nivel de tesoreria"/>
                 <Property Name="source_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Fuente" sap:quickinfo="Descripción de la fuente"/>
                 <Property Name="overdue_amount" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Overdue" sap:quickinfo="Importe fechas overdue"/>
                 <Property Name="overdue_critic" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
@@ -685,14 +685,14 @@
                 </ReferentialConstraint>
             </Association>
             <EntityContainer Name="cds_xstrcmxui_cash_flow_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx pdf">
+                <EntitySet Name="xSTRCMxC_BANCO_PRP_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_BANCO_PRP_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="dir_bank_hier" EntityType="cds_xstrcmxui_cash_flow.dir_bank_hierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="dir_liq_hier" EntityType="cds_xstrcmxui_cash_flow.dir_liq_hierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_hier_bank" EntityType="cds_xstrcmxui_cash_flow.cfw_hier_bankType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_hier_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_hier_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query" EntityType="cds_xstrcmxui_cash_flow.cfw_queryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="xSTRCMxC_BANCO_PRP_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_BANCO_PRP_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_SOCIEDAD_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_SOCIEDAD_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="I_CurrencyStdVH" EntityType="cds_xstrcmxui_cash_flow.I_CurrencyStdVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
                 <EntitySet Name="SAP__FormatSet" EntityType="cds_xstrcmxui_cash_flow.SAP__Format" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
@@ -745,7 +745,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Company Code"/>
+                        <PropertyValue Property="Label" String="Sociedad"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_SOCIEDAD_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -767,7 +767,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="House bank"/>
+                        <PropertyValue Property="Label" String="Banco propio"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_BANCO_PRP_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -805,7 +805,30 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String=""/>
+                        <PropertyValue Property="Label" String="Moneda visualización"/>
+                        <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
+                        <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="p_displaycurrency"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.FilterDefaultValue" String="EUR"/>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType/p_displaycurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueListForValidation" String=""/>
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Moneda visualización"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
                         <PropertyValue Property="SearchSupported" Bool="true"/>
@@ -828,7 +851,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="Company Code"/>
+                        <PropertyValue Property="Label" String="Sociedad"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_SOCIEDAD_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -850,7 +873,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="House bank"/>
+                        <PropertyValue Property="Label" String="Banco propio"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="xSTRCMxC_BANCO_PRP_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
@@ -888,30 +911,7 @@
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String=""/>
-                        <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
-                        <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
-                        <PropertyValue Property="SearchSupported" Bool="true"/>
-                        <PropertyValue Property="Parameters">
-                            <Collection>
-                                <Record Type="Common.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="p_displaycurrency"/>
-                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
-                                </Record>
-                                <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
-                                </Record>
-                            </Collection>
-                        </PropertyValue>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Common.FilterDefaultValue" String="EUR"/>
-            </Annotations>
-            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType/p_displaycurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Common.ValueListForValidation" String=""/>
-                <Annotation Term="Common.ValueList">
-                    <Record>
-                        <PropertyValue Property="Label" String=""/>
+                        <PropertyValue Property="Label" String="Moneda visualización"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
                         <PropertyValue Property="CollectionPath" String="I_CurrencyStdVH"/>
                         <PropertyValue Property="SearchSupported" Bool="true"/>

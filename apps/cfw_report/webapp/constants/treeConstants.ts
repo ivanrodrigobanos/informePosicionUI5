@@ -18,6 +18,7 @@ export const FIELDS_TREE_INTERNAL = {
   SHOW_BTN_PLV: "showBtnDetail",
   LOADING_VALUES: "loadingValues",
   CHILD_NODE: "accounts",
+  SHOW_POPOVER_NAV: "showPopOverNav",
 };
 export const FIELDS_TREE_ACCOUNT = {
   NODE_VALUE_WIDTH: "30rem",
@@ -39,6 +40,7 @@ export const FIELDS_TREE_ACCOUNT = {
   OVERDUE_AMOUNT_WIDTH: "7rem",
   OVERDUE_CRITIC: "overdue_critic",
   BANK_ACCOUNT: "bank_account",
+  BANK_ACCOUNT_NAME: "bank_account_name",
 };
 export const FIELDS_TREE_LIQITEM = {
   NODE_VALUE_WIDTH: "30rem",
@@ -85,3 +87,13 @@ export const CRITICALLY = {
 export const NODE_NOASIGN = "NOASIGN";
 
 export const PACKAGE_ACCOUNT_PLV = 100;
+
+export const PATH_NAVIGATION_MODEL = {
+  HIERARCHY_BANK: "navigationHierBank",
+  HIERARCHY_LIQ_ITEM: "navigationHierLiqItem",
+};
+
+// Sustituir esta constante por un servicio que lo lea del abapcloud
+export const SAP_HOST = "https://demo2str.stratesys.global:44300";
+export const SAP_CLIENT = "200";
+export const SAP_PATH = "/sap/bc/ui2/flp";
