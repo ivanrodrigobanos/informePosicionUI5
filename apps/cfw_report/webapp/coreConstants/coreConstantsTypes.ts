@@ -4,7 +4,7 @@ export type ConstantValue = string;
 export type ConstantValues = ConstantValue[];
 
 export interface ConstantData {
-  constante: ConstantID;
-  valor: ConstantValue;
+  Constante: ConstantID;
+  Valor: ConstantValue;
 }
 export type ConstantsData = ConstantData[];
