@@ -71,6 +71,10 @@
                     text="{i18n>bankAccountTree.popoverNavigationLinkTransferTo}"
                     target="_blank"
                     href="{path:'navigationHierBank>/info/url_nav_transfer_to'}" />
+                <Link
+                    text="{i18n>bankAccountTree.popoverNavigationLinkTransferFrom}"
+                    target="_blank"
+                    href="{path:'navigationHierBank>/info/url_nav_transfer_from'}" />
             </FlexBox>
         </FlexBox>
     </Popover>

@@ -64,6 +64,7 @@ export type NavigationInfo = {
   date?: Date;
   url_nav_detail?: string;
   url_nav_transfer_to?: string;
+  url_nav_transfer_from?: string;
   show_planning_level: boolean;
   bank_account_number: string;
   currency: string;

@@ -263,6 +263,8 @@ export default class BankTreeViewController extends TreeTableController {
     );
     this.navigationData.info.url_nav_transfer_to =
       this.buildURLNavigateTransferTo(this.navigationData.info);
+    this.navigationData.info.url_nav_transfer_from =
+      this.buildURLNavigateTransferFrom(this.navigationData.info);
 
     this.navigationData.info.title = this.ownerComponent
       .getI18nBundle()
@@ -309,9 +311,34 @@ export default class BankTreeViewController extends TreeTableController {
     url += "&CashFlowScopeForAccounting=2";
     return url;
   }
+  /**
+   * Construye la URL para la aplicación de crear transfería a
+   * @param info
+   * @returns
+   */
   private buildURLNavigateTransferTo(info: NavigationInfo): string {
     let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
     let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-transferTo?`;
+    url += `BankAccountInternalID=${info.bank_account}`;
+    url += `&BankAccountNumber=${info.bank_account_number}`;
+    url += `&KeyDate=${fechaIso}`;
+    url += `&currency=${info.currency}`;
+    // Paramétros fijos
+    url +=
+      "&ReleaseFlag=0&TransferFrom=X&TransferTo=X&btn_visible=true&checked=true&displayCurrency=";
+    url +=
+      "& isData=X & isTransactionCur=X & level=3 & newDataNode=true & noNav=false & preferredMode=create";
+
+    return url;
+  }
+  /**
+   * Construye la URL para la aplicación de crear transfería de
+   * @param info
+   * @returns
+   */
+  private buildURLNavigateTransferFrom(info: NavigationInfo): string {
+    let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
+    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-transferFrom?`;
     url += `BankAccountInternalID=${info.bank_account}`;
     url += `&BankAccountNumber=${info.bank_account_number}`;
     url += `&KeyDate=${fechaIso}`;
