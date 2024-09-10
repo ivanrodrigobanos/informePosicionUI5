@@ -28,8 +28,8 @@ export default class CoreConstantsModel extends BaseModel<ConstantsData> {
     let values: ConstantValues = [];
 
     values = this.constantsValue
-      .filter((row) => row.constante === constant)
-      .map((row) => row.valor);
+      .filter((row) => row.Constante === constant)
+      .map((row) => row.Valor);
 
     return values;
   }
@@ -41,8 +41,8 @@ export default class CoreConstantsModel extends BaseModel<ConstantsData> {
     let values: ConstantValues = [];
 
     values = this.constantsValue
-      .filter((row) => row.constante.includes(constant))
-      .map((row) => row.valor);
+      .filter((row) => row.Constante.includes(constant))
+      .map((row) => row.Valor);
 
     return values;
   }
