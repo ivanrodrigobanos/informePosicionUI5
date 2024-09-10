@@ -265,6 +265,8 @@ export default class BankTreeViewController extends TreeTableController {
       this.buildURLNavigateTransferTo(this.navigationData.info);
     this.navigationData.info.url_nav_transfer_from =
       this.buildURLNavigateTransferFrom(this.navigationData.info);
+    this.navigationData.info.url_nav_create_memorecord =
+      this.buildURLNavigateCreateMemorecord(this.navigationData.info);
 
     this.navigationData.info.title = this.ownerComponent
       .getI18nBundle()
@@ -348,6 +350,24 @@ export default class BankTreeViewController extends TreeTableController {
       "&ReleaseFlag=0&TransferFrom=X&TransferTo=X&btn_visible=true&checked=true&displayCurrency=";
     url +=
       "& isData=X & isTransactionCur=X & level=3 & newDataNode=true & noNav=false & preferredMode=create";
+
+    return url;
+  }
+  /**
+   * Construye la URL para la aplicación de crear registro individual o memorecord
+   * @param info
+   * @returns
+   */
+  private buildURLNavigateCreateMemorecord(info: NavigationInfo): string {
+    let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
+    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#MemoRecord-create?`;
+    url += `BankAccountInternalID=${info.bank_account}`;
+    url += `&BankAccount=${info.bank_account_number}`;
+    url += `&CashReqValueDate=${fechaIso}`;
+    url += `&currency=${info.currency}`;
+    // Paramétros fijos
+    url +=
+      "&btn_visible=true&checked=true&isData=X&isTransactionCur=X&level=3&newDataNode=true";
 
     return url;
   }
