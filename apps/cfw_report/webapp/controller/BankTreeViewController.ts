@@ -240,8 +240,11 @@ export default class BankTreeViewController extends TreeTableController {
     this.navigationData.info.bank_account_number =
       values[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_NUMBER];
     this.navigationData.info.currency = values[FIELDS_TREE_ACCOUNT.CURRENCY];
-    if (values[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL)
-      this.navigationData.info.show_planning_level = true;
+
+    this.navigationData.info.show_planning_level =
+      values[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL
+        ? true
+        : false;
 
     let amountField = event
       .getSource()
