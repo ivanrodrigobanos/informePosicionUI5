@@ -56,10 +56,10 @@ export default class BankTreeViewController extends TreeTableController {
         bank_account_name: "",
         date_formatted: "",
         show_planning_level: false,
+        bank_account_number: "",
+        currency: "",
       },
     };
-
-    // this._btnShowMsgApp = this._view.byId("btnShowMsgAppBankTree") as Button;
   }
   public getNavigationModel(): JSONModel {
     if (!this.navigationModel) {
@@ -237,6 +237,9 @@ export default class BankTreeViewController extends TreeTableController {
       values[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT];
     this.navigationData.info.bank_account_name =
       values[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_NAME];
+    this.navigationData.info.bank_account_number =
+      values[FIELDS_TREE_ACCOUNT.BANK_ACCOUNT_NUMBER];
+    this.navigationData.info.currency = values[FIELDS_TREE_ACCOUNT.CURRENCY];
     if (values[FIELDS_TREE.NODE_TYPE] === NODE_TYPES.PLANNING_LEVEL)
       this.navigationData.info.show_planning_level = true;
 
@@ -258,6 +261,8 @@ export default class BankTreeViewController extends TreeTableController {
     this.navigationData.info.url_nav_detail = this.buildURLNavigate2Detail(
       this.navigationData.info
     );
+    this.navigationData.info.url_nav_transfer_to =
+      this.buildURLNavigateTransferTo(this.navigationData.info);
 
     this.navigationData.info.title = this.ownerComponent
       .getI18nBundle()
@@ -295,10 +300,28 @@ export default class BankTreeViewController extends TreeTableController {
   private buildURLNavigate2Detail(info: NavigationInfo): string {
     let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
     let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-analyzePaymentDetails?`;
-    if (info.node_type === NODE_TYPES.LEAF)
-      url += `BankAccountInternalID=${info.node}`;
-    else url += `PlanningLevel=${info.node}`;
+
+    url += `BankAccountInternalID=${info.bank_account}`;
+    if (info.node_type === NODE_TYPES.PLANNING_LEVEL)
+      url += `&PlanningLevel=${info.node}`;
+
     url += `&TransactionDate=${fechaIso}`;
+    url += "&CashFlowScopeForAccounting=2";
+    return url;
+  }
+  private buildURLNavigateTransferTo(info: NavigationInfo): string {
+    let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
+    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-transferTo?`;
+    url += `BankAccountInternalID=${info.bank_account}`;
+    url += `&BankAccountNumber=${info.bank_account_number}`;
+    url += `&KeyDate=${fechaIso}`;
+    url += `&currency=${info.currency}`;
+    // Paramétros fijos
+    url +=
+      "&ReleaseFlag=0&TransferFrom=X&TransferTo=X&btn_visible=true&checked=true&displayCurrency=";
+    url +=
+      "& isData=X & isTransactionCur=X & level=3 & newDataNode=true & noNav=false & preferredMode=create";
+
     return url;
   }
 }

@@ -12,5 +12,7 @@ export interface AccountData extends AccountAmount {
   planning_level_name: string;
   overdue_amount: number;
   source: string;
+  bank_account_number: string;
+  bank_account_key: string;
 }
 export type AccountsData = AccountData[];

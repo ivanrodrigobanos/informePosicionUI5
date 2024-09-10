@@ -208,6 +208,8 @@
                 <Property Name="amount_data31" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
                 <Property Name="amount_label31" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
                 <Property Name="amount_critic31" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="bank_account_number" Type="Edm.String" MaxLength="18" sap:display-format="UpperCase" sap:label="Cuenta bancaria" sap:quickinfo="Nº cuenta bancaria"/>
+                <Property Name="bank_account_key" Type="Edm.String" MaxLength="15" sap:display-format="UpperCase" sap:label="Clave de banco"/>
                 <Property Name="p_keydate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor desde"/>
                 <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
                 <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>
@@ -433,6 +435,8 @@
                 <Property Name="amount_data31" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Importe ML" sap:quickinfo="Importe moneda sociedad"/>
                 <Property Name="amount_label31" Type="Edm.String" MaxLength="60" sap:label="Cabecera campo" sap:quickinfo="Texto cabecera campo"/>
                 <Property Name="amount_critic31" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
+                <Property Name="bank_account_number" Type="Edm.String" MaxLength="18" sap:display-format="UpperCase" sap:label="Cuenta bancaria" sap:quickinfo="Nº cuenta bancaria"/>
+                <Property Name="bank_account_key" Type="Edm.String" MaxLength="15" sap:display-format="UpperCase" sap:label="Clave de banco"/>
                 <Property Name="p_keydate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor desde"/>
                 <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
                 <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>

@@ -41,6 +41,7 @@ export const FIELDS_TREE_ACCOUNT = {
   OVERDUE_CRITIC: "overdue_critic",
   BANK_ACCOUNT: "bank_account",
   BANK_ACCOUNT_NAME: "bank_account_name",
+  BANK_ACCOUNT_NUMBER: "bank_account_number",
 };
 export const FIELDS_TREE_LIQITEM = {
   NODE_VALUE_WIDTH: "30rem",

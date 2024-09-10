@@ -221,6 +221,12 @@
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/currency">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/bank_account_number">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/bank_account_key">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/source">
                 <Annotation Term="Common.Text" Path="source_name">
                     <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
@@ -633,6 +639,12 @@
                         <PropertyPath>p_displaycurrency</PropertyPath>
                     </Collection>
                 </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_query_plvType/bank_account_number">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_query_plvType/bank_account_key">
+                <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_query_plvType/source">
                 <Annotation Term="Common.Text" Path="source_name">
