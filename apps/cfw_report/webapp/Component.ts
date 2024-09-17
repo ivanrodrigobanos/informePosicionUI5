@@ -19,6 +19,9 @@ import TableVisualizationState from "./state/tableVisualizationState";
 import MessageState from "./state/messageState";
 import AccountLiqItemState from "./state/accountLiqItemState";
 import HierarchyLiqItemState from "./state/hierarchyLiqItemState";
+import CoreConstantsState from "./coreConstants/coreConstantsState";
+import ODataModel from "sap/ui/model/odata/v2/ODataModel";
+import { APP_CORE_CONSTANTS } from "./constants/generalConstants";
 
 /**
  * @namespace cfwreport
@@ -32,6 +35,7 @@ export default class Component extends BaseComponent {
   public metadataState: MetadataState;
   public accountLiqItemState: AccountLiqItemState;
   public hierarchyLiqItemState: HierarchyLiqItemState;
+  public coreConstantsState: CoreConstantsState;
   public queryModel: JSONModel;
   public messageModel: JSONModel;
   public tableVisualizationState: TableVisualizationState;
@@ -67,10 +71,16 @@ export default class Component extends BaseComponent {
     this.tableVisualizationState = new TableVisualizationState(this);
     // Clase encargada de gestionar los datos de las cuentas de posición de liquidez
     this.accountLiqItemState = new AccountLiqItemState(this);
-    // Clase encarga de gestionar la jerarquía de posiciones de liquidez
+    // Clase encargada de gestionar la jerarquía de posiciones de liquidez
     this.hierarchyLiqItemState = new HierarchyLiqItemState(this);
-    // Clase encarga de gestionar los mensajes
+    // Clase encargada de gestionar los mensajes
     this.messageState = new MessageState(this);
+    // Clase encargada de gestionar las constantes
+    this.coreConstantsState = new CoreConstantsState(
+      this.getModel() as ODataModel
+    );
+
+    this.readConstants();
   }
 
   /**
@@ -145,5 +155,21 @@ export default class Component extends BaseComponent {
     this.queryModel.setProperty(QUERY_MODEL.LOADING_HIER_BANK_PROCESS, false);
     this.queryModel.setProperty(QUERY_MODEL.HIERARCHY_BANK_SHOWED, false);
     this.queryModel.setProperty(QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED, false);
+  }
+  /**
+   * Lectura de las constantes necesarias para la aplicación
+   */
+  private readConstants() {
+    // Constantes
+    this.coreConstantsState
+      .readConstants(APP_CORE_CONSTANTS)
+      .then(() => {
+        // URL de SAP
+        this.coreConstantsState
+          .readSAPURL()
+          .then(() => {})
+          .catch(() => {});
+      })
+      .catch(() => {});
   }
 }

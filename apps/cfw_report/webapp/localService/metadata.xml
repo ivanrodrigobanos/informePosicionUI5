@@ -441,12 +441,26 @@
                 <Property Name="p_enddate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha valor hasta"/>
                 <Property Name="p_displaycurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:value-list="standard" sap:semantics="currency-code"/>
             </EntityType>
+            <EntityType Name="sap_urlType" sap:label="Comunicaciones - URL del backend de SAP" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="http_url"/>
+                </Key>
+                <Property Name="http_url" Type="Edm.String" Nullable="false" sap:display-format="UpperCase" sap:label="URL"/>
+                <Property Name="https_url" Type="Edm.String" sap:display-format="UpperCase" sap:label="URL"/>
+            </EntityType>
             <EntityType Name="xSTRCMxC_SOCIEDAD_VHType" sap:label="Sociedades" sap:value-list="true" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="bukrs"/>
                 </Key>
                 <Property Name="bukrs" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Sociedad"/>
                 <Property Name="bukrs_desc" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
+            </EntityType>
+            <EntityType Name="constantsType" sap:label="Query de la tabla de constantes" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Constante"/>
+                </Key>
+                <Property Name="Constante" Type="Edm.String" Nullable="false" MaxLength="50" sap:display-format="UpperCase" sap:label="ID Constante" sap:quickinfo="ID constante"/>
+                <Property Name="Valor" Type="Edm.String" MaxLength="120" sap:label="Valor" sap:quickinfo="Valor constante"/>
             </EntityType>
             <EntityType Name="I_CurrencyStdVHType" sap:label="Moneda" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -697,7 +711,9 @@
                 <EntitySet Name="cfw_query" EntityType="cds_xstrcmxui_cash_flow.cfw_queryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="sap_url" EntityType="cds_xstrcmxui_cash_flow.sap_urlType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_SOCIEDAD_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_SOCIEDAD_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="constants" EntityType="cds_xstrcmxui_cash_flow.constantsType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="I_CurrencyStdVH" EntityType="cds_xstrcmxui_cash_flow.I_CurrencyStdVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
                 <EntitySet Name="SAP__FormatSet" EntityType="cds_xstrcmxui_cash_flow.SAP__Format" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="SAP__PDFStandardSet" EntityType="cds_xstrcmxui_cash_flow.SAP__PDFStandard" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
@@ -1091,6 +1107,23 @@
                     </Record>
                 </Annotation>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/constants" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/dir_bank_hier" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
@@ -1117,6 +1150,49 @@
                 <Annotation Term="Capabilities.InsertRestrictions">
                     <Record>
                         <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/sap_url" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="http_url"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="https_url"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>http_url</PropertyPath>
+                                <PropertyPath>https_url</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
                     </Record>
                 </Annotation>
                 <Annotation Term="Capabilities.UpdateRestrictions">

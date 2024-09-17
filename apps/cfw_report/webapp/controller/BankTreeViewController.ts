@@ -10,9 +10,6 @@ import {
   FIELDS_TREE_ACCOUNT,
   FIELDS_TREE_INTERNAL,
   NODE_TYPES,
-  SAP_CLIENT,
-  SAP_HOST,
-  SAP_PATH,
 } from "cfwreport/constants/treeConstants";
 import { QUERY_MODEL } from "cfwreport/constants/models";
 import { HierarchyTree, NavigationInfo } from "cfwreport/types/types";
@@ -23,6 +20,11 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import CustomData from "sap/ui/core/CustomData";
 import { ENTITY_FIELDS_DATA } from "cfwreport/constants/smartConstants";
 import DateFormat from "cfwreport/utils/dateFormat";
+import {
+  CONSTANT_SAP_CLIENT,
+  CONSTANT_SAP_HOST,
+  CONSTANT_SAP_PATH,
+} from "cfwreport/constants/generalConstants";
 
 type NavigationData = {
   info: NavigationInfo;
@@ -306,7 +308,14 @@ export default class BankTreeViewController extends TreeTableController {
    */
   private buildURLNavigate2Detail(info: NavigationInfo): string {
     let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
-    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-analyzePaymentDetails?`;
+
+    let url = `${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_HOST
+    )}/${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_PATH
+    )}?sap-client=${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_CLIENT
+    )}#BankAccount-analyzePaymentDetails?`;
 
     url += `BankAccountInternalID=${info.bank_account}`;
     if (info.node_type === NODE_TYPES.PLANNING_LEVEL)
@@ -323,7 +332,13 @@ export default class BankTreeViewController extends TreeTableController {
    */
   private buildURLNavigateTransferTo(info: NavigationInfo): string {
     let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
-    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-transferTo?`;
+    let url = `${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_HOST
+    )}/${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_PATH
+    )}?sap-client=${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_CLIENT
+    )}#BankAccount-transferTo?`;
     url += `BankAccountInternalID=${info.bank_account}`;
     url += `&BankAccountNumber=${info.bank_account_number}`;
     url += `&KeyDate=${fechaIso}`;
@@ -343,7 +358,13 @@ export default class BankTreeViewController extends TreeTableController {
    */
   private buildURLNavigateTransferFrom(info: NavigationInfo): string {
     let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
-    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#BankAccount-transferFrom?`;
+    let url = `${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_HOST
+    )}/${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_PATH
+    )}?sap-client=${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_CLIENT
+    )}#BankAccount-transferFrom?`;
     url += `BankAccountInternalID=${info.bank_account}`;
     url += `&BankAccountNumber=${info.bank_account_number}`;
     url += `&KeyDate=${fechaIso}`;
@@ -363,7 +384,13 @@ export default class BankTreeViewController extends TreeTableController {
    */
   private buildURLNavigateCreateMemorecord(info: NavigationInfo): string {
     let fechaIso = DateFormat.convertDate2ISO(info.date as Date);
-    let url = `${SAP_HOST}/${SAP_PATH}?sap-client=${SAP_CLIENT}#MemoRecord-create?`;
+    let url = `${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_HOST
+    )}/${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_PATH
+    )}?sap-client=${this.ownerComponent.coreConstantsState.getConstantValue(
+      CONSTANT_SAP_CLIENT
+    )}#MemoRecord-create?`;
     url += `BankAccountInternalID=${info.bank_account}`;
     url += `&BankAccount=${info.bank_account_number}`;
     url += `&CashReqValueDate=${fechaIso}`;

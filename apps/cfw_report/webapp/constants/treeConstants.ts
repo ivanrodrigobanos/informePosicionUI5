@@ -93,8 +93,3 @@ export const PATH_NAVIGATION_MODEL = {
   HIERARCHY_BANK: "navigationHierBank",
   HIERARCHY_LIQ_ITEM: "navigationHierLiqItem",
 };
-
-// Sustituir esta constante por un servicio que lo lea del abapcloud
-export const SAP_HOST = "https://demo2str.stratesys.global:44300";
-export const SAP_CLIENT = "200";
-export const SAP_PATH = "/sap/bc/ui2/flp";
