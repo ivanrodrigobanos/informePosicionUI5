@@ -159,8 +159,11 @@ export default class Main extends BaseController {
     if (filterValues.dateFrom && filterValues.dateTo) {
       if (filterValues.dateFrom > filterValues.dateTo) {
         filterValues.dateFromValueState = ValueState.Error;
+
         filterValues.dateFromValueStateMessage =
-          "Fecha desde no puede ser superior a la fecha hasta";
+          this.geti18nResourceBundle().getText(
+            "filterbar.DateHighLow"
+          ) as string;
       } else {
         // La diferencia de fechas no puede superar 31 días, limite de columnas del servicio.
         let diffInTime =
@@ -180,7 +183,11 @@ export default class Main extends BaseController {
           filterValues.dateToValueState = filterValues.dateFromValueState =
             ValueState.Error;
           filterValues.dateToValueStateMessage =
-            filterValues.dateFromValueStateMessage = `El número de días entre las dos fechas no puede superar los ${numeroDiasMax} días`;
+            filterValues.dateFromValueStateMessage =
+              this.geti18nResourceBundle().getText(
+                "filterbar.MaxIntervalDays",
+                [numeroDiasMax]
+              ) as string;
         }
       }
     }
