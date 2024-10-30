@@ -24,7 +24,7 @@ import {
   CONSTANT_SAP_CLIENT,
   CONSTANT_SAP_HOST,
   CONSTANT_SAP_PATH,
-} from "cfwreport/constants/generalConstants";
+} from "cfwreport/coreConstants/generalConstants";
 
 type NavigationData = {
   info: NavigationInfo;

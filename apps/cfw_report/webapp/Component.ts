@@ -21,7 +21,7 @@ import AccountLiqItemState from "./state/accountLiqItemState";
 import HierarchyLiqItemState from "./state/hierarchyLiqItemState";
 import CoreConstantsState from "./coreConstants/coreConstantsState";
 import ODataModel from "sap/ui/model/odata/v2/ODataModel";
-import { APP_CORE_CONSTANTS } from "./constants/generalConstants";
+import { APP_CORE_CONSTANTS } from "./coreConstants/generalConstants";
 
 /**
  * @namespace cfwreport

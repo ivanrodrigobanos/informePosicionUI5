@@ -1,4 +1,4 @@
-import { ConstantsID } from "cfwreport/coreConstants/coreConstantsTypes";
+import { ConstantsID } from "./coreConstantsTypes";
 
 export const CONSTANT_SAP_HOST = "SAP_HOST";
 export const CONSTANT_SAP_CLIENT = "SAP_CLIENT";

@@ -8,7 +8,7 @@ import {
   ConstantValue,
   ConstantValues,
 } from "./coreConstantsTypes";
-import { CONSTANT_SAP_HOST } from "cfwreport/constants/generalConstants";
+import { CONSTANT_SAP_HOST } from "./generalConstants";
 
 export type ConstantData = {
   constants: CoreConstantsModel;
