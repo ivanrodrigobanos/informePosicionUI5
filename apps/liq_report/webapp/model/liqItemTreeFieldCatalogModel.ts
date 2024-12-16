@@ -58,30 +58,6 @@ export default class LiqItemTreeFieldCatalogModel extends TreeFieldCatalogModel 
       },
     ];
     pos++;
-
-    // La columna de importe overdue se muestra si se indica por parámetro
-    if (params && params.overdueColumnWithValues) {
-      let fieldInfo = this.metadataState.getFieldInfo(
-        FIELDS_TREE_LIQITEM.OVERDUE_AMOUNT,
-        LIQITEM_ENTITY_SET
-      );
-      if (fieldInfo) {
-        fieldsCatalog.push({
-          name: fieldInfo.name,
-          label: fieldInfo.label,
-          quickinfo: fieldInfo.quickinfo,
-          internalID: `${ID_BANK_TREE_TABLE}-${pos}`,
-          allowPersonalization: false,
-          pos: pos++,
-          type: ColumnType.Amount,
-          width: FIELDS_TREE_LIQITEM.OVERDUE_AMOUNT_WIDTH,
-          hAlign: HorizontalAlign.Right,
-          visible: true,
-        });
-        pos++;
-      }
-    }
-
     return fieldsCatalog;
   }
 }
