@@ -9,8 +9,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwreport-display"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwreport-display"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -29,7 +35,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -53,7 +62,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -77,8 +89,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#project1-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#project1-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -97,7 +115,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -121,7 +142,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -145,8 +169,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#project1-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#project1-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -165,7 +195,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -189,7 +222,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -213,8 +249,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwdetreport-display"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwdetreport-display"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -233,7 +275,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -257,7 +302,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -281,8 +329,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwdetreport-display"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwdetreport-display"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -301,7 +355,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -325,7 +382,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -349,8 +409,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#project1-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#project1-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -369,7 +435,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -393,7 +462,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -417,8 +489,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwdetreport-display"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwdetreport-display"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -437,7 +515,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -461,7 +542,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -485,8 +569,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#project1-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#project1-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -505,7 +595,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -529,7 +622,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -553,8 +649,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwdetreport-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwdetreport-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -573,7 +675,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -597,7 +702,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -621,8 +729,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#cfwdetailreport-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#cfwdetailreport-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -641,7 +755,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -665,7 +782,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
@@ -689,8 +809,14 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
-      "args": ["--open", "test/flpSandbox.html#detallemacros-tile"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#detallemacros-tile"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std",
@@ -709,7 +835,10 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-mock.yaml",
@@ -733,12 +862,95 @@
       "windows": {
         "runtimeExecutable": "npx.cmd"
       },
-      "runtimeArgs": ["fiori", "run"],
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
       "args": [
         "--config",
         "./ui5-local.yaml",
         "--open",
         "test/flpSandbox.html#detallemacros-tile"
+      ],
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outputCapture": "std",
+      "port": 9229,
+      "env": {
+        "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false"
+      }
+    },
+    {
+      "name": "Start liq_report",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "cwd": "${workspaceFolder}/apps\\liq_report",
+      "windows": {
+        "runtimeExecutable": "npx.cmd"
+      },
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--open",
+        "test/flpSandbox.html#liqreport-display"
+      ],
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outputCapture": "std",
+      "port": 9229,
+      "env": {
+        "DEBUG": "--inspect",
+        "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false"
+      }
+    },
+    {
+      "name": "Start liq_report Mock",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps\\liq_report",
+      "runtimeExecutable": "npx",
+      "windows": {
+        "runtimeExecutable": "npx.cmd"
+      },
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--config",
+        "./ui5-mock.yaml",
+        "--open",
+        "test/flpSandbox.html#liqreport-display"
+      ],
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outputCapture": "std",
+      "port": 9229,
+      "env": {
+        "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false"
+      }
+    },
+    {
+      "name": "Start liq_report Local",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps\\liq_report",
+      "runtimeExecutable": "npx",
+      "windows": {
+        "runtimeExecutable": "npx.cmd"
+      },
+      "runtimeArgs": [
+        "fiori",
+        "run"
+      ],
+      "args": [
+        "--config",
+        "./ui5-local.yaml",
+        "--open",
+        "test/flpSandbox.html#liqreport-display"
       ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
