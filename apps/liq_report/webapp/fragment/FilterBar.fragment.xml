@@ -1,0 +1,68 @@
+<core:FragmentDefinition
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:sfb="sap.ui.comp.smartfilterbar"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <sfb:SmartFilterBar entitySet="cfw_query" id="SFBQuery"
+        persistencyKey="SmartFilterBarApp"
+        filterChange="onSFChange"
+        afterVariantLoad="onSFVariantLoad"
+        beforeVariantFetch="onSFBeforeVariantFetch">
+        <sfb:controlConfiguration>
+            <sfb:ControlConfiguration
+                key="p_keydate"
+                visibleInAdvancedArea="true"
+                filterType="single"
+                mandatory="mandatory"
+                index="1"
+                change="onSFDateToChange"
+            >
+                <sfb:customControl>
+                    <DatePicker
+                        id="p_keydate"
+                        width="100%"
+                        customData:hasValue="true"
+                        dateValue="{model: 'queryModel', path:'/filters/dateFrom'}"
+                        valueState="{model: 'queryModel', path:'/filters/dateFromValueState'}"
+                        valueStateText="{model: 'queryModel', path:'/filters/dateFromValueStateMessage'}"
+                    />
+                </sfb:customControl>
+            </sfb:ControlConfiguration>
+
+            <sfb:ControlConfiguration
+                key="p_enddate"
+                visibleInAdvancedArea="true"
+                filterType="single"
+                mandatory="mandatory"
+                index="2"
+            >
+                <sfb:customControl>
+                    <DatePicker
+                        id="p_enddate"
+                        width="100%"
+                        customData:hasValue="true"
+                        dateValue="{model: 'queryModel', path:'/filters/dateTo'}"
+                        valueState="{model: 'queryModel', path:'/filters/dateToValueState'}"
+                        valueStateText="{model: 'queryModel', path:'/filters/dateToValueStateMessage'}"
+                    />
+                </sfb:customControl>
+            </sfb:ControlConfiguration>
+            <sfb:ControlConfiguration
+                key="p_displaycurrency"
+                visibleInAdvancedArea="true"
+                filterType="single"
+                index="3" />
+            <sfb:ControlConfiguration
+                key="company_code"
+                visibleInAdvancedArea="true"
+                filterType="multiple"
+                index="4" />
+        </sfb:controlConfiguration>
+        <!-- layout data used to make the table growing but the filter bar fixed -->
+        <sfb:layoutData>
+            <FlexItemData shrinkFactor="0" />
+        </sfb:layoutData>
+    </sfb:SmartFilterBar>
+</core:FragmentDefinition>

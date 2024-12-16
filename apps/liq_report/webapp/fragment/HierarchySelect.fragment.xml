@@ -1,0 +1,37 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Popover
+        id="popOverHirarchySelect"
+        title="{i18n>hierarchySelect.title}"
+        class="sapUiContentPadding"
+        placement="Bottom"
+    >
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    id="action"
+                    text="{i18n>hierarchySelect.btnGo}"
+                    press="handlerHierarchySelected"
+                />
+            </Toolbar>
+        </footer>
+        <FlexBox
+            alignContent="Start"
+            direction="Column"
+        >
+            <FlexBox direction="Column">
+                <RadioButton
+                    id="LiquidityHierarchy"
+                    text="{i18n>hierarchySelect.liquidity}"
+                    select="handlerSelectHierarchy"
+                />
+                <core:Fragment
+                    fragmentName="cfwreport.fragment.hierarchyLiquidity.ComboLiquidityHierarchy"
+                    type="XML" />
+            </FlexBox>
+        </FlexBox>
+    </Popover>
+</core:FragmentDefinition>
