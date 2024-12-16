@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Popover
+        id="popOverChangeLiqItemHier"
+        title="{i18n>hierarchySelect.title}"
+        class="sapUiContentPadding"
+        placement="Bottom"
+    >
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    text="{i18n>hierarchySelect.btnGo}"
+                    press="handlerHierLiqItemSelected"
+                />
+            </Toolbar>
+        </footer>
+        <core:Fragment
+            fragmentName="cfwreport.fragment.hierarchyLiquidity.ComboLiquidityHierarchy"
+            type="XML"
+        />
+    </Popover>
+</core:FragmentDefinition>

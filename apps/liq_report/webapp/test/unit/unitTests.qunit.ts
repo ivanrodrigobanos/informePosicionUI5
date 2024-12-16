@@ -4,7 +4,7 @@ QUnit.config.autostart = false;
 
 // import all your QUnit tests here
 void Promise.all([
-	import("unit/controller/View1Page.controller")
+	import("liqreport/test/unit/controller/MainPage.controller")
 ]).then(() => {
 	QUnit.start();
 });

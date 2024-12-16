@@ -1,5 +1,5 @@
 /*global QUnit*/
-import Controller from "liqreport/controller/View1.controller";
+import Controller from "liqreport/controller/Main.controller";
 
 QUnit.module("View1 Controller");
 
