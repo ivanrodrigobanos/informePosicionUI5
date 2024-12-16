@@ -37,7 +37,6 @@ export const CUSTOM_DATA = {
 
 export const NUMBER_FIX_FIELDS = 1;
 
-export const ID_BANK_TREE_TABLE = "BankTreeTable";
 export const ID_LIQITEM_TREE_TABLE = "LiqItemTreeTable";
 
 export const NODE_TYPES = {
