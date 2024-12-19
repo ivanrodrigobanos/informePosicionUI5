@@ -56,27 +56,34 @@ export default class Main extends BaseController {
   private _popOverHierarchySelect: Popover;
   private _popOverChangeBankHier: Popover;
   private _popOverChangeLiqItemHier: Popover;
+  private _bankTreeTable: TreeTable;
   private _liqItemTreeTable: TreeTable;
   private _popOverMessagesApp: Popover;
   private _btnShowMessageAppRaw: Button;
+  private _btnShowMsgAppBankTree: Button;
   private _btnShowMsgAppLiqItemTree: Button;
   private _filterBarValuesChanged: boolean;
+  private _bankTreeNodeValueColumnMenu: Menu;
   private _liqItemTreeNodeValueColumnMenu: Menu;
+  private fieldsFactory: FieldsFactoryController;
   public formatter = formatter;
 
   public onInit() {
     this._sfb = this.byId("SFBQuery") as SmartFilterBar;
     this._st = this.byId("SFTQuery") as SmartTable;
     this.navContainer = this.byId("navContainer") as NavContainer;
+    this._bankTreeTable = this.byId("BankTreeTable") as TreeTable;
     this._liqItemTreeTable = this.byId("LiqItemTreeTable") as TreeTable;
 
     // Inicializacion de componentes, como popover
      this._initComponents();
 
     this._btnShowMessageAppRaw = this.byId("btnShowMessageAppRaw") as Button;
+    this._btnShowMsgAppBankTree = this.byId("btnShowMsgAppBankTree") as Button;
     this._btnShowMsgAppLiqItemTree = this.byId(
       "btnShowMsgAppLiqItemTree"
     ) as Button;
+
 
     this.setModel(
       this.getOwnerComponent().messageState.getModel(),
@@ -94,13 +101,17 @@ export default class Main extends BaseController {
     // Controla si se han modificado los valores de los filtros
     this._filterBarValuesChanged = true;
 
-
     this._liqItemTreeViewController = new LiqItemTreeViewController(
       this.getOwnerComponent(),
       this.byId("LiqItemTreeTable") as TreeTable,
       this.getView() as View
     );
     this._liqItemTreeViewController.initPropsTreeTable();
+    // this.fieldsFactory = new FieldsFactoryController(
+    //   this.getOwnerComponent(),
+    //   this.getView() as View,
+    //   this._bankTreeViewController
+    // );
   }
 
   /**
@@ -231,7 +242,7 @@ export default class Main extends BaseController {
         );
         this._popOverMessagesApp.openBy(this._btnShowMessageAppRaw);
       }
-      this.postAccountProcessLoadData();
+      // this.postAccountProcessLoadData(); //LO DEJO COMENTADO PORQUE EL MÉTODO TB LO ESTÁ
     });
   }
 
@@ -320,6 +331,17 @@ export default class Main extends BaseController {
           QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
           true
         );
+
+        // Si los filtros se han modificado y se navega hacia una jerarquía se realiza la misma acción que al refrescar. Es decir,
+        // leer los datos de la tabla principal para poder construir la jerarquía. Si no se han modificado se hace la lectura directa
+        // de los datos de jerarquía
+        if (this._filterBarValuesChanged) {
+          this.handlerGoHierarchyBank(); // Navegamos a la tabla de jerarquía de bancos
+
+          this.handlerRefreshData();
+        } else {
+          this.processBuildBankHier(hierViewModel.inputIDBank, true);
+        }
       }
 
       closePopover = true;
@@ -417,6 +439,25 @@ export default class Main extends BaseController {
   }
 
   /**
+   * Proceso de construcción de la jerarquía de bancos
+   * @param IDHierarchy Id de jerarquía
+   * @param navigate Navega a la vista de jerarquía
+   */
+  public processBuildBankHier(IDHierarchy: string, navigate: boolean) {
+    this.getOwnerComponent().messageState.clearMessage();
+
+    // this._bankTreeViewController.processBuildBankHier(
+    //   IDHierarchy,
+    //   this._filterBarValuesChanged,
+    //   () => {},
+    //   () => {
+    //     this._popOverMessagesApp.openBy(this._btnShowMsgAppBankTree);
+    //   }
+    // );
+
+    if (navigate) this.handlerGoHierarchyBank();
+  }
+  /**
    * Proceso de construcción de la jerarquía de posiciones de liquidez
    * @param IDHierarchy Id de jerarquía
    * @param navigate Navega a la vista de jerarquía
@@ -489,6 +530,19 @@ export default class Main extends BaseController {
       viewModel
     );
   }
+
+  /**
+   * Navega al informe de cuentas
+   */
+  public handlerGoAccountQuery() {
+    this.navContainer.to(this.byId(NAVIGATION_ID.ACCOUNT_QUERY) as Control);
+  }
+  /**
+   * Navega a la jerarquía de bancos
+   */
+  public handlerGoHierarchyBank() {
+    this.navContainer.to(this.byId(NAVIGATION_ID.HIERARCHY_BANK) as Control);
+  }
   /**
    * Navega a la jerarquía de posiciones de liquidez
    */
@@ -504,6 +558,32 @@ export default class Main extends BaseController {
     this.navContainer.back();
   }
   /**
+   * Gestiona el cambio de jerarquía de banco
+   */
+  public async handlerChangeBankHier(event: any) {
+    let btnShowHierarchy = event.getSource() as Button;
+    this._popOverChangeBankHier ??= await (<Promise<Popover>>this.loadFragment({
+      id: this.getView()?.getId() as string,
+      name: "liqreport.fragment.hierarchyBank.ChangeBankHier",
+    }));
+
+    this._popOverChangeBankHier.openBy(btnShowHierarchy);
+  }
+  /**
+   * Gestiona el cambio de jerarquía de banco
+   */
+  public async handlerChangeLiqItemHier(event: any) {
+    let btnShowHierarchy = event.getSource() as Button;
+    this._popOverChangeLiqItemHier ??= await (<Promise<Popover>>(
+      this.loadFragment({
+        id: this.getView()?.getId() as string,
+        name: "liqreport.fragment.hierarchyLiquidity.ChangeLiqItemHier",
+      })
+    ));
+
+    this._popOverChangeLiqItemHier.openBy(btnShowHierarchy);
+  }
+  /**
    * Construye las columnas
    * @param sId
    * @param oContext
@@ -512,7 +592,7 @@ export default class Main extends BaseController {
   public factoryHierarchyFieldCatalog(sId: string, oContext: any) {
     let fieldCatalog: Partial<FieldCatalogTree> = {};
     let statePath = "";
-   if (sId.includes(ID_LIQITEM_TREE_TABLE)) {
+    if (sId.includes(ID_LIQITEM_TREE_TABLE)) {
       fieldCatalog = this.getOwnerComponent()
         .hierarchyLiqItemState.getModel()
         .getProperty(oContext.sPath as string) as FieldCatalogTree;
@@ -584,6 +664,18 @@ export default class Main extends BaseController {
   }
 
   /**
+   * Gestiona la configuración del tree tabla de bancos
+   */
+  public async handlerTablePersonalization(event: any) {
+    await Engine.getInstance().show(
+      event.getSource().getParent().getParent() as Control,
+      ["Columns"],
+      {
+        source: event.getSource(),
+      }
+    );
+  }
+  /**
    * Gestiona el evento de columnas actualizas en el tree table de posiciones de liquidez
    * @param event
    */
@@ -643,23 +735,43 @@ export default class Main extends BaseController {
   /**
    * Post proceso después de la carga de datos de cuentas
    */
-  private postAccountProcessLoadData() {
-    // Si no hay datos puede ser por dos motivos 1) No ha encontrado datos con los filtros introducidos
-    // 2) Que el servicio haya dado un error.
-    // En ambos casos hay que:
-    // 1) desactivar el loading(puede ser que no este activo si no se ha seleccionado jerarquía)
-    // 2) Limpia el modo de datos de la jerarquía
+  // private postAccountProcessLoadData() {  //LO DEJO COMENTADO PORQUE NO SÉ SI NOS ES ÚTIL LO QUE HAY EN EL ELSE
+  //   // Si no hay datos puede ser por dos motivos 1) No ha encontrado datos con los filtros introducidos
+  //   // 2) Que el servicio haya dado un error.
+  //   // En ambos casos hay que:
+  //   // 1) desactivar el loading(puede ser que no este activo si no se ha seleccionado jerarquía)
+  //   // 2) Limpia el modo de datos de la jerarquía
+  //   if (this.getOwnerComponent().accountBankState.getAccountData().length > 0) {
+  //     // Se muestran las columnas de valore según los filtros en la smartable
+  //     this.showColumnValues();
 
-       // Nota: La obtención de datos para la posición de liquidez se hace en el método "preAccountProcess..." el motivo es que las búsquedas
-      // de datos son distintas a la de la smartable, y no tiene sentido esperarse a que termine la búsqueda para comenzar esta.
+  //     let hierViewModel = this.getOwnerComponent().queryModel.getProperty(
+  //       QUERY_MODEL.HIER_SELECT_VIEW_MODEL
+  //     ) as HierarchySelectViewModel;
 
-      this.setLoadingStateHierTree(false);
-      this.getOwnerComponent().hierarchyLiqItemState.clearModelValue();     
-    
+  //     // Se leen los datos cuando el radibutton de jerarquia de bancos esta marcado o ya se han mostrado datos. Si se han mostrado
+  //     // datos este servicio puede venir de un refresco o que se hayan cambiado datos de los filtros, en todo caso, se vuelve a leer los datos
+  //     // para tenerlos actualizados.
+  //     if (
+  //       hierViewModel.radiobuttonHierBank ||
+  //       (this.getOwnerComponent().queryModel.getProperty(
+  //         QUERY_MODEL.HIERARCHY_BANK_SHOWED
+  //       ) as boolean)
+  //     )
+  //       this.processBuildBankHier(hierViewModel.inputIDBank, false);
 
-    // Se indica que los filtros no han cambiado una vez obtenido todos los valores
-    this._filterBarValuesChanged = false;
-  }
+  //     // Nota: La obtención de datos para la posición de liquidez se hace en el método "preAccountProcess..." el motivo es que las búsquedas
+  //     // de datos son distintas a la de la smartable, y no tiene sentido esperarse a que termine la búsqueda para comenzar esta.
+  //   } else {
+  //     this.setLoadingStateHierTree(false);
+
+  //     this.getOwnerComponent().hierarchyBankState.clearModelValue();
+  //     this.getOwnerComponent().hierarchyLiqItemState.clearModelValue();
+  //   }
+
+  //   // Se indica que los filtros no han cambiado una vez obtenido todos los valores
+  //   this._filterBarValuesChanged = false;
+  // }
   /**
    * Establece el loader en los treeTable según el tipo de jerarquía que se este visualizando
    * @param loading
@@ -820,7 +932,7 @@ export default class Main extends BaseController {
             this.pressMenuOptionTextDisplay(
               state,
               oTable,
-             this._liqItemTreeNodeValueColumnMenu,
+              this._liqItemTreeNodeValueColumnMenu,
               fieldname,
               TextDisplayOption.Key,
               event.getParameter("id") as string
@@ -917,7 +1029,7 @@ export default class Main extends BaseController {
 
     let idColumn = this.getIdColumnFromState(state, fieldname);
     (this.byId(idColumn) as Column).setHeaderMenu(columnMenu.getId());
-    }
+  }
   /**
    * Recupera el Id interno del treetable a partir del nombre de campo y el state
    * que gestiona sus datos

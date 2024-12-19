@@ -4,7 +4,6 @@ import TreeTable from "sap/ui/table/TreeTable";
 import View from "sap/ui/core/mvc/View";
 import {
   CUSTOM_DATA,
-  ID_BANK_TREE_TABLE,
   NUMBER_FIX_FIELDS,
 } from "liqreport/constants/treeConstants";
 import { FieldsCatalogTree } from "liqreport/types/types";

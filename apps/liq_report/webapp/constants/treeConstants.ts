@@ -20,6 +20,29 @@ export const FIELDS_TREE_INTERNAL = {
   CHILD_NODE: "accounts",
   SHOW_POPOVER_NAV: "showPopOverNav",
 };
+export const FIELDS_TREE_ACCOUNT = {
+  NODE_VALUE_WIDTH: "30rem",
+  BANK_ACCOUNT_PARTNER: "bank_account_partner",
+  BANK_ACCOUNT_PARTNER_WIDTH: "15rem",
+  COMPANY_CODE: "company_code",
+  COMPANY_CODE_NAME: "company_code_name",
+  COMPANY_CODE_NAME_WIDTH: "10rem",
+  CURRENCY: "currency",
+  HOUSE_BANK: "house_bank",
+  HOUSE_BANK_WIDTH: "7rem",
+  HOUSE_BANK_ACCOUNT: "house_bank_account",
+  HOUSE_BANK_ACCOUNT_WIDTH: "6rem",
+  PLANNING_LEVEL: "planning_level",
+  PLANNING_LEVEL_WIDTH: "7rem",
+  PLANNING_LEVEL_NAME: "planning_level_name",
+  AMOUNT_DATA_WIDTH: "9rem",
+  OVERDUE_AMOUNT: "overdue_amount",
+  OVERDUE_AMOUNT_WIDTH: "7rem",
+  OVERDUE_CRITIC: "overdue_critic",
+  BANK_ACCOUNT: "bank_account",
+  BANK_ACCOUNT_NAME: "bank_account_name",
+  BANK_ACCOUNT_NUMBER: "bank_account_number",
+};
 export const FIELDS_TREE_LIQITEM = {
   NODE_VALUE_WIDTH: "30rem",
   CURRENCY: "currency",
@@ -37,6 +60,7 @@ export const CUSTOM_DATA = {
 
 export const NUMBER_FIX_FIELDS = 1;
 
+export const ID_BANK_TREE_TABLE = "BankTreeTable";
 export const ID_LIQITEM_TREE_TABLE = "LiqItemTreeTable";
 
 export const NODE_TYPES = {
