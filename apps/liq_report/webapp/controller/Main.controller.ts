@@ -42,7 +42,7 @@ import { TextDisplayOption } from "liqreport/types/hierarchyTypes";
 import LiqItemTreeViewController from "./LiqItemTreeViewController";
 import HierarchyLiqItemState from "liqreport/state/hierarchyLiqItemState";
 import formatter from "../model/formatter";
-// import FieldsFactoryController from "./FieldsFactoryController";
+import FieldsFactoryController from "./FieldsFactoryController";
 
 /**
  * @namespace liqreport.controller
@@ -56,29 +56,24 @@ export default class Main extends BaseController {
   private _popOverHierarchySelect: Popover;
   private _popOverChangeBankHier: Popover;
   private _popOverChangeLiqItemHier: Popover;
-  private _bankTreeTable: TreeTable;
   private _liqItemTreeTable: TreeTable;
   private _popOverMessagesApp: Popover;
   private _btnShowMessageAppRaw: Button;
-  private _btnShowMsgAppBankTree: Button;
   private _btnShowMsgAppLiqItemTree: Button;
   private _filterBarValuesChanged: boolean;
-  private _bankTreeNodeValueColumnMenu: Menu;
   private _liqItemTreeNodeValueColumnMenu: Menu;
   public formatter = formatter;
 
-  public async onInit(): Promise<void> {
+  public onInit() {
     this._sfb = this.byId("SFBQuery") as SmartFilterBar;
     this._st = this.byId("SFTQuery") as SmartTable;
     this.navContainer = this.byId("navContainer") as NavContainer;
-    this._bankTreeTable = this.byId("BankTreeTable") as TreeTable;
     this._liqItemTreeTable = this.byId("LiqItemTreeTable") as TreeTable;
 
     // Inicializacion de componentes, como popover
-    await this._initComponents();
+     this._initComponents();
 
     this._btnShowMessageAppRaw = this.byId("btnShowMessageAppRaw") as Button;
-    this._btnShowMsgAppBankTree = this.byId("btnShowMsgAppBankTree") as Button;
     this._btnShowMsgAppLiqItemTree = this.byId(
       "btnShowMsgAppLiqItemTree"
     ) as Button;
@@ -922,7 +917,7 @@ export default class Main extends BaseController {
 
     let idColumn = this.getIdColumnFromState(state, fieldname);
     (this.byId(idColumn) as Column).setHeaderMenu(columnMenu.getId());
-
+    }
   /**
    * Recupera el Id interno del treetable a partir del nombre de campo y el state
    * que gestiona sus datos

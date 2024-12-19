@@ -8,7 +8,7 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import AppComponent from "../Component";
 
 /**
- * @namespace cfwreport
+ * @namespace liqreport
  */
 export default abstract class BaseController extends Controller {
   /**
