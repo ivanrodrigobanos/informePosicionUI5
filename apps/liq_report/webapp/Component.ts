@@ -22,13 +22,12 @@ import ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import { APP_CORE_CONSTANTS } from "./coreConstants/generalConstants";
 
 /**
- * @namespace cfwreport
+ * @namespace liqreport
  */
 export default class Component extends BaseComponent {
   public static metadata = {
     manifest: "json",
   };
-
   public metadataState: MetadataState;
   public accountLiqItemState: AccountLiqItemState;
   public hierarchyLiqItemState: HierarchyLiqItemState;
@@ -53,7 +52,7 @@ export default class Component extends BaseComponent {
     // set the device model
     this.setModel(createDeviceModel(), "device");
 
-    this.initQueryModelData();
+     this.initQueryModelData();                                               //LO HE COMENTADO YO
 
     // Modelo para los mensajes
     //this.setModel(Messaging.getMessageModel(), MESSAGE_MODEL);
@@ -105,7 +104,7 @@ export default class Component extends BaseComponent {
    */
   private initQueryModelData() {
     // Filtros
-    this.queryModel = this.getModel(QUERY_MODEL.MODEL_NAME) as JSONModel;
+    this.queryModel = this.getModel() as JSONModel;  //ESTO LO HE CAMBIADO YO
     let dateFrom = new Date();
     dateFrom.setDate(dateFrom.getDate() - FILTER_DAYS.FROM);
     let dateTo = new Date();
