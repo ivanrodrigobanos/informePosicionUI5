@@ -23,7 +23,6 @@
         alternateRowColors="true"
         threshold="40000"
         rowsUpdated="handlerTreeLiqItemRowsUpdated"
-        sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
     >
         <tree:extension>
             <OverflowToolbar design="Transparent">
@@ -33,7 +32,6 @@
                 ({= ${hierarchyLiqItemState>/hierarchyAccount/hierarchyFlat}.length })"
                 />
                 <vm:VariantManagement
-                    id="hierarchyLiqItemTreeTable"
                     for="LiqItemTreeTable"
                 />
                 <ToolbarSpacer />
@@ -43,19 +41,6 @@
                     press="handlerRefreshData"
                 />
                 <ToolbarSeparator />
-                <Button
-                    tooltip="{i18n>treeTable.btnNavAccountQuery}"
-                    text="{i18n>treeTable.btnNavAccountQuery}"
-                    press="handlerGoAccountQuery"
-                />
-                <Button
-                    text="{i18n>accountDataTable.btnGoHierarchyBank}"
-                    tooltip="{i18n>accountDataTable.btnGoHierarchyBank}"
-                    press="handlerGoHierarchyBank"
-                    type="Transparent"
-                    visible="{= ${hierarchyBankState>/hierarchyAccount/hierarchyFlat}.length > 0 }"
-                />
-
                 <Button
                     tooltip="{i18n>treeTable.btnChangeHierarchy}"
                     text="{i18n>treeTable.btnChangeHierarchy}"

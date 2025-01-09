@@ -18,20 +18,8 @@
                 />
             </Toolbar>
         </footer>
-        <FlexBox
-            alignContent="Start"
-            direction="Column"
-        >
-            <FlexBox direction="Column">
-                <RadioButton
-                    id="LiquidityHierarchy"
-                    text="{i18n>hierarchySelect.liquidity}"
-                    select="handlerSelectHierarchy"
-                />
                 <core:Fragment
-                    fragmentName="cfwreport.fragment.hierarchyLiquidity.ComboLiquidityHierarchy"
+                    fragmentName="liqreport.fragment.ComboLiquidityHierarchy"
                     type="XML" />
-            </FlexBox>
-        </FlexBox>
     </Popover>
 </core:FragmentDefinition>

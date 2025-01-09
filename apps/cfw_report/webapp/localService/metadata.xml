@@ -80,7 +80,7 @@
                 <Property Name="node_name" Type="Edm.String" MaxLength="128" sap:label="Texto nodo" sap:quickinfo="Texto del nodo"/>
                 <Property Name="parent_node" Type="Edm.String" sap:label="Nodo padre"/>
                 <Property Name="node_type" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Tipo nodo" sap:quickinfo="Tipo de nodo"/>
-                <Property Name="hierarchy_id" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
+                <Property Name="hierarchy_id" Type="Edm.String" MaxLength="42" sap:display-format="UpperCase" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
                 <Property Name="hierarchy_category" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Tipo" sap:quickinfo="Subtipos de jerarquía"/>
                 <Property Name="node_display_order" Type="Edm.Int32" sap:label="Orden visualiz.IU" sap:quickinfo="Ordre de visualización IU de nodo"/>
                 <Property Name="include_noasign" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Incl. No Asignados" sap:quickinfo="Incluir no asignados"/>
@@ -94,7 +94,7 @@
                 <Property Name="node_name" Type="Edm.String" MaxLength="128" sap:label="Texto nodo" sap:quickinfo="Texto del nodo"/>
                 <Property Name="parent_node" Type="Edm.String" sap:label="Nodo padre"/>
                 <Property Name="node_type" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Tipo nodo" sap:quickinfo="Tipo de nodo"/>
-                <Property Name="hierarchy_id" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
+                <Property Name="hierarchy_id" Type="Edm.String" MaxLength="42" sap:display-format="UpperCase" sap:label="ID jerarquía" sap:quickinfo="ID de jerarquía"/>
                 <Property Name="hierarchy_category" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Tipo" sap:quickinfo="Subtipos de jerarquía"/>
                 <Property Name="node_display_order" Type="Edm.Int32" sap:label="Orden visualiz.IU" sap:quickinfo="Ordre de visualización IU de nodo"/>
             </EntityType>
@@ -106,12 +106,12 @@
                 <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="bank_account_name" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
                 <Property Name="bank_account_name" Type="Edm.String" MaxLength="60" sap:label="Descripción" sap:quickinfo="Descripción de cuenta"/>
-                <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
+                <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre entidad" sap:quickinfo="Nombre del banco" sap:value-list="standard"/>
                 <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
                 <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
                 <Property Name="house_bank" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio" sap:value-list="standard"/>
-                <Property Name="house_bank_account" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta"/>
+                <Property Name="house_bank_account" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta" sap:value-list="standard"/>
                 <Property Name="source_name" Type="Edm.String" MaxLength="60" sap:label="Desc. Fuente" sap:quickinfo="Descripción de la fuente"/>
                 <Property Name="overdue_amount" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="currency" sap:variable-scale="true" sap:label="Overdue" sap:quickinfo="Importe fechas overdue"/>
                 <Property Name="overdue_critic" Type="Edm.Byte" sap:label="Criticidad Fiori" sap:quickinfo="Criticidad fiori"/>
@@ -331,7 +331,7 @@
                 <Property Name="bank_account" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="bank_account_name" sap:label="Technical ID" sap:quickinfo="Descripción de cuenta"/>
                 <Property Name="source" Type="Edm.String" Nullable="false" MaxLength="100" sap:text="source_name" sap:label="Fuente"/>
                 <Property Name="bank_account_name" Type="Edm.String" MaxLength="60" sap:label="Descripción" sap:quickinfo="Descripción de cuenta"/>
-                <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre banco" sap:quickinfo="Nombre del banco"/>
+                <Property Name="bank_account_partner" Type="Edm.String" MaxLength="20" sap:label="Nombre entidad" sap:quickinfo="Nombre del banco"/>
                 <Property Name="company_code" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:text="company_code_name" sap:label="Sociedad" sap:value-list="standard"/>
                 <Property Name="company_code_name" Type="Edm.String" MaxLength="60" sap:label="Sociedad" sap:quickinfo="Nombre de la sociedad"/>
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Moneda visualización" sap:quickinfo="Moneda de visualización" sap:semantics="currency-code"/>
@@ -448,6 +448,24 @@
                 <Property Name="http_url" Type="Edm.String" Nullable="false" sap:display-format="UpperCase" sap:label="URL"/>
                 <Property Name="https_url" Type="Edm.String" sap:display-format="UpperCase" sap:label="URL"/>
             </EntityType>
+            <EntityType Name="xSTRCMxC_ID_CUENTA_VHType" sap:label="Id de cuenta" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="bukrs"/>
+                    <PropertyRef Name="hbkid"/>
+                    <PropertyRef Name="hktid"/>
+                </Key>
+                <Property Name="bukrs" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Sociedad"/>
+                <Property Name="hbkid" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Banco propio" sap:quickinfo="Clave breve para banco propio"/>
+                <Property Name="hktid" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="ID de cuenta" sap:quickinfo="Clave breve para un banco/cuenta"/>
+                <Property Name="hktid_desc" Type="Edm.String" MaxLength="60" sap:label="Denominación"/>
+            </EntityType>
+            <EntityType Name="xSTRCMxC_MONITOR_BANKS_VHType" sap:label="Monitor - Ayuda búsqueda de bancos" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="nombre_banco"/>
+                </Key>
+                <Property Name="nombre_banco" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Nombre entidad" sap:quickinfo="Nombre del banco"/>
+                <Property Name="fecha_extracto" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Fecha extracto"/>
+            </EntityType>
             <EntityType Name="xSTRCMxC_SOCIEDAD_VHType" sap:label="Sociedades" sap:value-list="true" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="bukrs"/>
@@ -519,6 +537,7 @@
                 <Property Name="MarginSize" Type="Edm.Int32" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="FontName" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Font Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Padding" Type="Edm.Int32" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TextDirectionLayout" Type="Edm.String" Nullable="false" MaxLength="40" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="SAP__PDFStandard" sap:content-version="1">
                 <Key>
@@ -712,6 +731,8 @@
                 <EntitySet Name="cfw_query_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="sap_url" EntityType="cds_xstrcmxui_cash_flow.sap_urlType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="xSTRCMxC_ID_CUENTA_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_ID_CUENTA_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="xSTRCMxC_MONITOR_BANKS_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_MONITOR_BANKS_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_SOCIEDAD_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_SOCIEDAD_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="constants" EntityType="cds_xstrcmxui_cash_flow.constantsType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="I_CurrencyStdVH" EntityType="cds_xstrcmxui_cash_flow.I_CurrencyStdVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
@@ -761,6 +782,25 @@
                 </AssociationSet>
             </EntityContainer>
             <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/bank_account_partner" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueListForValidation" String=""/>
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Nombre entidad"/>
+                        <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
+                        <PropertyValue Property="CollectionPath" String="xSTRCMxC_MONITOR_BANKS_VH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="bank_account_partner"/>
+                                    <PropertyValue Property="ValueListProperty" String="nombre_banco"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/company_code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ValueListForValidation" String=""/>
                 <Annotation Term="Common.ValueList">
@@ -815,6 +855,36 @@
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
                                     <PropertyValue Property="ValueListProperty" String="name1"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/house_bank_account" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueListForValidation" String=""/>
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="ID de cuenta"/>
+                        <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
+                        <PropertyValue Property="CollectionPath" String="xSTRCMxC_ID_CUENTA_VH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="company_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="bukrs"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="house_bank"/>
+                                    <PropertyValue Property="ValueListProperty" String="hbkid"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="house_bank_account"/>
+                                    <PropertyValue Property="ValueListProperty" String="hktid"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="hktid_desc"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>
@@ -1218,6 +1288,40 @@
                     </Record>
                 </Annotation>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_ID_CUENTA_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_MONITOR_BANKS_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_SOCIEDAD_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
@@ -1268,6 +1372,7 @@
                         <PropertyValue Property="Padding" Bool="true"/>
                         <PropertyValue Property="HeaderFooter" Bool="true"/>
                         <PropertyValue Property="IANATimezoneFormat" Bool="true"/>
+                        <PropertyValue Property="TextDirectionLayout" Bool="true"/>
                         <PropertyValue Property="ResultSizeDefault" Int="20000"/>
                         <PropertyValue Property="ResultSizeMaximum" Int="20000"/>
                         <PropertyValue Property="Treeview" Bool="true"/>
@@ -1312,6 +1417,10 @@
             </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.SAP__DocumentDescription/CreatedAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="SAP__core.Computed"/>
+            </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.SAP__Format/TextDirectionLayout" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="SAP__core.Description" String="Setting the text direction-layout is supported"/>
+                <Annotation Term="SAP__core.LongDescription" String="PDF supports setting the text direction-layout (e.g. left-to-right or right-to-left) in the document description"/>
             </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.SAP__DocumentDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="SAP__capabilties.InsertRestrictions">

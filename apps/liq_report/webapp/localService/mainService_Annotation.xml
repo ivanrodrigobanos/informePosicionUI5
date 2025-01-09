@@ -24,11 +24,11 @@
     <edmx:Reference Uri="../../catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ODM',Version='0001',SAP__Origin='')/$value">
         <edmx:Include Namespace="com.sap.vocabularies.ODM.v1" Alias="SAP__ODM"/>
     </edmx:Reference>
-    <edmx:Reference Uri="../../../strcm/ui_cash_flow_o2/$metadata">
-        <edmx:Include Namespace="UI_CASH_FLOW_O2" Alias="SAP"/>
+    <edmx:Reference Uri="../../../strcm/ui_cash_flow_02/$metadata">
+        <edmx:Include Namespace="UI_CASH_FLOW_02" Alias="SAP"/>
     </edmx:Reference>
     <edmx:DataServices>
-        <Schema Namespace="com.sap.strcm.ui_cash_flow_o2_van.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Schema Namespace="com.sap.strcm.ui_cash_flow_02_van.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
             <Annotations Target="cds_xstrcmxui_cash_flow.dir_bank_hierType">
                 <Annotation Term="UI.Facets">
                     <Collection>

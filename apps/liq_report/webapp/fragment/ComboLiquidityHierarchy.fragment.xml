@@ -16,7 +16,6 @@
             showSecondaryValues="true"
             filterSecondaryValues="true"
             selectedKey="{model: 'queryModel', path:'/hierSelectViewModel/inputIDLiquidity'}"
-            enabled="{model: 'queryModel', path:'/hierSelectViewModel/radiobuttonHierLiqItem',formatter:'.formatter.enabledInputHierLiqItem'}"
             items="{
 						path: '/dir_liq_hier',
                         suspended: true,

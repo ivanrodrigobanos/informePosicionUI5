@@ -104,7 +104,7 @@ export default class Component extends BaseComponent {
    */
   private initQueryModelData() {
     // Filtros
-    this.queryModel = this.getModel() as JSONModel;  //ESTO LO HE CAMBIADO YO
+    this.queryModel = this.getModel(QUERY_MODEL.MODEL_NAME) as JSONModel;  //ESTO LO HE CAMBIADO YO
     let dateFrom = new Date();
     dateFrom.setDate(dateFrom.getDate() - FILTER_DAYS.FROM);
     let dateTo = new Date();

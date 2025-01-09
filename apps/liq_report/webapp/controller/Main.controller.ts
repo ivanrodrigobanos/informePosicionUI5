@@ -73,7 +73,7 @@ export default class Main extends BaseController {
     this._st = this.byId("SFTQuery") as SmartTable;
     this.navContainer = this.byId("navContainer") as NavContainer;
     this._bankTreeTable = this.byId("BankTreeTable") as TreeTable;
-    this._liqItemTreeTable = this.byId("LiqItemTreeTable") as TreeTable;
+    this._liqItemTreeTable = this.byId("LiqItemTreeTable") as TreeTable;//LiqItemTreeTable
 
     // Inicializacion de componentes, como popover
      this._initComponents();
@@ -275,9 +275,6 @@ export default class Main extends BaseController {
     let closePopoverBank = false;
     let closePopoverLiqItem = false;
 
-    if (hierViewModel.radiobuttonHierBank)
-      closePopoverBank = this.handlerHierBankSelected();
-
     if (hierViewModel.radiobuttonHierLiqItem)
       closePopoverLiqItem = this.handlerHierLiqItemSelected();
 
@@ -296,68 +293,6 @@ export default class Main extends BaseController {
       this._popOverHierarchySelect
     )
       this._popOverHierarchySelect.close();
-  }
-  /**
-   * Proceso que gestiona la selección de la jerarquia de bancos ya sea
-   * desde el selector principal o cuando se cambia la jerarquía
-   */
-  public handlerHierBankSelected(): boolean {
-    let hierViewModel = this.getOwnerComponent().queryModel.getProperty(
-      QUERY_MODEL.HIER_SELECT_VIEW_MODEL
-    ) as HierarchySelectViewModel;
-
-    let closePopover = false;
-    let msgToastText = "";
-
-    hierViewModel.inputIDBankValueState = ValueState.None;
-    hierViewModel.inputIDBankValueStateText = "";
-
-    if (hierViewModel.inputIDBank === "") {
-      hierViewModel.inputIDBankValueState = ValueState.Error;
-      hierViewModel.inputIDBankValueStateText =
-        this.geti18nResourceBundle().getText(
-          "hierarchySelect.mandatoryHier"
-        ) as string;
-    } else {
-      if (hierViewModel.inputIDBank === hierViewModel.inputIDBankPrevious) {
-        msgToastText = this.geti18nResourceBundle().getText(
-          "hierarchySelect.notHierChanged"
-        ) as string;
-      } else {
-        hierViewModel.inputIDBankPrevious = hierViewModel.inputIDBank; // Guardo el previo
-
-        // Activamos el loader de la tabla de jerarquía
-        this.getOwnerComponent().queryModel.setProperty(
-          QUERY_MODEL.LOADING_HIER_BANK_PROCESS,
-          true
-        );
-
-        // Si los filtros se han modificado y se navega hacia una jerarquía se realiza la misma acción que al refrescar. Es decir,
-        // leer los datos de la tabla principal para poder construir la jerarquía. Si no se han modificado se hace la lectura directa
-        // de los datos de jerarquía
-        if (this._filterBarValuesChanged) {
-          this.handlerGoHierarchyBank(); // Navegamos a la tabla de jerarquía de bancos
-
-          this.handlerRefreshData();
-        } else {
-          this.processBuildBankHier(hierViewModel.inputIDBank, true);
-        }
-      }
-
-      closePopover = true;
-    }
-
-    this.getOwnerComponent().queryModel.setProperty(
-      QUERY_MODEL.HIER_SELECT_VIEW_MODEL,
-      hierViewModel
-    );
-
-    if (closePopover && this._popOverChangeBankHier)
-      this._popOverChangeBankHier.close();
-
-    if (msgToastText !== "") MessageToast.show(msgToastText);
-
-    return closePopover;
   }
   /**
    * Proceso que gestiona la selección de la jerarquia de posiciones de liquidez ya sea
@@ -455,7 +390,6 @@ export default class Main extends BaseController {
     //   }
     // );
 
-    if (navigate) this.handlerGoHierarchyBank();
   }
   /**
    * Proceso de construcción de la jerarquía de posiciones de liquidez
@@ -530,19 +464,6 @@ export default class Main extends BaseController {
       viewModel
     );
   }
-
-  /**
-   * Navega al informe de cuentas
-   */
-  public handlerGoAccountQuery() {
-    this.navContainer.to(this.byId(NAVIGATION_ID.ACCOUNT_QUERY) as Control);
-  }
-  /**
-   * Navega a la jerarquía de bancos
-   */
-  public handlerGoHierarchyBank() {
-    this.navContainer.to(this.byId(NAVIGATION_ID.HIERARCHY_BANK) as Control);
-  }
   /**
    * Navega a la jerarquía de posiciones de liquidez
    */
@@ -577,7 +498,7 @@ export default class Main extends BaseController {
     this._popOverChangeLiqItemHier ??= await (<Promise<Popover>>(
       this.loadFragment({
         id: this.getView()?.getId() as string,
-        name: "liqreport.fragment.hierarchyLiquidity.ChangeLiqItemHier",
+        name: "liqreport.fragment.ChangeLiqItemHier",
       })
     ));
 

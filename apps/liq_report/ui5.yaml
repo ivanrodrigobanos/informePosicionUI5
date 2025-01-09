@@ -19,6 +19,7 @@ server:
           - scp: true
             path: /sap
             url: https://c8b17cfb-1029-4317-b575-e75b998efae5.abap.eu20.hana.ondemand.com
+            authenticationType: oauth2
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

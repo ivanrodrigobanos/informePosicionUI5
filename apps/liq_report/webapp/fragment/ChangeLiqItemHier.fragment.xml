@@ -18,7 +18,7 @@
             </Toolbar>
         </footer>
         <core:Fragment
-            fragmentName="cfwreport.fragment.hierarchyLiquidity.ComboLiquidityHierarchy"
+            fragmentName="liqreport.fragment.ComboLiquidityHierarchy"
             type="XML"
         />
     </Popover>
