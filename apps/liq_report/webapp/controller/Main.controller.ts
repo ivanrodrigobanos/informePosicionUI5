@@ -418,53 +418,6 @@ export default class Main extends BaseController {
     (event.getSource() as Dialog).close();
   }
   /**
-   * Gestiona el cambio de radiobutton
-   * @param event
-   */
-  public handlerSelectHierarchy(event: any) {
-    let viewModel = this.getOwnerComponent().queryModel.getProperty(
-      QUERY_MODEL.HIER_SELECT_VIEW_MODEL
-    ) as HierarchySelectViewModel;
-    // Se pone que los input no son editables a expensas de saber cual ha sido el seleccionado
-    viewModel.radiobuttonHierBank = false;
-    viewModel.radiobuttonHierLiqItem = false;
-
-    let radioButton = event.getSource() as RadioButton;
-    // Radiobutton de jerarquía de banco seleccionado
-    if (
-      radioButton.getId().indexOf("BankHierarchy") !== -1 &&
-      radioButton.getSelected()
-    ) {
-      viewModel.radiobuttonHierBank = true;
-      // Se quita el valor de los ID seleccionados en otras jerarquías, si no se ha mostrado previamente sus valores
-      if (
-        !this.getOwnerComponent().queryModel.getProperty(
-          QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED
-        )
-      )
-        viewModel.inputIDLiquidity = "";
-    }
-    // Radiobutton de jerarquía de liquidez seleccionado
-    else if (
-      radioButton.getId().indexOf("LiquidityHierarchy") !== -1 &&
-      radioButton.getSelected()
-    ) {
-      viewModel.radiobuttonHierLiqItem = true;
-      // Se quita el valor de los ID seleccionados en otras jerarquías
-      if (
-        !this.getOwnerComponent().queryModel.getProperty(
-          QUERY_MODEL.HIERARCHY_BANK_SHOWED
-        )
-      )
-        viewModel.inputIDBank = "";
-    }
-
-    this.getOwnerComponent().queryModel.setProperty(
-      QUERY_MODEL.HIER_SELECT_VIEW_MODEL,
-      viewModel
-    );
-  }
-  /**
    * Navega a la jerarquía de posiciones de liquidez
    */
   public handlerGoHierarchyLiqItem() {
