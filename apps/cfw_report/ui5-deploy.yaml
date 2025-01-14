@@ -20,6 +20,6 @@ builder:
           name: /STRCM/CFW_REPORT
           description: Informe de provisión y previsión
           package: /STRCM/TR02_03_01
-          transport: H01K900101
+          transport: H01K900352
         exclude:
           - /test/

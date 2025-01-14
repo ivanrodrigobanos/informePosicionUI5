@@ -68,7 +68,7 @@ export default class Main extends BaseController {
   private _btnShowMsgAppLiqItemTree: Button;
   private _filterBarValuesChanged: boolean;
   private _bankTreeNodeValueColumnMenu: Menu | null;
-  private _liqItemTreeNodeValueColumnMenu: Menu;
+  private _liqItemTreeNodeValueColumnMenu: Menu | null;
   private fieldsFactory: FieldsFactoryController;
   public formatter = formatter;
 
@@ -230,6 +230,10 @@ export default class Main extends BaseController {
     if (this._bankTreeNodeValueColumnMenu) {
       this._bankTreeNodeValueColumnMenu.destroy();
       this._bankTreeNodeValueColumnMenu = null;
+    }
+    if (this._liqItemTreeNodeValueColumnMenu) {
+      this._liqItemTreeNodeValueColumnMenu.destroy();
+      this._liqItemTreeNodeValueColumnMenu = null;
     }
     this.getOwnerComponent().messageState.clearMessage();
 
