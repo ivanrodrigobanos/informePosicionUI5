@@ -399,11 +399,14 @@ export default class HierarchyBankAccountModel extends BaseHierarchy<HierarchyTr
     // Opción de mostrar popover de opciones de navegación
     rowTree[FIELDS_TREE_INTERNAL.SHOW_POPOVER_NAV] = true;
 
-    if (existPlvNode)
+    if (existPlvNode) {
+      //Cuando hay posiciones de liquidez, la navegación es a nivel de posiciones de liquidez, NO a nivel de cuenta
+      rowTree[FIELDS_TREE_INTERNAL.SHOW_POPOVER_NAV] = false;
       this.fillTreeSubnodes(
         rowTree,
         rowHierarchyFlat[FIELDS_TREE.NODE] as string
       );
+    }
   }
   /**
    * Rellena los datos de los planning level

@@ -67,7 +67,7 @@ export default class Main extends BaseController {
   private _btnShowMsgAppBankTree: Button;
   private _btnShowMsgAppLiqItemTree: Button;
   private _filterBarValuesChanged: boolean;
-  private _bankTreeNodeValueColumnMenu: Menu;
+  private _bankTreeNodeValueColumnMenu: Menu | null;
   private _liqItemTreeNodeValueColumnMenu: Menu;
   private fieldsFactory: FieldsFactoryController;
   public formatter = formatter;
@@ -227,6 +227,10 @@ export default class Main extends BaseController {
    * @param event
    */
   public onBeforeRebindTable(event: any) {
+    if (this._bankTreeNodeValueColumnMenu) {
+      this._bankTreeNodeValueColumnMenu.destroy();
+      this._bankTreeNodeValueColumnMenu = null;
+    }
     this.getOwnerComponent().messageState.clearMessage();
 
     // Procesos antes de la lectura de datos
@@ -1038,8 +1042,8 @@ export default class Main extends BaseController {
               state,
               oTable,
               state instanceof HierarchyBankState
-                ? this._bankTreeNodeValueColumnMenu
-                : this._liqItemTreeNodeValueColumnMenu,
+                ? (this._bankTreeNodeValueColumnMenu as Menu)
+                : (this._liqItemTreeNodeValueColumnMenu as Menu),
               fieldname,
               TextDisplayOption.Key,
               event.getParameter("id") as string
@@ -1067,8 +1071,8 @@ export default class Main extends BaseController {
               state,
               oTable,
               state instanceof HierarchyBankState
-                ? this._bankTreeNodeValueColumnMenu
-                : this._liqItemTreeNodeValueColumnMenu,
+                ? (this._bankTreeNodeValueColumnMenu as Menu)
+                : (this._liqItemTreeNodeValueColumnMenu as Menu),
               fieldname,
               TextDisplayOption.Text,
               event.getParameter("id") as string
@@ -1096,8 +1100,8 @@ export default class Main extends BaseController {
               state,
               oTable,
               state instanceof HierarchyBankState
-                ? this._bankTreeNodeValueColumnMenu
-                : this._liqItemTreeNodeValueColumnMenu,
+                ? (this._bankTreeNodeValueColumnMenu as Menu)
+                : (this._liqItemTreeNodeValueColumnMenu as Menu),
               fieldname,
               TextDisplayOption.TextKey,
               event.getParameter("id") as string

@@ -16,7 +16,6 @@ import { NAVIGATION_ID } from "liqreport/constants/navigation";
 import Control from "sap/ui/core/Control";
 import Button from "sap/m/Button";
 import Popover from "sap/m/Popover";
-import RadioButton from "sap/m/RadioButton";
 import Dialog from "sap/m/Dialog";
 import View from "sap/ui/core/mvc/View";
 import Item from "sap/ui/core/Item";
@@ -50,7 +49,7 @@ import FieldsFactoryController from "./FieldsFactoryController";
 export default class Main extends BaseController {
   private _liqItemTreeViewController: LiqItemTreeViewController;
   private _sfb: SmartFilterBar;
-  private _st: SmartTable;
+  // private _st: SmartTable;
   private _stInternalTable: Table;
   public navContainer: NavContainer;
   private _popOverHierarchySelect: Popover;
@@ -70,9 +69,7 @@ export default class Main extends BaseController {
 
   public onInit() {
     this._sfb = this.byId("SFBQuery") as SmartFilterBar;
-    this._st = this.byId("SFTQuery") as SmartTable;
     this.navContainer = this.byId("navContainer") as NavContainer;
-    this._bankTreeTable = this.byId("BankTreeTable") as TreeTable;
     this._liqItemTreeTable = this.byId("LiqItemTreeTable") as TreeTable;//LiqItemTreeTable
 
     // Inicializacion de componentes, como popover
@@ -193,57 +190,18 @@ export default class Main extends BaseController {
     // completamente cargado, y puedo inicializar el model con determinados datos de el.
     this.initModel();
     // Oculta las columna de valores para que no se vean de un inicio.
-    this.hiddenColumnValues();
+
+    // this.hiddenColumnValues();                                                                         //LO HE COMENTADO YO
   }
   /**
    * Evento que se lanza antes del programa de búsqueda de la smartable.
    * @param event
    */
-  public onBeforeRebindTable(event: any) {
+  public onSearchSFB(event: any) {
     this.getOwnerComponent().messageState.clearMessage();
 
     // Procesos antes de la lectura de datos
     this.preAccountProcessLoadData();
-
-    let filterValues = this.getOwnerComponent().getFiltersValues();
-
-    // Se añaden los filtros a medida a la tabla
-    let mBindingParams = event.getParameter("bindingParams");
-    mBindingParams.filters.push(
-      new Filter(
-        "p_keydate",
-        FilterOperator.EQ,
-        DateFormat.convertUTCDateToLocalDate(filterValues.dateFrom)
-      )
-    );
-
-    mBindingParams.filters.push(
-      new Filter(
-        "p_enddate",
-        FilterOperator.EQ,
-        DateFormat.convertUTCDateToLocalDate(filterValues.dateTo)
-      )
-    );
-    // Se pasan todos los campos a la hora de hacer el select y obtener toda la info
-    mBindingParams.parameters.select = this.buildSelectFields();
-
-    this._st.attachEventOnce("dataReceived", (eventDataReceived: any) => {
-      let modelValue: AccountsData = [];
-      // Esta asignacion se guardarán más campos (campos internos del odata) que hay definido en el tipo,
-      // pero me da igual, porque luego podre acceder a cada campo de manera i
-      let parameters = eventDataReceived.getParameters();
-      if (parameters.getParameter("data")) {
-        modelValue = parameters.getParameter("data").results;
-      } else {
-        this.getOwnerComponent().messageState.AddErrorMessage(
-          this.geti18nResourceBundle().getText(
-            "accountDataTable.errorGetService"
-          ) as string
-        );
-        this._popOverMessagesApp.openBy(this._btnShowMessageAppRaw);
-      }
-      // this.postAccountProcessLoadData(); //LO DEJO COMENTADO PORQUE EL MÉTODO TB LO ESTÁ
-    });
   }
 
   /**
@@ -432,19 +390,7 @@ export default class Main extends BaseController {
     this.navContainer.back();
   }
   /**
-   * Gestiona el cambio de jerarquía de banco
-   */
-  public async handlerChangeBankHier(event: any) {
-    let btnShowHierarchy = event.getSource() as Button;
-    this._popOverChangeBankHier ??= await (<Promise<Popover>>this.loadFragment({
-      id: this.getView()?.getId() as string,
-      name: "liqreport.fragment.hierarchyBank.ChangeBankHier",
-    }));
-
-    this._popOverChangeBankHier.openBy(btnShowHierarchy);
-  }
-  /**
-   * Gestiona el cambio de jerarquía de banco
+   * Gestiona el cambio de jerarquía de liquidez
    */
   public async handlerChangeLiqItemHier(event: any) {
     let btnShowHierarchy = event.getSource() as Button;
@@ -529,12 +475,9 @@ export default class Main extends BaseController {
     let treeTable = event.getSource().getParent().getParent() as TreeTable;
     treeTable.collapse(treeTable.getSelectedIndices());
   }
-  /**
-   * Gestiona el refresco manual de datos
-   */
   public handlerRefreshData() {
-    // Se lanza el proceso de lectura de datos de la smartable
-    this._st.rebindTable(true);
+    // Se lanza el proceso de lectura de datos de la filterbar
+    this.onSearchSFB(true)
   }
 
   /**
@@ -592,19 +535,7 @@ export default class Main extends BaseController {
 
     // Pone los loader de los treeTable
     this.setLoadingStateHierTree(true);
-
-    // Nota: La obtención de datos para la posición de liquidez se hace aquí porque la búsqueda de datos para construir la jerarquía
-    // no depende de la smartable. Y de esta manera se hacen procesos en paralelo ganando en velocidad.
-    // Se leen los datos cuando el radibutton de jerarquia de posiciones esta marcado o ya se han mostrado datos. Si se han mostrado
-    // datos este servicio puede venir de un refresco o que se hayan cambiado datos de los filtros, en todo caso, se vuelve a leer los datos
-    // para tenerlos actualizados.
-    if (
-      hierViewModel.radiobuttonHierLiqItem ||
-      (this.getOwnerComponent().queryModel.getProperty(
-        QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED
-      ) as boolean)
-    )
-      this.processBuildLiqItemHier(hierViewModel.inputIDLiquidity, false);
+    this.processBuildLiqItemHier(hierViewModel.inputIDLiquidity, false);                
   }
   /**
    * Post proceso después de la carga de datos de cuentas
@@ -697,21 +628,6 @@ export default class Main extends BaseController {
     return selectFields;
   }
   /**
-   * Oculta las columnas de valores
-   */
-  private hiddenColumnValues() {
-    let columns = this._stInternalTable.getColumns();
-
-    columns
-      .filter(
-        (column) =>
-          column.getId().indexOf(ENTITY_FIELDS_DATA.AMOUNT_DATA) !== -1
-      )
-      .forEach((column) => {
-        column.setVisible(false);
-      });
-  }
-  /**
    * Inicialización de modelos globales o propios
    */
   private initModel() {
@@ -731,16 +647,6 @@ export default class Main extends BaseController {
         if (field === "") fields = field;
         else fields += `,${field}`;
       });
-    this._st.setIgnoredFields(fields);
-
-    // Se obtiene la instancia de la tabla asociada a la smartable para poder ajustar valores que no se puede hacer directamente a la smartable.
-    this._stInternalTable = this.byId(`${this._st.getId()}-ui5table`) as Table;
-    this._stInternalTable.setFixedColumnCount(1);
-
-    // Apaño para forzar que se lean todos los registros de golpe. Ya
-    // que los datos se pivotan de filas a columnas. Con lo cual no puede haber paginación
-    // porque tanto se pivote en origen o en destino(que es como lo hacemos ahora) el problema estará igual.
-    this._stInternalTable.setThreshold(40000);
   }
   /**
    * Asocia a un menu contextual a un columna de una tabla
