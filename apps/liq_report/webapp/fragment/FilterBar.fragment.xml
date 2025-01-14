@@ -9,7 +9,9 @@
         persistencyKey="SmartFilterBarApp"
         filterChange="onSFChange"
         afterVariantLoad="onSFVariantLoad"
-        beforeVariantFetch="onSFBeforeVariantFetch">
+        beforeVariantFetch="onSFBeforeVariantFetch"
+        search="onSearchSFB"
+        >
         <sfb:controlConfiguration>
             <sfb:ControlConfiguration
                 key="p_keydate"
