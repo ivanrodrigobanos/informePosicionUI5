@@ -40,9 +40,8 @@ server:
         backend:
           - scp: true
             path: /sap
-            url: https://c8b17cfb-1029-4317-b575-e75b998efae5.abap.eu20.hana.ondemand.com
+            url: https://2e98834f-eb7d-4142-a082-fa59853fcbc0.abap.eu20.hana.ondemand.com
             authenticationType: oauth2
-            destination: abap-cloud-default_abap-productos-des-scsvnw05-pyxisabap
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
