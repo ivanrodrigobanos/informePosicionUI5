@@ -119,6 +119,10 @@ export default class Component extends BaseComponent {
     dateTo.setDate(dateTo.getDate() + FILTER_DAYS.TO);
 
     let initFilters: FiltersQuery = {
+      house_bank: [],
+      bank_account_partner: [],
+      house_bank_account: [],
+      // bank_account: [],
       company_code: [],
       displayCurrency: "",
       dateFrom: dateFrom,

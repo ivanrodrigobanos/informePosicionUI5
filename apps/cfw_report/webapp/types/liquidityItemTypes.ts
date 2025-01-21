@@ -14,4 +14,9 @@ export type FiltersAccountData = {
   dateTo: Date;
   displayCurrency: string;
   source?: string;
+  house_bank?: string[];
+  company_code?: string[];
+  house_bank_account?: string[];
+  bank_account?: string[];
+  bank_account_partner?: string[];
 };

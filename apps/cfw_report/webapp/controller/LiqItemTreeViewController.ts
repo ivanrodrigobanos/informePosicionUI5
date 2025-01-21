@@ -45,6 +45,11 @@ export default class LiqItemTreeViewController extends TreeTableController {
         dateFrom: filterValues.dateFrom,
         dateTo: filterValues.dateTo,
         displayCurrency: filterValues.displayCurrency,
+        house_bank: filterValues.house_bank,
+        company_code: filterValues.company_code,
+        house_bank_account: filterValues.house_bank_account,
+        // bank_account: filterValues.bank_account,
+        bank_account_partner: filterValues.bank_account_partner,
       }),
       this.ownerComponent.hierarchyLiqItemState.readHierarchy(IDHierarchy),
     ])
@@ -66,8 +71,6 @@ export default class LiqItemTreeViewController extends TreeTableController {
           QUERY_MODEL.HIERARCHY_LIQITEM_SHOWED,
           true
         );
-
-        
       })
       .catch(() => {
         this.ownerComponent.queryModel.setProperty(

@@ -36,10 +36,56 @@ export default class AccountLiqItemService extends BaseService {
       ),
       new Filter("currency", FilterOperator.EQ, filterValues.displayCurrency),
     ];
+    if (filterValues.house_bank == undefined) {
+    } else if (filterValues.house_bank.length > 0) {
+      filterValues.house_bank.forEach((houseBank) => {
+        filtersService.push(
+          new Filter("house_bank", FilterOperator.EQ, houseBank)
+        );
+      });
+    }
+    if (filterValues.company_code == undefined) {
+    } else if (filterValues.company_code.length > 0)
+      filterValues.company_code.forEach((companyCode) => {
+        filtersService.push(
+          new Filter("company_code", FilterOperator.EQ, companyCode)
+        );
+      });
+
+    if (filterValues.house_bank_account == undefined) {
+    } else if (filterValues.house_bank_account.length > 0)
+      filterValues.house_bank_account.forEach((houseBankAccount) => {
+        filtersService.push(
+          new Filter("house_bank_account", FilterOperator.EQ, houseBankAccount)
+        );
+      });
+
+    // if (filterValues.bank_account == undefined) {
+    // } else if (filterValues.bank_account.length > 0)
+    //   filterValues.bank_account.forEach((bankAccount) => {
+    //     filtersService.push(
+    //       new Filter("bank_account", FilterOperator.EQ, bankAccount)
+    //     );
+    //   });
+    if (filterValues.bank_account_partner == undefined) {
+    } else if (filterValues.bank_account_partner.length > 0)
+      filterValues.bank_account_partner.forEach((bankAccountPartner) => {
+        filtersService.push(
+          new Filter(
+            "bank_account_partner",
+            FilterOperator.EQ,
+            bankAccountPartner
+          )
+        );
+      });
+
     let resultado = await this.odata(
       "/cfw_query_liq_item"
     ).get<Cfw_query_liq_item>({
       filters: filtersService,
+      urlParameters: {
+        $top: "40000",
+      },
     });
     return resultado.data.results;
   }

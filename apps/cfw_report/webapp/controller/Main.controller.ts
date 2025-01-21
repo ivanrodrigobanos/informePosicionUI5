@@ -501,7 +501,6 @@ export default class Main extends BaseController {
    */
   public processBuildLiqItemHier(IDHierarchy: string, navigate: boolean) {
     this.getOwnerComponent().messageState.clearMessage();
-
     this._liqItemTreeViewController.processBuildHierarchy(
       IDHierarchy,
       this._filterBarValuesChanged,
@@ -1208,9 +1207,30 @@ export default class Main extends BaseController {
     let internalValues = this._sfb.getFilterData() as any;
     filterValues.displayCurrency = internalValues.p_displaycurrency;
     filterValues.company_code = [];
+    filterValues.house_bank = [];
+    filterValues.company_code = [];
+    filterValues.house_bank_account = [];
+    // filterValues.bank_account = [];
+    filterValues.bank_account_partner = [];
     if (internalValues.company_code)
       internalValues.company_code.items.forEach((item: any) => {
         filterValues.company_code.push(item.key as string);
+      });
+    if (internalValues.house_bank)
+      internalValues.house_bank.items.forEach((item: any) => {
+        filterValues.house_bank.push(item.key as string);
+      });
+    if (internalValues.house_bank_account)
+      internalValues.house_bank_account.items.forEach((item: any) => {
+        filterValues.house_bank_account.push(item.key as string);
+      });
+    // if (internalValues.bank_account)
+    //   internalValues.bank_account.items.forEach((item: any) => {
+    //     filterValues.bank_account.push(item.key as string);
+    //   });
+    if (internalValues.bank_account_partner)
+      internalValues.bank_account_partner.items.forEach((item: any) => {
+        filterValues.bank_account_partner.push(item.key as string);
       });
 
     this.getOwnerComponent().setFiltersValues(filterValues);

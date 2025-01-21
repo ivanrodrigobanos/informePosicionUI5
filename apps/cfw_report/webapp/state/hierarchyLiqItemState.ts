@@ -28,7 +28,9 @@ export default class HierarchyLiqItemState extends BaseState<
     this.data = {
       generalInfo: new HierarchyGeneralInfoModel(),
       hierarchy: new HierarchyModel(),
-      hierarchyAccount: new HierarchyLiqItemAccountModel(this.ownerComponent.getI18nBundle()),
+      hierarchyAccount: new HierarchyLiqItemAccountModel(
+        this.ownerComponent.getI18nBundle()
+      ),
       treeFieldCatalog: new LiqItemTreeFieldCatalogModel(
         this.ownerComponent.metadataState,
         this.ownerComponent.getI18nBundle()
@@ -50,7 +52,7 @@ export default class HierarchyLiqItemState extends BaseState<
    * Proceso de construcción de la jerarquía
    * @returns
    */
-  public processBuildHierarchy() {    
+  public processBuildHierarchy() {
     this.getData().hierarchyAccount = new HierarchyLiqItemAccountModel(
       this.ownerComponent.getI18nBundle(),
       this.getData().hierarchy.getData(),
@@ -66,7 +68,6 @@ export default class HierarchyLiqItemState extends BaseState<
           this.ownerComponent.accountBankState.checkOverdueColumnWithValues(),
       }
     );
-
     this.updateModel();
   }
   /**

@@ -13,6 +13,9 @@ export type FiltersAccountData = {
   displayCurrency: string;
   bank_account: string[];
   source?: string;
+  house_bank?: string[];
+  house_bank_account?: string[];
+  bank_account_partner?: string[];
 };
 export type AccountValue = {
   accountData: AccountBankModel;

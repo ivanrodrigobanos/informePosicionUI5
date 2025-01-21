@@ -54,8 +54,40 @@ export default class AccountBankService extends BaseService {
       );
     });
 
+    if (filterValues.house_bank == undefined) {
+    } else if (filterValues.house_bank.length > 0) {
+      filterValues.house_bank.forEach((houseBank) => {
+        filtersService.push(
+          new Filter("house_bank", FilterOperator.EQ, houseBank)
+        );
+      });
+    }
+
+    if (filterValues.house_bank_account == undefined) {
+    } else if (filterValues.house_bank_account.length > 0)
+      filterValues.house_bank_account.forEach((houseBankAccount) => {
+        filtersService.push(
+          new Filter("house_bank_account", FilterOperator.EQ, houseBankAccount)
+        );
+      });
+
+    if (filterValues.bank_account_partner == undefined) {
+    } else if (filterValues.bank_account_partner.length > 0)
+      filterValues.bank_account_partner.forEach((bankAccountPartner) => {
+        filtersService.push(
+          new Filter(
+            "bank_account_partner",
+            FilterOperator.EQ,
+            bankAccountPartner
+          )
+        );
+      });
+
     let resultado = await this.odata("/cfw_query_plv").get<Cfw_query_plvSet>({
       filters: filtersService,
+      urlParameters: {
+        $top: "40000",
+      },
     });
     return resultado.data.results;
   }
