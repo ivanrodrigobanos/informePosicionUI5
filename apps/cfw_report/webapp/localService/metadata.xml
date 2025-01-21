@@ -454,6 +454,13 @@
                 <Property Name="http_url" Type="Edm.String" Nullable="false" sap:display-format="UpperCase" sap:label="URL"/>
                 <Property Name="https_url" Type="Edm.String" sap:display-format="UpperCase" sap:label="URL"/>
             </EntityType>
+            <EntityType Name="xSTRCMxC_ENTITY_BANKS_VHType" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="nombre_banco"/>
+                </Key>
+                <Property Name="nombre_banco" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Entity name" sap:quickinfo="Name of the bank"/>
+                <Property Name="banco_descripcion" Type="Edm.String" MaxLength="60" sap:label=""/>
+            </EntityType>
             <EntityType Name="xSTRCMxC_ID_CUENTA_VHType" sap:value-list="true" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="bukrs"/>
@@ -464,13 +471,6 @@
                 <Property Name="hbkid" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="House bank" sap:quickinfo="Short key for a house bank"/>
                 <Property Name="hktid" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Account ID" sap:quickinfo="ID for account details"/>
                 <Property Name="hktid_desc" Type="Edm.String" MaxLength="60" sap:label="Description"/>
-            </EntityType>
-            <EntityType Name="xSTRCMxC_MONITOR_BANKS_VHType" sap:value-list="true" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="nombre_banco"/>
-                </Key>
-                <Property Name="nombre_banco" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Entity name" sap:quickinfo="Name of the bank"/>
-                <Property Name="fecha_extracto" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Bank Statement Date"/>
             </EntityType>
             <EntityType Name="xSTRCMxC_SOCIEDAD_VHType" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -737,8 +737,8 @@
                 <EntitySet Name="cfw_query_liq_item" EntityType="cds_xstrcmxui_cash_flow.cfw_query_liq_itemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="cfw_query_plv" EntityType="cds_xstrcmxui_cash_flow.cfw_query_plvType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="sap_url" EntityType="cds_xstrcmxui_cash_flow.sap_urlType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="xSTRCMxC_ENTITY_BANKS_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_ENTITY_BANKS_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_ID_CUENTA_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_ID_CUENTA_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="xSTRCMxC_MONITOR_BANKS_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_MONITOR_BANKS_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="xSTRCMxC_SOCIEDAD_VH" EntityType="cds_xstrcmxui_cash_flow.xSTRCMxC_SOCIEDAD_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="constants" EntityType="cds_xstrcmxui_cash_flow.constantsType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="I_CurrencyStdVH" EntityType="cds_xstrcmxui_cash_flow.I_CurrencyStdVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
@@ -794,13 +794,16 @@
                     <Record>
                         <PropertyValue Property="Label" String="Entity name"/>
                         <PropertyValue Property="DistinctValuesSupported" Bool="true"/>
-                        <PropertyValue Property="CollectionPath" String="xSTRCMxC_MONITOR_BANKS_VH"/>
+                        <PropertyValue Property="CollectionPath" String="xSTRCMxC_ENTITY_BANKS_VH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="bank_account_partner"/>
                                     <PropertyValue Property="ValueListProperty" String="nombre_banco"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="banco_descripcion"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>
@@ -1354,7 +1357,7 @@
                     </Record>
                 </Annotation>
             </Annotations>
-            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_ID_CUENTA_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_ENTITY_BANKS_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
                         <PropertyValue Property="Deletable" Bool="false"/>
@@ -1371,7 +1374,7 @@
                     </Record>
                 </Annotation>
             </Annotations>
-            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_MONITOR_BANKS_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="cds_xstrcmxui_cash_flow.cds_xstrcmxui_cash_flow_Entities/xSTRCMxC_ID_CUENTA_VH" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record>
                         <PropertyValue Property="Deletable" Bool="false"/>

@@ -218,6 +218,9 @@
                     </Collection>
                 </Annotation>
             </Annotations>
+            <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/bank_account">
+                <Annotation Term="UI.HiddenFilter"/>
+            </Annotations>
             <Annotations Target="cds_xstrcmxui_cash_flow.cfw_queryType/source">
                 <Annotation Term="UI.HiddenFilter"/>
                 <Annotation Term="Common.Text" Path="source_name">
@@ -1256,9 +1259,6 @@
                         <PropertyPath>p_displaycurrency</PropertyPath>
                     </Collection>
                 </Annotation>
-            </Annotations>
-            <Annotations Target="cds_xstrcmxui_cash_flow.xSTRCMxC_MONITOR_BANKS_VHType/fecha_extracto">
-                <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="_Entities"/>
         </Schema>
