@@ -459,7 +459,6 @@
                     <PropertyRef Name="nombre_banco"/>
                 </Key>
                 <Property Name="nombre_banco" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Entity name" sap:quickinfo="Name of the bank"/>
-                <Property Name="banco_descripcion" Type="Edm.String" MaxLength="60" sap:label=""/>
             </EntityType>
             <EntityType Name="xSTRCMxC_ID_CUENTA_VHType" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -801,9 +800,6 @@
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="bank_account_partner"/>
                                     <PropertyValue Property="ValueListProperty" String="nombre_banco"/>
-                                </Record>
-                                <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="banco_descripcion"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>
