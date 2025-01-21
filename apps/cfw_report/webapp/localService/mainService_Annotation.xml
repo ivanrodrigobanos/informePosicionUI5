@@ -33,7 +33,7 @@
                 <Annotation Term="UI.Facets">
                     <Collection>
                         <Record Type="UI.ReferenceFacet">
-                            <PropertyValue Property="Label" String="Datos generales"/>
+                            <PropertyValue Property="Label" String=""/>
                             <PropertyValue Property="ID" String="DGENERALES"/>
                             <PropertyValue Property="Target" AnnotationPath="@UI.Identification"/>
                         </Record>
@@ -80,7 +80,7 @@
                 <Annotation Term="UI.Facets">
                     <Collection>
                         <Record Type="UI.ReferenceFacet">
-                            <PropertyValue Property="Label" String="Datos generales"/>
+                            <PropertyValue Property="Label" String=""/>
                             <PropertyValue Property="ID" String="DGENERALES"/>
                             <PropertyValue Property="Target" AnnotationPath="@UI.Identification"/>
                         </Record>
@@ -766,6 +766,12 @@
                             <PropertyValue Property="Value" Path="source"/>
                         </Record>
                         <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="company_code"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="house_bank"/>
+                        </Record>
+                        <Record Type="UI.DataField">
                             <PropertyValue Property="Criticality" Path="overdue_critic"/>
                             <PropertyValue Property="CriticalityRepresentation" EnumMember="UI.CriticalityRepresentationType/WithoutIcon"/>
                             <PropertyValue Property="Value" Path="overdue_amount"/>
@@ -931,6 +937,7 @@
                     <Collection>
                         <PropertyPath>p_keydate</PropertyPath>
                         <PropertyPath>p_enddate</PropertyPath>
+                        <PropertyPath>company_code</PropertyPath>
                         <PropertyPath>p_displaycurrency</PropertyPath>
                     </Collection>
                 </Annotation>
